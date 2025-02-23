@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: src/core/Bank.Core.Api/Dockerfile
+    ports:
+      - "5001:8080"
 
   bank.credits.api:
     image: ${DOCKER_REGISTRY-}bankcreditsapi
