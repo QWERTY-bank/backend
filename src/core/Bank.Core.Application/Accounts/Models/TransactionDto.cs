@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Bank.Core.Application.Account.Models;
+namespace Bank.Core.Application.Accounts.Models;
 
 public class TransactionDto
 {
@@ -15,5 +15,5 @@ public class TransactionDto
     /// Операции начисления и списания валют
     /// </summary>
     [Required]
-    public required IReadOnlyCollection<TransactionCurrencyDto> Resources { get; init; }
+    public required IReadOnlyCollection<CurrencyValueDto> CurrencyValues { get; init; }
 }

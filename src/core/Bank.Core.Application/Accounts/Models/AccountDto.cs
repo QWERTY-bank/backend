@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Bank.Core.Application.Account.Models;
+namespace Bank.Core.Application.Accounts.Models;
 
 public class AccountDto
 {
@@ -15,4 +15,10 @@ public class AccountDto
     /// </summary>
     [Required]
     public required string Title { get; init; }
+    
+    /// <summary>
+    ///     Значения валюты на счете
+    /// </summary>
+    [Required]
+    public required IReadOnlyCollection<CurrencyValueDto> CurrencyValues { get; init; }
 }

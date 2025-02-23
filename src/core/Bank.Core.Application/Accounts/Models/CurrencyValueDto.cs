@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Bank.Core.Application.Account.Models;
+namespace Bank.Core.Application.Accounts.Models;
 
-public class TransactionCurrencyDto
+public class CurrencyValueDto
 {
     /// <summary>
     ///     Код валюты (например, RUB)

@@ -1,7 +1,7 @@
 using System.Net;
 using Bank.Core.Api.Models.Accounts;
 using Bank.Core.Api.Models.Common;
-using Bank.Core.Application.Account.Models;
+using Bank.Core.Application.Accounts.Models;
 using Bank.Core.Application.Common;
 using Microsoft.AspNetCore.Mvc;
 
