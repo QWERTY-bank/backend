@@ -1,0 +1,20 @@
+services:
+  bank.core.api:
+    image: ${DOCKER_REGISTRY-}bankcoreapi
+    build:
+      context: .
+      dockerfile: src/core/Bank.Core.Api/Dockerfile
+
+  bank.credits.api:
+    image: ${DOCKER_REGISTRY-}bankcreditsapi
+    build:
+      context: .
+      dockerfile: src/credits/Bank.Credits.Api/Dockerfile
+
+
+  bank.users.api:
+    image: ${DOCKER_REGISTRY-}bankusersapi
+    build:
+      context: .
+      dockerfile: src/users/Bank.Users.Api/Dockerfile
+
