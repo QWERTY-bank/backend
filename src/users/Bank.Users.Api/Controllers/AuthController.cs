@@ -1,4 +1,5 @@
-﻿using Bank.Common.Api.DTOs;
+﻿using Bank.Common.Api.Controllers;
+using Bank.Common.Api.DTOs;
 using Bank.Users.Api.Configurations.Authorization;
 using Bank.Users.Api.Models.Auth;
 using Bank.Users.Application.Auth;
@@ -9,10 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bank.Users.Api.Controllers
 {
     [Route("api/auth")]
-    [ApiController]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    public class AuthController : ControllerBase
+    public class AuthController : BaseController
     {
         /// <summary>
         /// Регистрация пользователя

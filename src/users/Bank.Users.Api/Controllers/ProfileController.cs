@@ -1,4 +1,5 @@
-﻿using Bank.Common.Api.DTOs;
+﻿using Bank.Common.Api.Controllers;
+using Bank.Common.Api.DTOs;
 using Bank.Users.Api.Models.Profile;
 using Bank.Users.Application.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,12 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bank.Users.Api.Controllers
 {
     [Route("api/profile")]
-    [ApiController]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class ProfileController : ControllerBase
+    public class ProfileController : BaseController
     {
         /// <summary>
         /// Профиль текущего пользователя
