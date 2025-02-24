@@ -33,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{36D591
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bank.Common.Api", "src\common\Bank.Common.Api\Bank.Common.Api.csproj", "{4422CECF-C0D7-49EA-83EC-BF3B32E011A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bank.Common.Application", "src\common\Bank.Common.Application\Bank.Common.Application.csproj", "{9B624DBA-FD6A-4898-8C1D-9267F3CAF602}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,10 @@ Global
 		{4422CECF-C0D7-49EA-83EC-BF3B32E011A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4422CECF-C0D7-49EA-83EC-BF3B32E011A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4422CECF-C0D7-49EA-83EC-BF3B32E011A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B624DBA-FD6A-4898-8C1D-9267F3CAF602}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B624DBA-FD6A-4898-8C1D-9267F3CAF602}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B624DBA-FD6A-4898-8C1D-9267F3CAF602}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B624DBA-FD6A-4898-8C1D-9267F3CAF602}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +103,7 @@ Global
 		{9E560F4E-E321-482C-AB4A-1D3FD5C5B82A} = {517451B4-3848-4C95-B466-8E8A7A2B899C}
 		{36D591C7-65C7-A0D1-1CBC-10CDE441BDC8} = {6E2DC0D9-A4F9-46FD-A1E4-13A141C6B469}
 		{4422CECF-C0D7-49EA-83EC-BF3B32E011A2} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
+		{9B624DBA-FD6A-4898-8C1D-9267F3CAF602} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {12763DB4-07C3-4231-9EC1-021CE5B1C0EF}

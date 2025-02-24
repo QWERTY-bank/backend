@@ -1,7 +1,7 @@
-using Common.API.Configurations;
+using Bank.Common.Api.Configurations;
+using Bank.Users.Api.Configurations.Authorization;
 using System.Reflection;
 using System.Text.Json.Serialization;
-using UserService.Infrastructure.Identity.Configurations.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 

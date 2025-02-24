@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
-using Common.API.Configurations.Authorization;
-using Common.API.Configurations.Others;
+using Bank.Common.Api.Configurations.Others;
+using Bank.Common.Api.Configurations.Authorization;
 
-namespace Common.API.Configurations
+namespace Bank.Common.Api.Configurations
 {
     public static class ConfigurationApiExtensions
     {

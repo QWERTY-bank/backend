@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Logging;
 using System.Collections.Immutable;
 using System.Net;
-using Common.API.DTOs;
+using Bank.Common.Api.DTOs;
 
-namespace Common.API.Middlewares
+namespace Bank.Common.Api.Middlewares
 {
     public class ExceptionsHandlerMiddleware(RequestDelegate next, ILogger<ExceptionsHandlerMiddleware> logger)
     {

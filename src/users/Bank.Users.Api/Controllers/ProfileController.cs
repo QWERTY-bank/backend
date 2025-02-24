@@ -1,24 +1,36 @@
-﻿using Bank.Users.Api.Models.Profile;
+﻿using Bank.Common.Api.DTOs;
+using Bank.Users.Api.Models.Profile;
+using Bank.Users.Application.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bank.Users.Api.Controllers
 {
-    [Route("api/user")]
+    [Route("api/profile")]
     [ApiController]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ProfileController : ControllerBase
     {
         /// <summary>
+        /// Профиль текущего пользователя
+        /// </summary>
+        [HttpGet]
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+        public Task<ActionResult> GetProfileAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Обновление почты
         /// </summary>
-        [HttpPatch("email")]
-        public async Task<ActionResult> ChangeEmailAsync([FromBody] ChangeEmailProfileRequest request)
+        [HttpPut("phone")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public Task<ActionResult> ChangePhoneAsync([FromBody] ChangePhoneProfileRequest request)
         {
             throw new NotImplementedException();
         }
@@ -26,8 +38,9 @@ namespace Bank.Users.Api.Controllers
         /// <summary>
         /// Обновление пароля
         /// </summary>
-        [HttpPatch("password")]
-        public async Task<ActionResult> ChangePasswordAsync([FromBody] ChangePasswordProfileRequest request)
+        [HttpPut("password")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public Task<ActionResult> ChangePasswordAsync([FromBody] ChangePasswordProfileRequest request)
         {
             throw new NotImplementedException();
         }
@@ -35,8 +48,9 @@ namespace Bank.Users.Api.Controllers
         /// <summary>
         /// Обновление данных профиля
         /// </summary>
-        [HttpPatch("profile")]
-        public async Task<ActionResult> ChangeProfileAsync([FromBody] ChangeProfileRequest request)
+        [HttpPut("profile")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public Task<ActionResult> ChangeProfileAsync([FromBody] ChangeProfileRequest request)
         {
             throw new NotImplementedException();
         }

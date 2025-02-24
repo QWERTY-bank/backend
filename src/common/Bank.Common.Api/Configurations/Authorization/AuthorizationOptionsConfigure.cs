@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 
-namespace Common.API.Configurations.Authorization
+namespace Bank.Common.Api.Configurations.Authorization
 {
     public class AuthorizationOptionsConfigure : IConfigureOptions<AuthorizationOptions>
     {

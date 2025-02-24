@@ -1,14 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Bank.Users.Api.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace Bank.Users.Api.Models.Auth
 {
     public class LoginAuthRequest
     {
         [Required]
-        [EmailAddress]
-        public string Email { get; init; } = null!;
+        [PhoneNumber]
+        public required string Phone { get; init; }
 
         [Required]
-        public string Password { get; init; } = null!;
+        public required string Password { get; init; }
     }
 }

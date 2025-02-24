@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Common.API.Configurations.Others
+namespace Bank.Common.Api.Configurations.Others
 {
     public class SwaggerGenOptionsConfigure : IConfigureOptions<SwaggerGenOptions>
     {

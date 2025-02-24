@@ -1,9 +1,9 @@
-﻿using Common.API.Attributes;
+﻿using Bank.Common.Api.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace Common.API.Controllers
+namespace Bank.Common.Api.Controllers
 {
     [ApiController]
     [ValidateModelState]

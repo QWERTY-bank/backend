@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Bank.Common.Api.Middlewares;
+using Microsoft.AspNetCore.Builder;
 
-namespace Common.API.Middlewares.Extensions
+namespace Bank.Common.Api.Middlewares.Extensions
 {
     public static class CommonMiddlewareExtensions
     {

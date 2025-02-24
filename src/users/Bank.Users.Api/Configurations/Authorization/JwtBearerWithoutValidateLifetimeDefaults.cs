@@ -1,4 +1,4 @@
-﻿namespace UserService.Infrastructure.Identity.Configurations.Authorization
+﻿namespace Bank.Users.Api.Configurations.Authorization
 {
     public static class JwtBearerWithoutValidateLifetimeDefaults
     {

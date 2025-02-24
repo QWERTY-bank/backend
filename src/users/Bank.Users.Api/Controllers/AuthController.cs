@@ -1,16 +1,17 @@
-﻿using Bank.Users.Api.Models.Auth;
+﻿using Bank.Common.Api.DTOs;
+using Bank.Users.Api.Configurations.Authorization;
+using Bank.Users.Api.Models.Auth;
 using Bank.Users.Application.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using UserService.Infrastructure.Identity.Configurations.Authorization;
 
 namespace Bank.Users.Api.Controllers
 {
     [Route("api/auth")]
     [ApiController]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     public class AuthController : ControllerBase
     {
         /// <summary>
@@ -18,7 +19,7 @@ namespace Bank.Users.Api.Controllers
         /// </summary>
         [HttpPost("registration")]
         [ProducesResponseType(typeof(TokensDTO), StatusCodes.Status200OK)]
-        public async Task<ActionResult<TokensDTO>> RegistrationAsync(RegistrationAuthRequest request)
+        public Task<ActionResult<TokensDTO>> RegistrationAsync(RegistrationAuthRequest request)
         {
             throw new NotImplementedException();
         }
@@ -28,7 +29,7 @@ namespace Bank.Users.Api.Controllers
         /// </summary>
         [HttpPost("login")]
         [ProducesResponseType(typeof(TokensDTO), StatusCodes.Status200OK)]
-        public async Task<ActionResult<TokensDTO>> LoginAsync(LoginAuthRequest request)
+        public Task<ActionResult<TokensDTO>> LoginAsync(LoginAuthRequest request)
         {
             throw new NotImplementedException();
         }
@@ -40,7 +41,7 @@ namespace Bank.Users.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ActionResult> LogoutAsync()
+        public Task<ActionResult> LogoutAsync()
         {
             throw new NotImplementedException();
         }
@@ -52,7 +53,7 @@ namespace Bank.Users.Api.Controllers
         [ProducesResponseType(typeof(TokensDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Authorize(AuthenticationSchemes = JwtBearerWithoutValidateLifetimeDefaults.CheckOnlySignature)]
-        public async Task<ActionResult<TokensDTO>> UpdateAccessTokenAsync(UpdateAccessAuthRequest request)
+        public Task<ActionResult<TokensDTO>> UpdateAccessTokenAsync(UpdateAccessAuthRequest request)
         {
             throw new NotImplementedException();
         }

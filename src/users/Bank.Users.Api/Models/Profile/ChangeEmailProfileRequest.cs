@@ -1,11 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Bank.Users.Api.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace Bank.Users.Api.Models.Profile
 {
-    public class ChangeEmailProfileRequest
+    public class ChangePhoneProfileRequest
     {
         [Required]
-        [EmailAddress]
-        public string NewEmail { get; set; } = null!;
+        [PhoneNumber]
+        public required string NewPhone { get; init; }
     }
 }

@@ -7,8 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\common\Bank.Common.Application\Bank.Common.Application.csproj" />
-    <ProjectReference Include="..\Bank.Users.Domain\Bank.Users.Domain.csproj" />
+    <PackageReference Include="X.PagedList" Version="10.5.7" />
   </ItemGroup>
 
 </Project>

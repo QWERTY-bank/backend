@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Bank.Common.Api.Configurations.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Common.API.Configurations.Authorization;
 
-namespace UserService.Infrastructure.Identity.Configurations.Authorization
+namespace Bank.Users.Api.Configurations.Authorization
 {
     internal class JwtBearerOptionsWithoutValidateLifetimeConfigure(IOptions<JwtOptions> _jwtOptions) : IConfigureNamedOptions<JwtBearerOptions>
     {

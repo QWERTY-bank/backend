@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Bank.Users.Api.Attributes;
+using Bank.Users.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Bank.Users.Api.Models.Auth
 {
@@ -6,13 +8,21 @@ namespace Bank.Users.Api.Models.Auth
     {
         [Required]
         [MinLength(5)]
-        public string FullName { get; init; } = null!;
+        public required string FullName { get; init; }
+
+        [DateValidation]
+        [Required]
+        public required DateOnly Birthday { get; init; }
 
         [Required]
-        [EmailAddress]
-        public string Email { get; init; } = null!;
+        public required Gender Gender { get; init; }
 
         [Required]
-        public string Password { get; init; } = null!;
+        [PhoneNumber]
+        public required string Phone { get; init; }
+
+        [Required]
+        [Password]
+        public required string Password { get; init; }
     }
 }

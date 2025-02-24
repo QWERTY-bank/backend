@@ -3,7 +3,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 
-namespace Common.API.Configurations.Others
+namespace Bank.Common.Api.Configurations.Others
 {
     internal class SwaggerAuthOperationFilter : IOperationFilter
     {

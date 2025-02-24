@@ -1,13 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Bank.Users.Api.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace Bank.Users.Api.Models.Profile
 {
     public class ChangePasswordProfileRequest
     {
         [Required]
-        public string CurrentPassword { get; set; } = null!;
+        public required string CurrentPassword { get; init; }
 
         [Required]
-        public string NewPassword { get; set; } = null!;
+        [Password]
+        public required string NewPassword { get; init; }
     }
 }

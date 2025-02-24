@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Bank.Common.Api.DTOs;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Collections.Immutable;
-using Common.API.DTOs;
 
-namespace Common.API.Attributes
+namespace Bank.Common.Api.Attributes
 {
     public class ValidateModelStateAttribute : ActionFilterAttribute
     {
