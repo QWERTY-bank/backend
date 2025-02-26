@@ -17,6 +17,12 @@ public class AccountDto
     public required string Title { get; init; }
     
     /// <summary>
+    ///     Идентификатор пользователя
+    /// </summary>
+    [Required]
+    public required Guid UserId { get; init; }
+    
+    /// <summary>
     ///     Значения валюты на счете
     /// </summary>
     [Required]

@@ -7,13 +7,16 @@
         <NoWarn>$(NoWarn);1591</NoWarn>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <DocumentationFile>bin\Debug\net8.0\Bank.Core.Application.xml</DocumentationFile>
-    </PropertyGroup>
+    <ItemGroup>
+      <Folder Include="Accounts\" />
+      <Folder Include="Currencies\" />
+      <Folder Include="Transactions\" />
+    </ItemGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <DocumentationFile>bin\Release\net8.0\Bank.Core.Application.xml</DocumentationFile>
-    </PropertyGroup>
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.13" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
+    </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Bank.Core.Domain\Bank.Core.Domain.csproj" />
