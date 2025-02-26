@@ -1,7 +1,10 @@
 ﻿using Bank.Common.Api.Controllers;
 using Bank.Common.Api.DTOs;
+using Bank.Credits.Api.Models.Tarifs;
+using Bank.Credits.Application.Tarifs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static Bank.Common.Application.Extensions.PagedListExtensions;
 
 namespace Bank.Credits.Api.Controllers
 {
@@ -14,16 +17,8 @@ namespace Bank.Credits.Api.Controllers
         /// Получить список тарифов
         /// </summary>
         [HttpGet]
+        [ProducesResponseType(typeof(PagedListWithMetadata<TarifDto>), StatusCodes.Status200OK)]
         public Task<ActionResult> GetTarifsAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Получить подробную информацию о тарифе
-        /// </summary>
-        [HttpGet("{tarifId}")]
-        public Task<ActionResult> GetTarifAsync([FromRoute] Guid tarifId)
         {
             throw new NotImplementedException();
         }
@@ -32,16 +27,8 @@ namespace Bank.Credits.Api.Controllers
         /// Создать новый тариф (для сотрудников)
         /// </summary>
         [HttpPost]
-        public Task<ActionResult> CreateTarifAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Обновить информацию о тарифе (для сотрудников)
-        /// </summary>
-        [HttpPut("{tarifId}")]
-        public Task<ActionResult> UpdateTarifAsync([FromRoute] Guid tarifId)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public Task<ActionResult> CreateTarifAsync([FromBody] CreateTarifRequest request)
         {
             throw new NotImplementedException();
         }

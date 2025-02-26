@@ -1,6 +1,5 @@
 ﻿using Bank.Common.Api.Controllers;
 using Bank.Common.Api.DTOs;
-using Bank.Users.Api.Models.Common;
 using Bank.Users.Application.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
