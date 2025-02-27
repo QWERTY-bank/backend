@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddUsersConfigurations();
 builder.Services.AddUsersServices();
 builder.AddUsersDbContext();
+builder.AddRedisDb();
 
 var app = builder.Build();
 

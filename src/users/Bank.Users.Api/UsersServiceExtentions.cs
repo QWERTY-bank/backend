@@ -1,8 +1,10 @@
 ﻿using Bank.Common.Api.Configurations;
 using Bank.Common.Auth.Extensions;
 using Bank.Users.Api.Configurations.Authorization;
+using Bank.Users.Application.Auth;
 using Bank.Users.Persistence;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 using System.Reflection;
 using System.Text.Json.Serialization;
 
@@ -18,7 +20,10 @@ namespace Bank.Users.Api
         /// </summary>
         public static void AddUsersServices(this IServiceCollection services)
         {
-
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ITokensService, TokensService>();
+            services.AddScoped<IRefreshTokenStore, RefreshTokenStore>();
+            services.AddScoped<IPasswordService, PasswordService>();
         }
 
         /// <summary>
@@ -53,6 +58,15 @@ namespace Bank.Users.Api
         {
             string? postgreConnectionString = builder.Configuration.GetConnectionString("PostgreConnection");
             builder.Services.AddDbContext<UsersDbContext>(options => options.UseNpgsql(postgreConnectionString!));
+        }
+
+        /// <summary>
+        /// Настройка redis
+        /// </summary>
+        public static void AddRedisDb(this WebApplicationBuilder builder)
+        {
+            string? redisConnectionString = builder.Configuration.GetConnectionString("RedisConnection");
+            builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString!));
         }
 
         /// <summary>

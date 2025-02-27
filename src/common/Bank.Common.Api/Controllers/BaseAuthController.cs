@@ -12,6 +12,6 @@ namespace Bank.Common.Api.Controllers
     {
         protected Guid UserId { get => User.GetUserId(); }
 
-        protected Guid TokenId { get => User.GetTokenId(); }
+        protected Guid TokenJTI { get => User.GetTokenId(); }
     }
 }

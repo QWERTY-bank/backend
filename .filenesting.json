@@ -1,0 +1,5 @@
+{
+  "dependentFileRules": {
+    "*.cs": [ "*.impl.cs" ]
+  }
+}
