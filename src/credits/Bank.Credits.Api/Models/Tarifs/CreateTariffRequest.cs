@@ -1,9 +1,12 @@
 ﻿using Bank.Credits.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace Bank.Credits.Api.Models.Tarifs
+namespace Bank.Credits.Api.Models.Tariffs
 {
-    public class CreateTarifRequest
+    /// <summary>
+    /// Запрос на создание запроса
+    /// </summary>
+    public class CreateTariffRequest
     {
         /// <summary>
         /// Название тарифа

@@ -2,7 +2,7 @@
 
 namespace Bank.Credits.Application.Tarifs
 {
-    public class TarifDto
+    public class TariffDto
     {
         public required Guid Id { get; init; }
 

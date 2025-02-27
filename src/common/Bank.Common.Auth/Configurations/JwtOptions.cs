@@ -1,4 +1,4 @@
-﻿namespace Bank.Common.Api.Configurations.Authorization
+﻿namespace Bank.Common.Auth.Configurations
 {
     public class JwtOptions
     {

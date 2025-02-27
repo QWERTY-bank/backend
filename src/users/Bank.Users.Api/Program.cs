@@ -1,31 +1,15 @@
-using Bank.Common.Api.Configurations;
-using Bank.Users.Api.Configurations.Authorization;
-using System.Reflection;
-using System.Text.Json.Serialization;
+using Bank.Users.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSwaggerGen(options =>
-{
-    var filePath = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
-    options.IncludeXmlComments(filePath);
-});
-
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    });
-
-// Configuration extensions
-builder.Services.AddSwaggerConfigure();
-builder.Services.AddModalStateConfigure();
-builder.Services.ConfigureOptions<JwtBearerOptionsWithoutValidateLifetimeConfigure>();
-builder.Services.ConfigureOptions<AuthorizationOptionsWithoutValidateLifetimeConfigure>();
-builder.Services.AddJwtAuthentication()
-    .AddJwtBearer(JwtBearerWithoutValidateLifetimeDefaults.CheckOnlySignature);
+builder.Services.AddUsersConfigurations();
+builder.Services.AddUsersServices();
+builder.AddUsersDbContext();
 
 var app = builder.Build();
+
+app.Services.AddAutoMigration();
+app.Services.AddDatabaseSeed();
 
 app.UseSwagger();
 app.UseSwaggerUI();

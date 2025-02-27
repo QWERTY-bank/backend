@@ -3,8 +3,14 @@ using System.Text.RegularExpressions;
 
 namespace Bank.Users.Api.Attributes
 {
-    public class PhoneNumberAttribute : ValidationAttribute
+    /// <summary>
+    /// Валидация номера телефона
+    /// </summary>
+    public class RuPhoneNumberAttribute : ValidationAttribute
     {
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public override bool IsValid(object? value)
         {
             if (value is string phoneNumber)

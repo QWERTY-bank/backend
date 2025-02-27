@@ -1,4 +1,4 @@
-﻿namespace Bank.Users.Application.Users
+﻿namespace Bank.Users.Application.Users.Models
 {
     public class UserShortDto
     {

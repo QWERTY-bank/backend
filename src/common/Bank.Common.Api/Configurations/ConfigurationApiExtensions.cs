@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Bank.Common.Api.Configurations.Others;
+using Bank.Common.Api.Configurations.Swagger;
 using Microsoft.Extensions.DependencyInjection;
-using Bank.Common.Api.Configurations.Others;
-using Bank.Common.Api.Configurations.Authorization;
 
 namespace Bank.Common.Api.Configurations
 {
@@ -19,17 +18,6 @@ namespace Bank.Common.Api.Configurations
             services.ConfigureOptions<SwaggerGenOptionsConfigure>();
 
             return services;
-        }
-
-        public static AuthenticationBuilder AddJwtAuthentication(this IServiceCollection services)
-        {
-            services.ConfigureOptions<AuthorizationOptionsConfigure>();
-
-            services.ConfigureOptions<JwtBearerOptionsConfigure>();
-            services.ConfigureOptions<JwtOptionsConfigure>();
-
-            return services.AddAuthentication()
-                    .AddJwtBearer();
         }
     }
 }

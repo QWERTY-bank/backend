@@ -3,8 +3,14 @@ using System.Text.RegularExpressions;
 
 namespace Bank.Users.Api.Attributes
 {
+    /// <summary>
+    /// Валидация пароля
+    /// </summary>
     public class PasswordAttribute : ValidationAttribute
     {
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public override bool IsValid(object? value)
         {
             if (value is string password)

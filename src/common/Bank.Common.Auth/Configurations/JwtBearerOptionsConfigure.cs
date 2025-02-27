@@ -3,9 +3,9 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace Bank.Common.Api.Configurations.Authorization
+namespace Bank.Common.Auth.Configurations
 {
-    public class JwtBearerOptionsConfigure(IOptions<JwtOptions> _jwtOptions) : IConfigureNamedOptions<JwtBearerOptions>
+    internal class JwtBearerOptionsConfigure(IOptions<JwtOptions> _jwtOptions) : IConfigureNamedOptions<JwtBearerOptions>
     {
         private readonly JwtOptions jwtOptions = _jwtOptions.Value;
 

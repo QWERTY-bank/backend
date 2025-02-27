@@ -1,20 +1,23 @@
 ﻿using Bank.Common.Api.Controllers;
 using Bank.Common.Api.DTOs;
-using Bank.Users.Application.Users;
+using Bank.Common.Auth.Attributes;
+using Bank.Users.Application.Users.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Bank.Common.Application.Extensions.PagedListExtensions;
 
 namespace Bank.Users.Api.Controllers
 {
+    /// <summary>
+    /// Отвечает за пользователей
+    /// </summary>
     [Route("api/users")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class UsersController : BaseController
+    [BankAuthorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public class UsersController : BaseAuthController
     {
         /// <summary>
         /// Получить пользователей

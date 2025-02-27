@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace Bank.Common.Api.Configurations.Authorization
+namespace Bank.Common.Auth.Configurations
 {
     public class JwtOptionsConfigure(IConfiguration configuration) : IConfigureOptions<JwtOptions>
     {

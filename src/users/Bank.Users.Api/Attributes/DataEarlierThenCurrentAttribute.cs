@@ -2,8 +2,14 @@
 
 namespace Bank.Users.Api.Attributes
 {
-    public class DateValidationAttribute : ValidationAttribute
+    /// <summary>
+    /// Валидация даты, что она не позже текущей
+    /// </summary>
+    public class DataEarlierThenCurrentAttribute : ValidationAttribute
     {
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public override bool IsValid(object? value)
         {
             if (value is DateOnly date)

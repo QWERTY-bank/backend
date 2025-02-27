@@ -1,20 +1,32 @@
 ﻿using Bank.Users.Api.Attributes;
-using Bank.Users.Domain.Enums;
+using Bank.Users.Domain.Users;
 using System.ComponentModel.DataAnnotations;
 
 namespace Bank.Users.Api.Models.Profile
 {
+    /// <summary>
+    /// Запрос на обновление профиля
+    /// </summary>
     public class ChangeProfileRequest
     {
+        /// <summary>
+        /// Новое имя профиля
+        /// </summary>
         [Required]
         [MinLength(5)]
         public required string NewFullName { get; init; }
 
-        [DateValidation]
+        /// <summary>
+        /// Новая дата рождения
+        /// </summary>
+        [DataEarlierThenCurrent]
         [Required]
-        public required DateOnly Birthday { get; init; }
+        public required DateOnly NewBirthday { get; init; }
 
+        /// <summary>
+        /// Новый пол
+        /// </summary>
         [Required]
-        public required Gender Gender { get; init; }
+        public required GenderType NewGender { get; init; }
     }
 }

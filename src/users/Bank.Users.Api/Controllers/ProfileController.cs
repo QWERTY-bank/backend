@@ -1,22 +1,25 @@
 ﻿using Bank.Common.Api.Controllers;
 using Bank.Common.Api.DTOs;
+using Bank.Common.Auth.Attributes;
 using Bank.Users.Api.Models.Profile;
-using Bank.Users.Application.Users;
+using Bank.Users.Application.Users.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bank.Users.Api.Controllers
 {
+    /// <summary>
+    /// Отвечает за профиль текущего пользователя
+    /// </summary>
     [Route("api/profile")]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class ProfileController : BaseController
+    [BankAuthorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public class ProfileController : BaseAuthController
     {
         /// <summary>
-        /// Профиль текущего пользователя
+        /// Профиль текущего пользователя 
         /// </summary>
         [HttpGet]
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
@@ -26,7 +29,7 @@ namespace Bank.Users.Api.Controllers
         }
 
         /// <summary>
-        /// Обновление почты
+        /// Обновление номера
         /// </summary>
         [HttpPut("phone")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

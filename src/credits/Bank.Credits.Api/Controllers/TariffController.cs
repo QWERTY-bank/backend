@@ -1,24 +1,25 @@
 ﻿using Bank.Common.Api.Controllers;
 using Bank.Common.Api.DTOs;
-using Bank.Credits.Api.Models.Tarifs;
+using Bank.Credits.Api.Models.Tariffs;
 using Bank.Credits.Application.Tarifs;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Bank.Common.Application.Extensions.PagedListExtensions;
 
 namespace Bank.Credits.Api.Controllers
 {
-    [Route("api/tarifs")]
+    /// <summary>
+    /// Отвечает за тарифы для кредитов
+    /// </summary>
+    [Route("api/tariffs")]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    [Authorize]
-    public class TarifsController : BaseController
+    public class TariffController : BaseAuthController
     {
         /// <summary>
         /// Получить список тарифов
         /// </summary>
         [HttpGet]
-        [ProducesResponseType(typeof(PagedListWithMetadata<TarifDto>), StatusCodes.Status200OK)]
-        public Task<ActionResult> GetTarifsAsync()
+        [ProducesResponseType(typeof(PagedListWithMetadata<TariffDto>), StatusCodes.Status200OK)]
+        public Task<ActionResult> GetTariffsAsync()
         {
             throw new NotImplementedException();
         }
@@ -28,7 +29,7 @@ namespace Bank.Credits.Api.Controllers
         /// </summary>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public Task<ActionResult> CreateTarifAsync([FromBody] CreateTarifRequest request)
+        public Task<ActionResult> CreateTariffAsync([FromBody] CreateTariffRequest request)
         {
             throw new NotImplementedException();
         }
@@ -36,8 +37,8 @@ namespace Bank.Credits.Api.Controllers
         /// <summary>
         /// Удалить тариф (для сотрудников)
         /// </summary>
-        [HttpDelete("{tarifId}")]
-        public Task<ActionResult> DeleteTarifAsync([FromRoute] Guid tarifId)
+        [HttpDelete("{tariffId}")]
+        public Task<ActionResult> DeleteTariffAsync([FromRoute] Guid tariffId)
         {
             throw new NotImplementedException();
         }

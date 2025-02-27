@@ -7,8 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\common\Bank.Common.Application\Bank.Common.Application.csproj" />
-    <ProjectReference Include="..\Bank.Users.Persistence\Bank.Users.Persistence.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.13" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bank.Common.Models\Bank.Common.Models.csproj" />
   </ItemGroup>
 
 </Project>
