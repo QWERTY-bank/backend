@@ -35,7 +35,7 @@ namespace Bank.Users.Application.Auth
                 return ExecutionResult<TokensDTO>.FromBadRequest("UserIsExist", "User with this phone number already exist.");
             }
  
-            var hashPasswordResult = await _passwordService.HashPassword(registrationDTO.Password);
+            var hashPasswordResult = _passwordService.HashPassword(registrationDTO.Password);
             if (hashPasswordResult.IsNotSuccess)
             {
                 _logger.LogError($"Password hashing error");
@@ -88,7 +88,7 @@ namespace Bank.Users.Application.Auth
                 return ExecutionResult<TokensDTO>.FromBadRequest("LoginFail", "login fail.");
             }
 
-            var checkingPasswordResult = await _passwordService.CheckPassword(login.Password, user.PasswordHash);
+            var checkingPasswordResult = _passwordService.CheckPassword(login.Password, user.PasswordHash);
             if (checkingPasswordResult.IsNotSuccess)
             {
                 _logger.LogInformation($"Invalid password for user with id = '{user.Id}'.");

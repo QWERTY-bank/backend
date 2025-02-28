@@ -4,7 +4,7 @@ namespace Bank.Users.Application.Auth
 {
     public interface IPasswordService
     {
-        Task<ExecutionResult<string>> HashPassword(string password);
-        Task<ExecutionResult> CheckPassword(string password, string passwordHash);
+        ExecutionResult<string> HashPassword(string password);
+        ExecutionResult CheckPassword(string password, string passwordHash);
     }
 }

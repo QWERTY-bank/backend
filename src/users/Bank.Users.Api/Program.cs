@@ -4,6 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddUsersConfigurations();
 builder.Services.AddUsersServices();
+builder.Services.AddAutoMapperProfiles();
 builder.AddUsersDbContext();
 builder.AddRedisDb();
 

@@ -1,6 +1,6 @@
 ﻿using Bank.Common.Api.Controllers;
 using Bank.Common.Api.DTOs;
-using Bank.Credits.Api.Models.Tariffs;
+using Bank.Credits.Api.Models.Tarifs;
 using Bank.Credits.Application.Tarifs;
 using Microsoft.AspNetCore.Mvc;
 using static Bank.Common.Application.Extensions.PagedListExtensions;

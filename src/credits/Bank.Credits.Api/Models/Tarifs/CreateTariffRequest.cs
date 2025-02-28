@@ -1,7 +1,7 @@
 ﻿using Bank.Credits.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace Bank.Credits.Api.Models.Tariffs
+namespace Bank.Credits.Api.Models.Tarifs
 {
     /// <summary>
     /// Запрос на создание запроса

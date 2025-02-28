@@ -4,6 +4,10 @@ services:
     build:
       context: .
       dockerfile: src/core/Bank.Core.Api/Dockerfile
+    depends_on:
+      - postgres
+    networks:
+      - my-net
     ports:
       - "5001:8080"
 
@@ -12,6 +16,10 @@ services:
     build:
       context: .
       dockerfile: src/credits/Bank.Credits.Api/Dockerfile
+    depends_on:
+      - postgres
+    networks:
+      - my-net
     ports:
       - "5002:8080"
 
@@ -20,5 +28,34 @@ services:
     build:
       context: .
       dockerfile: src/users/Bank.Users.Api/Dockerfile
+    depends_on:
+      - postgres
+      - redis  
+    networks:
+      - my-net
     ports:
       - "5003:8080"
+
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 4123
+    volumes:
+      - /var/lib/postgresql/data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:latest
+    restart: always
+    networks:
+      - my-net
+    ports:
+      - "6379:6379"
+  
+networks:
+  my-net:
+    driver: bridge
+     
