@@ -1,4 +1,4 @@
-﻿using Z1all.ExecutionResult;
+﻿using Z1all.ExecutionResult.StatusCode;
 
 namespace Bank.Users.Application.Auth
 {
@@ -10,6 +10,6 @@ namespace Bank.Users.Application.Auth
         public ExecutionResult CheckPassword(string password, string passwordHash) 
             => BCrypt.Net.BCrypt.Verify(password, passwordHash)
                 ? ExecutionResult.FromSuccess()
-                : ExecutionResult.FromError("CheckPassword", "Invalid password");
+                : ExecutionResult.FromBadRequest("CheckPassword", "Invalid password");
     }
 }

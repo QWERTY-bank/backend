@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="X.PagedList" Version="10.5.7" />
+    <PackageReference Include="Z1all.ExecutionResult" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>

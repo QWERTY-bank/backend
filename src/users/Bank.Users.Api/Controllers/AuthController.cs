@@ -9,13 +9,6 @@ using Bank.Users.Application.Auth.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 
-// + Добавить хэширование пароля
-// + Связять контроллер auth и сервис auth
-// + Обновить dockerfile
-// + Добавить конфигурации в appsettings
-// Добавить миграцию
-// + Добавить postgres и redis в docker compose
-
 namespace Bank.Users.Api.Controllers
 {
     /// <summary>

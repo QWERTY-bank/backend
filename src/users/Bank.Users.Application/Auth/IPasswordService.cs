@@ -1,4 +1,4 @@
-﻿using Z1all.ExecutionResult;
+﻿using Z1all.ExecutionResult.StatusCode;
 
 namespace Bank.Users.Application.Auth
 {

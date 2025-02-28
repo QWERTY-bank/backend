@@ -1,6 +1,7 @@
 ﻿using Bank.Common.Api.Attributes;
 using Bank.Common.Api.DTOs;
 using Bank.Common.Auth.Extensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Z1all.ExecutionResult.StatusCode;
 
@@ -29,8 +30,13 @@ namespace Bank.Common.Api.Controllers
             return Ok(response.Result!);
         }
 
-        private ObjectResult ExecutionResultHandler(ExecutionResult executionResult, string? otherMassage = null)
+        private ActionResult ExecutionResultHandler(ExecutionResult executionResult, string? otherMassage = null)
         {
+            if (executionResult.IsSuccess)
+            {
+                return StatusCode(StatusCodes.Status204NoContent);
+            }
+
             return StatusCode((int)executionResult.StatusCode, new ErrorResponse()
             {
                 Title = otherMassage ?? "One or more errors occurred.",

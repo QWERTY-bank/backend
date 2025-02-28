@@ -4,6 +4,8 @@ using Bank.Users.Api.Configurations.Authorization;
 using Bank.Users.Api.Mappers;
 using Bank.Users.Application.Auth;
 using Bank.Users.Application.Auth.Mapper;
+using Bank.Users.Application.Users;
+using Bank.Users.Application.Users.Mapper;
 using Bank.Users.Persistence;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
@@ -26,6 +28,8 @@ namespace Bank.Users.Api
             services.AddScoped<ITokensService, TokensService>();
             services.AddScoped<IRefreshTokenStore, RefreshTokenStore>();
             services.AddScoped<IPasswordService, PasswordService>();
+
+            services.AddScoped<IUserService, UserService>();
         }
 
         /// <summary>
@@ -34,8 +38,8 @@ namespace Bank.Users.Api
         public static void AddAutoMapperProfiles(this IServiceCollection services)
         {
             services.AddAutoMapper(
-                typeof(AuthApplicationMapperProfile),
-                typeof(AuthApiMapperProfile)
+                typeof(AuthApplicationMapperProfile), typeof(AuthApiMapperProfile),
+                typeof(UserApplicationMapperProfile), typeof(UserApiMapperProfile)
             );
         }
 

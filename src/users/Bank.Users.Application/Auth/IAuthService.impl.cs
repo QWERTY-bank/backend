@@ -27,15 +27,15 @@ namespace Bank.Users.Application.Auth
             _logger = logger;
         }
 
-        public async Task<ExecutionResult<TokensDTO>> RegistrationAsync(RegistrationDTO registrationDTO)
+        public async Task<ExecutionResult<TokensDTO>> RegistrationAsync(RegistrationDTO model)
         {
-            var userIsExist = await _context.Users.AnyAsync(x => x.Phone == registrationDTO.Phone);
+            var userIsExist = await _context.Users.AnyAsync(x => x.Phone == model.Phone);
             if (userIsExist)
             {
                 return ExecutionResult<TokensDTO>.FromBadRequest("UserIsExist", "User with this phone number already exist.");
             }
  
-            var hashPasswordResult = _passwordService.HashPassword(registrationDTO.Password);
+            var hashPasswordResult = _passwordService.HashPassword(model.Password);
             if (hashPasswordResult.IsNotSuccess)
             {
                 _logger.LogError($"Password hashing error");
@@ -44,10 +44,10 @@ namespace Bank.Users.Application.Auth
 
             UserEntity newUser = new()
             {
-                Phone = registrationDTO.Phone,
-                FullName = registrationDTO.FullName,
-                Birthday = registrationDTO.Birthday,
-                Gender = registrationDTO.Gender,
+                Phone = model.Phone,
+                FullName = model.FullName,
+                Birthday = model.Birthday,
+                Gender = model.Gender,
                 PasswordHash = hashPasswordResult.Result
             };
 
@@ -79,18 +79,18 @@ namespace Bank.Users.Application.Auth
             return true;
         }
 
-        public async Task<ExecutionResult<TokensDTO>> LoginAsync(LoginDTO login)
+        public async Task<ExecutionResult<TokensDTO>> LoginAsync(LoginDTO model)
         {
             var user = await _context.Users
                 .Include(x => x.Roles)
-                .FirstOrDefaultAsync(x => x.Phone == login.Phone);
+                .FirstOrDefaultAsync(x => x.Phone == model.Phone);
             if (user == null)
             {
                 _logger.LogInformation($"The user was not found on the phone.");
                 return ExecutionResult<TokensDTO>.FromBadRequest("LoginFail", "login fail.");
             }
 
-            var checkingPasswordResult = _passwordService.CheckPassword(login.Password, user.PasswordHash);
+            var checkingPasswordResult = _passwordService.CheckPassword(model.Password, user.PasswordHash);
             if (checkingPasswordResult.IsNotSuccess)
             {
                 _logger.LogInformation($"Invalid password for user with id = '{user.Id}'.");
