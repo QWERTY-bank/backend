@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Bank.Common.Application.Extensions;
 using Bank.Users.Application.Auth;
 using Bank.Users.Application.Users.Models;
 using Bank.Users.Domain.Users;
 using Bank.Users.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using X.PagedList;
 using Z1all.ExecutionResult.StatusCode;
 
 namespace Bank.Users.Application.Users
@@ -19,7 +21,7 @@ namespace Bank.Users.Application.Users
         public UserService(
             UsersDbContext context,
             IPasswordService passwordService,
-            ILogger<UserService> logger, 
+            ILogger<UserService> logger,
             IMapper mapper)
         {
             _context = context;
@@ -38,6 +40,26 @@ namespace Bank.Users.Application.Users
             }
 
             return _mapper.Map<UserDto>(user);
+        }
+
+        public async Task<ExecutionResult<IPagedList<UserShortDto>>> GetUsersAsync(int page, int pageSize)
+        {
+            var users = await _context.Users
+                .ToPagedListAsync(page, pageSize);
+
+            var result = users.ToMappedPagedList<UserEntity, UserShortDto>(_mapper);
+
+            return ExecutionResult<IPagedList<UserShortDto>>.FromSuccess(result);
+        }
+
+        public async Task<ExecutionResult> ChangeUserBlockStatusAsync(bool isBlock, Guid userId)
+        {
+            return await UpdateUserHandlerAsync(userId, user =>
+            {
+                user.IsBlocked = isBlock;
+
+                return ExecutionResult.FromSuccess();
+            });
         }
 
         public async Task<ExecutionResult> ChangePasswordAsync(ChangePasswordDto model, Guid userId)

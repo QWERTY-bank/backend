@@ -27,7 +27,7 @@ namespace Bank.Users.Application.Auth
             _logger = logger;
         }
 
-        public async Task<ExecutionResult<TokensDTO>> RegistrationAsync(RegistrationDTO model)
+        public async Task<ExecutionResult<TokensDTO>> RegistrationAsync(RegistrationDTO model, RoleType role)
         {
             var userIsExist = await _context.Users.AnyAsync(x => x.Phone == model.Phone);
             if (userIsExist)
@@ -48,12 +48,13 @@ namespace Bank.Users.Application.Auth
                 FullName = model.FullName,
                 Birthday = model.Birthday,
                 Gender = model.Gender,
+                IsBlocked = false,
                 PasswordHash = hashPasswordResult.Result
             };
 
             await _context.Users.AddAsync(newUser);
 
-            var addingToRoleResult = await AddUserToRoleAsync(newUser, RoleType.Default);
+            var addingToRoleResult = await AddUserToRoleAsync(newUser, role);
             if (!addingToRoleResult)
             {
                 _logger.LogCritical($"Role '{RoleType.Default.ToString()}' does not found.");
@@ -88,6 +89,12 @@ namespace Bank.Users.Application.Auth
             {
                 _logger.LogInformation($"The user was not found on the phone.");
                 return ExecutionResult<TokensDTO>.FromBadRequest("LoginFail", "login fail.");
+            }
+
+            if (user.IsBlocked)
+            {
+                _logger.LogInformation($"User with id = '{user.Id}' is blocked.");
+                return ExecutionResult<TokensDTO>.FromBadRequest("LoginFail", "The user has been blocked.");
             }
 
             var checkingPasswordResult = _passwordService.CheckPassword(model.Password, user.PasswordHash);

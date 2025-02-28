@@ -10,6 +10,8 @@ namespace Bank.Users.Domain.Users
         public required string Phone { get; set; }
 
         public required string PasswordHash { get; set; }
+        
+        public required bool IsBlocked { get; set; }
 
         public List<Role> Roles { get; set; } = null!;
     }

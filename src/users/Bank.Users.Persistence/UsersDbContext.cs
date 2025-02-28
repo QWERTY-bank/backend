@@ -24,6 +24,9 @@ namespace Bank.Users.Persistence
             modelBuilder.HasDefaultSchema(BankUsersSchema);
 
             modelBuilder.Entity<UserEntity>()
+                .Property(x => x.IsBlocked)
+                .HasDefaultValue(false);
+            modelBuilder.Entity<UserEntity>()
                 .HasMany(x => x.Roles)
                 .WithMany();
         }
