@@ -60,6 +60,8 @@ namespace Bank.Users.Application.Auth
                 return ExecutionResult<TokensDTO>.FromInternalServer("RegistrationFail", "Unknow error.");
             }
 
+            await _context.SaveChangesAsync();
+
             return await _tokensService.CreateTokensAsync(newUser);
         }
 

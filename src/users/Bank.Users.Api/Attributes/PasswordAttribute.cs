@@ -18,6 +18,7 @@ namespace Bank.Users.Api.Attributes
                 string pattern = @"^(?=.*[A-Z])(?=.*\d).{6,}$";
                 if (!Regex.IsMatch(password, pattern))
                 {
+                    ErrorMessage = "The password must contain at least one uppercase letter and number and be at least 6 characters long.";
                     return false;
                 }
             }

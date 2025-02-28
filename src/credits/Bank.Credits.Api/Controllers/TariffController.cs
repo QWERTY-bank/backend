@@ -1,5 +1,6 @@
 ﻿using Bank.Common.Api.Controllers;
 using Bank.Common.Api.DTOs;
+using Bank.Common.Auth.Attributes;
 using Bank.Credits.Api.Models.Tarifs;
 using Bank.Credits.Application.Tarifs;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,8 @@ namespace Bank.Credits.Api.Controllers
     /// </summary>
     [Route("api/tariffs")]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    public class TariffController : BaseAuthController
+    [BankAuthorize]
+    public class TariffController : BaseController
     {
         /// <summary>
         /// Получить список тарифов

@@ -1,7 +1,9 @@
+using Bank.Common.Api.Configurations;
 using Bank.Users.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.ConfigureAppsettings();
 builder.Services.AddUsersConfigurations();
 builder.Services.AddUsersServices();
 builder.Services.AddAutoMapperProfiles();

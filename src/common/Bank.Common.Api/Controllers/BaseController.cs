@@ -1,6 +1,5 @@
 ﻿using Bank.Common.Api.Attributes;
 using Bank.Common.Api.DTOs;
-using Bank.Common.Auth.Attributes;
 using Bank.Common.Auth.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Z1all.ExecutionResult.StatusCode;
@@ -9,8 +8,7 @@ namespace Bank.Common.Api.Controllers
 {
     [ApiController]
     [ValidateModelState]
-    [BankAuthorize]
-    public abstract class BaseAuthController : ControllerBase
+    public abstract class BaseController : ControllerBase
     {
         protected Guid UserId { get => User.GetUserId(); }
 

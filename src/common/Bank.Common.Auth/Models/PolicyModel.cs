@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Bank.Common.Models.Auth;
+using System.Text.Json;
 
 namespace Bank.Common.Auth.Models
 {
@@ -17,6 +18,11 @@ namespace Bank.Common.Auth.Models
             {
                 yield return new MinimalRoleTypeRequirement(MinimalRoleType.Value);
             }
+        }
+
+        public override string ToString()
+        {
+            return JsonSerializer.Serialize(this);
         }
     }
 }

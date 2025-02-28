@@ -16,7 +16,7 @@ namespace Bank.Users.Api.Controllers
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     [BankAuthorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class ProfileController : BaseAuthController
+    public class ProfileController : BaseController
     {
         /// <summary>
         /// Профиль текущего пользователя 

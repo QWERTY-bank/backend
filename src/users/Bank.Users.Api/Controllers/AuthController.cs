@@ -24,7 +24,7 @@ namespace Bank.Users.Api.Controllers
     [Route("api/auth")]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    public class AuthController : BaseAuthController
+    public class AuthController : BaseController
     {
         private readonly IAuthService _authService;
         private readonly ITokensService _tokensService;

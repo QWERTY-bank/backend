@@ -16,6 +16,7 @@ namespace Bank.Users.Api.Attributes
             {
                 if (date >= DateOnly.FromDateTime(DateTime.UtcNow))
                 {
+                    ErrorMessage = $"Error: {date} >= {DateOnly.FromDateTime(DateTime.UtcNow)}. The date must be earlier than the current one.";
                     return false;
                 }
             }

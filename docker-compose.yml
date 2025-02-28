@@ -1,3 +1,11 @@
+version: "3.5"
+
+x-common: &common
+  networks:
+    - my-net
+  environment:
+    RUNTIME_ENVIRONMENT: "Docker"
+
 services:
   bank.core.api:
     image: ${DOCKER_REGISTRY-}bankcoreapi
@@ -6,8 +14,7 @@ services:
       dockerfile: src/core/Bank.Core.Api/Dockerfile
     depends_on:
       - postgres
-    networks:
-      - my-net
+    <<: *common
     ports:
       - "5001:8080"
 
@@ -18,8 +25,7 @@ services:
       dockerfile: src/credits/Bank.Credits.Api/Dockerfile
     depends_on:
       - postgres
-    networks:
-      - my-net
+    <<: *common
     ports:
       - "5002:8080"
 
@@ -30,9 +36,8 @@ services:
       dockerfile: src/users/Bank.Users.Api/Dockerfile
     depends_on:
       - postgres
-      - redis  
-    networks:
-      - my-net
+      - redis
+    <<: *common
     ports:
       - "5003:8080"
 
@@ -41,9 +46,11 @@ services:
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 4123
+      POSTGRES_PASSWORD: admin
     volumes:
       - /var/lib/postgresql/data:/var/lib/postgresql/data
+    networks:
+      - my-net
     ports:
       - "5432:5432"
 
@@ -54,8 +61,7 @@ services:
       - my-net
     ports:
       - "6379:6379"
-  
+
 networks:
   my-net:
     driver: bridge
-     

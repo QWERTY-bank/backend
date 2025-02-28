@@ -1,5 +1,6 @@
 ﻿using Bank.Common.Api.Controllers;
 using Bank.Common.Api.DTOs;
+using Bank.Common.Auth.Attributes;
 using Bank.Credits.Api.Models.Credits;
 using Bank.Credits.Application.Credits;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,8 @@ namespace Bank.Credits.Api.Controllers
     /// </summary>
     [Route("api/credits")]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    public class CreditsController : BaseAuthController
+    [BankAuthorize]
+    public class CreditsController : BaseController
     {
         /// <summary>
         /// Получить историю кредитов

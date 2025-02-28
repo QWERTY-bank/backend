@@ -8,7 +8,7 @@ namespace Bank.Common.Auth.Extensions
     {
         public static Guid GetUserId(this ClaimsPrincipal user)
         {
-            var value = user.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
+            var value = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             return user.Identity?.IsAuthenticated == null || value == null
                 ? Guid.Empty
                 : Guid.Parse(value);

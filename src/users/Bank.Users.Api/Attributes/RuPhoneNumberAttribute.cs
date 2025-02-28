@@ -18,6 +18,7 @@ namespace Bank.Users.Api.Attributes
                 string pattern = @"^(?:\+7|8)[0-9]{10}$";
                 if (!Regex.IsMatch(phoneNumber, pattern))
                 {
+                    ErrorMessage = "The phone must start with +7 or 8 and have a length of 11 digits.";
                     return false;
                 }
             }
