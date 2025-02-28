@@ -22,6 +22,10 @@ namespace Bank.Users.Persistence
             var assembly = Assembly.GetExecutingAssembly();
             modelBuilder.ApplyConfigurationsFromAssembly(assembly);
             modelBuilder.HasDefaultSchema(BankUsersSchema);
+
+            modelBuilder.Entity<UserEntity>()
+                .HasMany(x => x.Roles)
+                .WithMany();
         }
     }
 }
