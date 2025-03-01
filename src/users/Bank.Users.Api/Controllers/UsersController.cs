@@ -19,7 +19,7 @@ namespace Bank.Users.Api.Controllers
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    [BankAuthorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, MinimalRoleType = RoleType.Employee)]
+    [BankAuthorize(RoleType.Employee, JwtBearerDefaults.AuthenticationScheme)]
     public class UsersController : BaseController
     {
         private readonly IUserService _userService;
