@@ -45,7 +45,7 @@ public class AccountApiController : BaseController
     [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
     public Task<IResult> TransferCurrencies(
         [FromRoute] long id,
-        [FromBody] TransactionRequest request,
+        [FromBody] ExtendedTransactionRequest request,
         CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
