@@ -41,7 +41,7 @@ namespace Bank.Users.Api.Controllers
         /// </summary>
         [HttpPost("registration")]
         [ProducesResponseType(typeof(TokensDTO), StatusCodes.Status200OK)]
-        public async Task<ActionResult<TokensDTO>> RegistrationAsync(RegistrationAuthRequest request)
+        public async Task<IActionResult> RegistrationAsync(RegistrationAuthRequest request)
         {
             return await ExecutionResultHandlerAsync(() 
                 => _authService.RegistrationAsync(_mapper.Map<RegistrationDTO>(request)));
@@ -52,7 +52,7 @@ namespace Bank.Users.Api.Controllers
         /// </summary>
         [HttpPost("login")]
         [ProducesResponseType(typeof(TokensDTO), StatusCodes.Status200OK)]
-        public async Task<ActionResult<TokensDTO>> LoginAsync(LoginAuthRequest request)
+        public async Task<IActionResult> LoginAsync(LoginAuthRequest request)
         {
             return await ExecutionResultHandlerAsync(()
                 => _authService.LoginAsync(_mapper.Map<LoginDTO>(request)));
@@ -65,7 +65,7 @@ namespace Bank.Users.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [BankAuthorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ActionResult> LogoutAsync()
+        public async Task<IActionResult> LogoutAsync()
         {
             return await ExecutionResultHandlerAsync(()
                 => _tokensService.RemoveRefreshAsync(TokenJTI));
@@ -78,7 +78,7 @@ namespace Bank.Users.Api.Controllers
         [ProducesResponseType(typeof(TokensDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [BankAuthorize(AuthenticationSchemes = JwtBearerWithoutValidateLifetimeDefaults.CheckOnlySignature)]
-        public async Task<ActionResult<TokensDTO>> UpdateAccessTokenAsync(UpdateAccessAuthRequest request)
+        public async Task<IActionResult> UpdateAccessTokenAsync(UpdateAccessAuthRequest request)
         {
             return await ExecutionResultHandlerAsync(()
                 => _authService.UpdateAccessTokenAsync(request.Refresh, TokenJTI, UserId));

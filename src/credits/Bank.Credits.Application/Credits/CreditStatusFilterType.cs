@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Bank.Credits.Application.Enums
+namespace Bank.Credits.Application.Credits
 {
     public enum CreditStatusFilterType
     {

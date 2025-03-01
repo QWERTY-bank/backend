@@ -2,6 +2,7 @@
 using Bank.Common.Auth.Extensions;
 using Bank.Users.Api.Configurations.Authorization;
 using Bank.Users.Api.Mappers;
+using Bank.Users.Application;
 using Bank.Users.Application.Auth;
 using Bank.Users.Application.Auth.Mapper;
 using Bank.Users.Application.Users;

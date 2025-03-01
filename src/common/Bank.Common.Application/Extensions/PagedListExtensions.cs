@@ -13,13 +13,11 @@ namespace Bank.Common.Application.Extensions
         }
 
         public static PagedListWithMetadata<T> AddMetaData<T>(this IPagedList<T> list)
-            where T : class
         {
             return new PagedListWithMetadata<T>(list);
         }
 
         public class PagedListWithMetadata<T>
-            where T : class
         {
             public IPagedList<T> Results { get; set; }
             public PagedListMetaData Pagination { get; set; }

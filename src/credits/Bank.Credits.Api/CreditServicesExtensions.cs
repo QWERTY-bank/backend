@@ -1,11 +1,14 @@
 ﻿using Bank.Common.Api.Configurations;
 using Bank.Common.Auth.Extensions;
-using Bank.Users.Persistence;
+using Bank.Credits.Api.Mappers;
+using Bank.Credits.Application.Tariffs;
+using Bank.Credits.Application.Tariffs.Mapper;
+using Bank.Credits.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Text.Json.Serialization;
 
-namespace Bank.Users.Api
+namespace Bank.Credits.Api
 {
     /// <summary>
     /// Настройка зависимостей
@@ -17,7 +20,7 @@ namespace Bank.Users.Api
         /// </summary>
         public static void AddCreditServices(this IServiceCollection services)
         {
-
+            services.AddScoped<ITariffsService, TariffsService>();
         }
 
         /// <summary>
@@ -25,9 +28,9 @@ namespace Bank.Users.Api
         /// </summary>
         public static void AddAutoMapperProfiles(this IServiceCollection services)
         {
-            //services.AddAutoMapper(
-            //    typeof(AuthApplicationMapperProfile), typeof(AuthApiMapperProfile),
-            //);
+            services.AddAutoMapper(
+                typeof(TariffApplicationMapperProfile), typeof(TariffApiMapperProfile)
+            );
         }
 
         /// <summary>

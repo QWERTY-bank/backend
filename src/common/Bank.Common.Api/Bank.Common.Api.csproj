@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Bank.Common.Application\Bank.Common.Application.csproj" />
     <ProjectReference Include="..\Bank.Common.Auth\Bank.Common.Auth.csproj" />
   </ItemGroup>
 

@@ -1,4 +1,4 @@
-﻿using Bank.Credits.Application.Enums;
+﻿using Bank.Credits.Application.Credits;
 
 namespace Bank.Credits.Api.Models.Credits
 {
