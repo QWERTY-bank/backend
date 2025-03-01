@@ -31,8 +31,12 @@ internal static class SwaggerServiceCollectionExtensions
             };
             options.AddSecurityRequirement(openApiSecurityRequirement);
 
+            var assembliesWithDocs = new [] {"Bank.Core.Domain", "Bank.Core.Application", "Bank.Core.Api"};
+
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(x => x.FullName != null && x.FullName.Contains("Bank.Core"));
+                .Where(assembly => assembly.FullName != null &&
+                                   assembliesWithDocs.Any(assemblyWithDocks =>
+                                       assembly.FullName.Contains(assemblyWithDocks)));
             
             foreach (var assembly in assemblies)
             {

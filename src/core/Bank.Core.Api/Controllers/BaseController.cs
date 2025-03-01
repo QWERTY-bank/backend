@@ -6,7 +6,6 @@ using Microsoft.IdentityModel.JsonWebTokens;
 namespace Bank.Core.Api.Controllers;
 
 [ApiController]
-[Authorize]
 public abstract class BaseController : ControllerBase
 {
     protected Guid UserId
@@ -20,14 +19,5 @@ public abstract class BaseController : ControllerBase
         }
     }
     
-    protected Guid TokenId
-    {
-        get
-        {
-            var value = User.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
-            return User.Identity?.IsAuthenticated == null || value == null
-                ? Guid.Empty
-                : Guid.Parse(value);
-        }
-    }
+    
 }

@@ -17,7 +17,19 @@ public class AccountDto
     public required string Title { get; init; }
     
     /// <summary>
-    ///     Значения валюты на счете
+    ///     Идентификатор пользователя
+    /// </summary>
+    [Required]
+    public required Guid UserId { get; init; }
+    
+    /// <summary>
+    ///     Закрыт ли счет
+    /// </summary>
+    [Required]
+    public required bool IsClosed { get; init; }
+    
+    /// <summary>
+    ///     Значения валют на счете
     /// </summary>
     [Required]
     public required IReadOnlyCollection<CurrencyValueDto> CurrencyValues { get; init; }

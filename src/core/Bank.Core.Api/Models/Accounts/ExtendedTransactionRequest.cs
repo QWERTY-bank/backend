@@ -1,12 +1,14 @@
 using System.ComponentModel.DataAnnotations;
+using Bank.Core.Application.Accounts.Models;
 using Bank.Core.Domain.Transactions;
 
-namespace Bank.Core.Application.Accounts.Models;
+namespace Bank.Core.Api.Models.Accounts;
 
-public class TransactionDto
+public class ExtendedTransactionRequest
 {
     /// <summary>
     /// Уникальный идентификатор транзакции
+    /// Для идемпотентности должен заполняться на стороне клиента
     /// </summary>
     [Required]
     public required Guid Key { get; init; }

@@ -9,5 +9,5 @@ public class DepositAccountRequest
     ///     Транзакция начисления
     /// </summary>
     [Required]
-    public required TransactionDto Transaction { get; init; }
+    public required TransactionRequest Transaction { get; init; }
 }
