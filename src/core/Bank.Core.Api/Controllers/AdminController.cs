@@ -19,14 +19,11 @@ public class AdminController : BaseController
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet("users/{id}")]
-    [ProducesResponseType(typeof(Page<AccountDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(IReadOnlyCollection<AccountDto>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.Forbidden)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-    public Task<IResult> GetAccounts(
-        [FromRoute] Guid id,
-        [FromQuery] Pagination pagination,
-        CancellationToken cancellationToken)
+    public Task<IResult> GetAccounts([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

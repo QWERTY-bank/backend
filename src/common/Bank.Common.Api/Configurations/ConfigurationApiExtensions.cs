@@ -26,7 +26,9 @@ namespace Bank.Common.Api.Configurations
         {
             var environment = Environment.GetEnvironmentVariable("RUNTIME_ENVIRONMENT");
 
-            builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            builder.Configuration
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
 
             if (environment == "Docker")
             {

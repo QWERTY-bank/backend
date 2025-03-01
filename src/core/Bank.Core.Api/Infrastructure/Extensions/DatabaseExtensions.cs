@@ -1,3 +1,4 @@
+using Bank.Core.Application;
 using Bank.Core.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +18,8 @@ internal static class DatabaseExtensions
                 .UseNpgsql(connectionString)
                 .UseSnakeCaseNamingConvention();
         });
+        
+        services.AddScoped<ICoreDbContext>(provider => provider.GetRequiredService<CoreDbContext>());
 
         return services;
     }

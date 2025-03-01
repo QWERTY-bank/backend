@@ -5,9 +5,11 @@ using Bank.Core.Api.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCoreSwagger();
-builder.Services.AddJwtAuthentication();
-builder.Services.AddCoreDatabase(builder.Configuration);
+builder.Services
+    .AddCoreSwagger()
+    .AddCoreDatabase(builder.Configuration)
+    .AddCoreMediatR()
+    .AddJwtAuthentication();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -16,6 +18,8 @@ builder.Services.AddControllers()
     });
 
 var app = builder.Build();
+
+app.Services.MigrateDatabase();
 
 app.UseExceptionsHandler();
 

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Bank.Core.Domain.Currencies;
 
 namespace Bank.Core.Application.Accounts.Models;
 
@@ -8,7 +9,7 @@ public class CurrencyValueDto
     ///     Код валюты (например, RUB)
     /// </summary>
     [Required]
-    public required string Code { get; init; }
+    public required CurrencyCode Code { get; init; }
     
     /// <summary>
     ///     Значение

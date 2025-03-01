@@ -2,7 +2,7 @@ using Microsoft.OpenApi.Models;
 
 namespace Bank.Core.Api.Infrastructure.Extensions;
 
-internal static class SwaggerServiceCollectionExtensions
+internal static class SwaggerExtensions
 {
     public static IServiceCollection AddCoreSwagger(this IServiceCollection services)
     {
