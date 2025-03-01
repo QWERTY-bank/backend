@@ -11,7 +11,7 @@ namespace Bank.Common.Auth.Attributes
             SetPolicy(new PolicyModel());
         }
 
-        public BankAuthorizeAttribute(RoleType minimalRoleType, string? authenticationSchemes)
+        public BankAuthorizeAttribute(RoleType minimalRoleType, string? authenticationSchemes = null)
         {
             AuthenticationSchemes = authenticationSchemes;
             SetPolicy(new PolicyModel

@@ -3,7 +3,7 @@ using Bank.Core.Domain.Currencies;
 
 namespace Bank.Core.Application.Accounts.Models;
 
-public class CurrencyValueDto
+public class CurrencyValue
 {
     /// <summary>
     ///     Код валюты (например, RUB)

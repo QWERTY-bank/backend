@@ -19,4 +19,10 @@ public static class OperationResultFactory
             new Error(
                 OperationErrorCodes.NotFound,
                 $"Сущность с идентификатором {id} не найдена"));
+    
+    public static OperationResult<T> InvalidData<T>(string message) =>
+        new OperationResult<T>(
+            new Error(
+                OperationErrorCodes.InvalidData,
+                message));
 }

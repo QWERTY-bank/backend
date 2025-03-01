@@ -7,28 +7,29 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Bank.Core.Application.Accounts.Read;
 
-public class GetUserAccountTransactionsQuery : IRequest<OperationResult<TransactionsResponseDto>>
+public class GetMyAccountTransactionsQuery : IRequest<OperationResult<TransactionsResponseDto>>
 {
+    public required Guid UserId { get; init; }
     public required long AccountId { get; init; }
     public required Period Period { get; init; }
 }
 
-public class GetUserAccountTransactionsQueryHandler : IRequestHandler<GetUserAccountTransactionsQuery, OperationResult<TransactionsResponseDto>>
+public class GetMyAccountTransactionsQueryHandler : IRequestHandler<GetMyAccountTransactionsQuery, OperationResult<TransactionsResponseDto>>
 {
     private readonly ICoreDbContext _dbContext;
 
-    public GetUserAccountTransactionsQueryHandler(ICoreDbContext dbContext)
+    public GetMyAccountTransactionsQueryHandler(ICoreDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
     public async Task<OperationResult<TransactionsResponseDto>> Handle(
-        GetUserAccountTransactionsQuery request, 
+        GetMyAccountTransactionsQuery request, 
         CancellationToken cancellationToken)
     {
-        var accountExists = await _dbContext.Accounts
+        var accountExists = await _dbContext.PersonalAccounts
             .AnyAsync(
-                account => account.Id == request.AccountId,
+                account => account.Id == request.AccountId && account.UserId == request.UserId,
                 cancellationToken);
 
         if (!accountExists)
@@ -44,7 +45,7 @@ public class GetUserAccountTransactionsQueryHandler : IRequestHandler<GetUserAcc
                 transaction.OperationDate <= request.Period.End)
             .OrderByDescending(transaction => transaction.OperationDate)
             .ToListAsync(cancellationToken);
-        
+
         var groupedTransactions = transactions
             .SelectMany(transaction => transaction.Currencies.Select(currency => new
             {

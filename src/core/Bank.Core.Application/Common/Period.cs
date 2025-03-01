@@ -8,12 +8,12 @@ public class Period
     /// <summary>
     /// Начало
     /// </summary>
-    public required DateTimeOffset Start { get; init; }
+    public DateTimeOffset Start { get; init; } = DateTimeOffset.MinValue;
 
     /// <summary>
     /// Конец
     /// </summary>
-    public required DateTimeOffset End { get; init; }
+    public DateTimeOffset End { get; init; } = DateTimeOffset.MaxValue;
 
     public static Period All => new() {Start = DateTimeOffset.MinValue, End = DateTimeOffset.MaxValue};
 }
