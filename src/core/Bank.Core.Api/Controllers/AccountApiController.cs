@@ -50,23 +50,4 @@ public class AccountApiController : BaseController
     {
         throw new NotImplementedException();
     }
-    
-    /// <summary>
-    /// Закрывает счет
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    [HttpDelete("{id:long}")]
-    [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
-    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-    public Task<IResult> CloseAccount(
-        [FromRoute] long id,
-        CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
 }
