@@ -3,7 +3,6 @@ using Bank.Core.Api.Models.Accounts;
 using Bank.Core.Api.Models.Common;
 using Bank.Core.Application.Accounts.Models;
 using Bank.Core.Application.Common;
-using Bank.Core.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,9 +16,8 @@ namespace Bank.Core.Api.Controllers;
 public class AccountController : BaseController
 {
     /// <summary>
-    /// Возвращает счета пользователей
+    /// Возвращает счета пользователя
     /// </summary>
-    /// <param name="pagination"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet]
@@ -27,9 +25,7 @@ public class AccountController : BaseController
     [ProducesResponseType((int)HttpStatusCode.Forbidden)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-    public Task<IResult> GetAccounts(
-        [FromQuery] Pagination pagination,
-        CancellationToken cancellationToken)
+    public Task<IResult> GetAccounts(CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
@@ -109,25 +105,6 @@ public class AccountController : BaseController
     public Task<IResult> WithdrawToAccount(
         [FromRoute] long id,
         [FromBody] WithdrawAccountRequest request,
-        CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-    
-    /// <summary>
-    /// Закрывает счет
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    [HttpDelete("{id:long}")]
-    [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
-    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-    public Task<IResult> CloseAccount(
-        [FromRoute] long id,
         CancellationToken cancellationToken)
     {
         throw new NotImplementedException();

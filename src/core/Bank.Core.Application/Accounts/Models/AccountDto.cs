@@ -23,6 +23,12 @@ public class AccountDto
     public required Guid UserId { get; init; }
     
     /// <summary>
+    ///     Закрыт ли счет
+    /// </summary>
+    [Required]
+    public required bool IsClosed { get; init; }
+    
+    /// <summary>
     ///     Значения валют на счете
     /// </summary>
     [Required]

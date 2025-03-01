@@ -7,7 +7,6 @@ public class TransactionDto
 {
     /// <summary>
     /// Уникальный идентификатор транзакции
-    /// Для идемпотентности должен заполняться на стороне клиента
     /// </summary>
     [Required]
     public required Guid Key { get; init; }
