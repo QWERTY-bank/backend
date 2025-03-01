@@ -38,7 +38,7 @@ public class AccountController : BaseController
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
     public async Task<IResult> GetAccounts(CancellationToken cancellationToken)
     {
-        var query = new GetUserAccountsQuery
+        var query = new GetMyAccountsQuery
         {
             UserId = UserId
         };
@@ -84,12 +84,20 @@ public class AccountController : BaseController
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
-    public Task<IResult> GetAccountTransactions(
+    public async Task<IResult> GetAccountTransactions(
         [FromRoute] long id,
         [FromQuery] Period period,
         CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var query = new GetMyAccountTransactionsQuery
+        {
+            AccountId = id,
+            Period = period,
+            UserId = UserId
+        };
+        var result = await _mediator.Send(query, cancellationToken);
+
+        return result.ToEndpointResult();
     }
     
     /// <summary>
@@ -105,12 +113,21 @@ public class AccountController : BaseController
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
-    public Task<IResult> DepositToAccount(
+    public async Task<IResult> DepositToAccount(
         [FromRoute] long id,
         [FromBody] DepositAccountRequest request,
         CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var command = new AddDepositTransactionCommand
+        {
+            AccountId = id,
+            TransactionKey = request.Transaction.Key,
+            Currencies = request.Transaction.CurrencyValues,
+            UserId = UserId
+        };
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return result.ToEndpointResult();
     }
     
     /// <summary>
@@ -126,12 +143,21 @@ public class AccountController : BaseController
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
-    public Task<IResult> WithdrawToAccount(
+    public async Task<IResult> WithdrawToAccount(
         [FromRoute] long id,
         [FromBody] WithdrawAccountRequest request,
         CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var command = new AddWithdrawTransactionCommand
+        {
+            AccountId = id,
+            TransactionKey = request.Transaction.Key,
+            Currencies = request.Transaction.CurrencyValues,
+            UserId = UserId
+        };
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return result.ToEndpointResult();
     }
     
     /// <summary>

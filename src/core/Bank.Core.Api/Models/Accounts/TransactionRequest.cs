@@ -16,5 +16,5 @@ public class TransactionRequest
     /// Операции начисления и списания валют
     /// </summary>
     [Required]
-    public required IReadOnlyCollection<CurrencyValueDto> CurrencyValues { get; init; }
+    public required IReadOnlyCollection<CurrencyValue> CurrencyValues { get; init; }
 }

@@ -1,4 +1,5 @@
 using System.Transactions;
+using Bank.Core.Domain.Accounts;
 using Bank.Core.Domain.Common;
 
 namespace Bank.Core.Domain.Transactions;
@@ -36,11 +37,12 @@ public abstract class TransactionEntity : BaseEntity<long>
     public bool IsCancel { get; init; }
     
     public required long AccountId { get; init; }
+    
+    public AccountBaseEntity? Account { get; init; }
 
     /// <summary>
     /// Дочерние транзакции
     /// </summary>
-    public List<TransactionEntity> ChildTransactions = [];
-    
-    public List<TransactionCurrency> Currencies = [];
+    public IReadOnlyCollection<TransactionEntity> ChildTransactions { get; }= [];
+    public IReadOnlyCollection<TransactionCurrency> Currencies { get; init; }= [];
 }

@@ -18,7 +18,7 @@ public class AccountBaseEntityConfiguration : IEntityTypeConfiguration<AccountBa
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(account => account.Transactions)
-            .WithOne()
+            .WithOne(transaction => transaction.Account)
             .HasForeignKey(transaction => transaction.AccountId)
             .OnDelete(DeleteBehavior.Restrict);
         

@@ -1,6 +1,7 @@
 using Bank.Core.Application;
 using Bank.Core.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Bank.Core.Api.Infrastructure.Extensions;
 
@@ -11,11 +12,15 @@ internal static class DatabaseExtensions
         IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("Core");
+
+        var dataSource = new NpgsqlDataSourceBuilder(connectionString)
+            .EnableDynamicJson()
+            .Build();
         
         services.AddDbContextPool<CoreDbContext>(opt =>
         {
             opt
-                .UseNpgsql(connectionString)
+                .UseNpgsql(dataSource)
                 .UseSnakeCaseNamingConvention();
         });
         

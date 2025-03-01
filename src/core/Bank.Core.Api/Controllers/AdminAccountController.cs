@@ -1,21 +1,31 @@
 using System.Net;
+using Bank.Common.Auth.Attributes;
+using Bank.Common.Models.Auth;
+using Bank.Core.Api.Infrastructure.Extensions;
 using Bank.Core.Api.Infrastructure.Web;
 using Bank.Core.Application.Accounts.Models;
+using Bank.Core.Application.Accounts.Read;
 using Bank.Core.Application.Common;
-using Microsoft.AspNetCore.Authorization;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bank.Core.Api.Controllers;
 
-[Authorize]
+[BankAuthorize(RoleType.Employee)]
 [Route("admin/accounts")]
-public class AdminController : BaseController
+public class AdminAccountController : BaseController
 {
+    private readonly IMediator _mediator;
+
+    public AdminAccountController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
     /// <summary>
     /// Возвращает счета пользователя
     /// </summary>
     /// <param name="id"></param>
-    /// <param name="pagination"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet("users/{id}")]
@@ -23,9 +33,15 @@ public class AdminController : BaseController
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
-    public Task<IResult> GetAccounts([FromRoute] Guid id, CancellationToken cancellationToken)
+    public async Task<IResult> GetAccounts([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var query = new GetUserAccountsQuery
+        {
+            UserId = id
+        };
+        var result = await _mediator.Send(query, cancellationToken);
+
+        return result.ToEndpointResult();
     }
     
     /// <summary>
@@ -40,11 +56,18 @@ public class AdminController : BaseController
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
-    public Task<IResult> GetAccountTransactions(
+    public async Task<IResult> GetAccountTransactions(
         [FromRoute] long id,
         [FromQuery] Period period,
         CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var query = new GetUserAccountTransactionsQuery
+        {
+            AccountId = id,
+            Period = period,
+        };
+        var result = await _mediator.Send(query, cancellationToken);
+
+        return result.ToEndpointResult();
     }
 }
