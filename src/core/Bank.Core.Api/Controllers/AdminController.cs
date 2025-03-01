@@ -1,5 +1,5 @@
 using System.Net;
-using Bank.Common.Api.DTOs;
+using Bank.Core.Api.Infrastructure.Web;
 using Bank.Core.Application.Accounts.Models;
 using Bank.Core.Application.Common;
 using Microsoft.AspNetCore.Authorization;
@@ -20,9 +20,9 @@ public class AdminController : BaseController
     /// <returns></returns>
     [HttpGet("users/{id}")]
     [ProducesResponseType(typeof(IReadOnlyCollection<AccountDto>), (int)HttpStatusCode.OK)]
-    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
-    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
     public Task<IResult> GetAccounts([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
@@ -36,10 +36,10 @@ public class AdminController : BaseController
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet("{id:long}/transactions")]
-    [ProducesResponseType(typeof(Page<TransactionDto>), (int)HttpStatusCode.OK)]
-    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
-    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+    [ProducesResponseType(typeof(TransactionsResponseDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
     public Task<IResult> GetAccountTransactions(
         [FromRoute] long id,
         [FromQuery] Period period,

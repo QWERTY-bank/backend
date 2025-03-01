@@ -1,5 +1,6 @@
 using System.Net;
 using Bank.Core.Api.Infrastructure.Extensions;
+using Bank.Core.Api.Infrastructure.Web;
 using Bank.Core.Api.Models.Accounts;
 using Bank.Core.Application.Accounts;
 using Bank.Core.Application.Accounts.Models;
@@ -32,9 +33,9 @@ public class AccountController : BaseController
     /// <returns></returns>
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyCollection<AccountDto>), (int)HttpStatusCode.OK)]
-    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
-    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
     public async Task<IResult> GetAccounts(CancellationToken cancellationToken)
     {
         var query = new GetUserAccountsQuery
@@ -54,9 +55,9 @@ public class AccountController : BaseController
     /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(typeof(long), (int)HttpStatusCode.OK)]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
     public async Task<IResult> CreateAccount(
         [FromBody] CreateAccountRequest request,
         CancellationToken cancellationToken)
@@ -79,10 +80,10 @@ public class AccountController : BaseController
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet("{id:long}/transactions")]
-    [ProducesResponseType(typeof(Page<TransactionDto>), (int)HttpStatusCode.OK)]
-    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
-    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+    [ProducesResponseType(typeof(TransactionsResponseDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
     public Task<IResult> GetAccountTransactions(
         [FromRoute] long id,
         [FromQuery] Period period,
@@ -100,10 +101,10 @@ public class AccountController : BaseController
     /// <returns></returns>
     [HttpPost("{id:long}/deposit")]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
-    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
     public Task<IResult> DepositToAccount(
         [FromRoute] long id,
         [FromBody] DepositAccountRequest request,
@@ -121,10 +122,10 @@ public class AccountController : BaseController
     /// <returns></returns>
     [HttpPost("{id:long}/withdraw")]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
-    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
     public Task<IResult> WithdrawToAccount(
         [FromRoute] long id,
         [FromBody] WithdrawAccountRequest request,
@@ -141,10 +142,10 @@ public class AccountController : BaseController
     /// <returns></returns>
     [HttpDelete("{id:long}")]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
-    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
     public async Task<IResult> CloseAccount(
         [FromRoute] long id,
         CancellationToken cancellationToken)

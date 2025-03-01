@@ -1,4 +1,5 @@
 using System.Net;
+using Bank.Core.Api.Infrastructure.Web;
 using Bank.Core.Api.Models.Accounts;
 using Bank.Core.Application.Accounts.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -21,9 +22,9 @@ public class AccountApiController : BaseController
     /// <returns></returns>
     [HttpGet("{id:long}/balance")]
     [ProducesResponseType(typeof(BalanceDto), (int)HttpStatusCode.OK)]
-    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
-    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
     public Task<IResult> GetAccounts(
         [FromRoute] long id,
         CancellationToken cancellationToken)
@@ -39,10 +40,10 @@ public class AccountApiController : BaseController
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpPost("{id:long}/transfer")]
-    [ProducesResponseType(typeof(BalanceDto), (int)HttpStatusCode.OK)]
-    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
-    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+    [ProducesResponseType((int)HttpStatusCode.NoContent)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
     public Task<IResult> TransferCurrencies(
         [FromRoute] long id,
         [FromBody] ExtendedTransactionRequest request,
