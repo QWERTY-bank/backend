@@ -27,31 +27,11 @@ namespace Bank.Credits.Api.Controllers
         }
 
         /// <summary>
-        /// Получить историю кредитов пользователя (для сотрудника)
-        /// </summary>
-        [HttpGet("user/{userId}")]
-        [ProducesResponseType(typeof(PagedListWithMetadata<CreditShortDto>), StatusCodes.Status200OK)]
-        public Task<ActionResult> GetCreditsAsync([FromQuery] CreditsFilter filter, [FromQuery] Pagination pagination, [FromRoute] Guid userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
         /// Получить информацию по кредиту
         /// </summary>
         [HttpGet("{creditId}")]
         [ProducesResponseType(typeof(CreditDto), StatusCodes.Status200OK)]
         public Task<ActionResult> GetCreditAsync([FromRoute] Guid creditId)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Получить информацию по кредиту пользователя (для сотрудника)
-        /// </summary>
-        [HttpGet("{creditId}/user/{userId}")]
-        [ProducesResponseType(typeof(CreditDto), StatusCodes.Status200OK)]
-        public Task<ActionResult> GetCreditAsync([FromRoute] Guid creditId, [FromRoute] Guid userId)
         {
             throw new NotImplementedException();
         }

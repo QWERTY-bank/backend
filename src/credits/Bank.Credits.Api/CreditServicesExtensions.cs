@@ -1,5 +1,7 @@
 ﻿using Bank.Common.Api.Configurations;
 using Bank.Common.Auth.Extensions;
+using Bank.Users.Persistence;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Text.Json.Serialization;
 
@@ -55,8 +57,8 @@ namespace Bank.Users.Api
         /// </summary>
         public static void AddCreditDbContext(this WebApplicationBuilder builder)
         {
-            //string? postgreConnectionString = builder.Configuration.GetConnectionString("PostgreConnection");
-            //builder.Services.AddDbContext<UsersDbContext>(options => options.UseNpgsql(postgreConnectionString!));
+            string? postgreConnectionString = builder.Configuration.GetConnectionString("PostgreConnection");
+            builder.Services.AddDbContext<CreditsDbContext>(options => options.UseNpgsql(postgreConnectionString!));
         }
 
         /// <summary>
@@ -64,8 +66,11 @@ namespace Bank.Users.Api
         /// </summary>
         public static void AddAutoMigration(this IServiceProvider services)
         {
-            //using var dbContext = services.CreateScope().ServiceProvider.GetRequiredService<UsersDbContext>();
-            //dbContext.Database.Migrate();
+            using (var scope = services.CreateScope())
+            {
+                using var dbContext = scope.ServiceProvider.GetRequiredService<CreditsDbContext>();
+                dbContext.Database.Migrate();
+            }
         }
     }
 }

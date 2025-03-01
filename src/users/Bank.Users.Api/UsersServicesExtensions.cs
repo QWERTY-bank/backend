@@ -94,8 +94,11 @@ namespace Bank.Users.Api
         /// </summary>
         public static void AddAutoMigration(this IServiceProvider services)
         {
-            using var dbContext = services.CreateScope().ServiceProvider.GetRequiredService<UsersDbContext>();
-            dbContext.Database.Migrate();
+            using (var scope = services.CreateScope())
+            {
+                using var dbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+                dbContext.Database.Migrate();
+            }
         }
 
         /// <summary>
