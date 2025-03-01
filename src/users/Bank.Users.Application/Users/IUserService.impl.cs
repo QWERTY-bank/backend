@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Bank.Common.Application.Extensions;
+using Bank.Common.Models.Auth;
 using Bank.Users.Application.Auth;
 using Bank.Users.Application.Users.Models;
 using Bank.Users.Domain.Users;
@@ -50,6 +51,20 @@ namespace Bank.Users.Application.Users
             var result = users.ToMappedPagedList<UserEntity, UserShortDto>(_mapper);
 
             return ExecutionResult<IPagedList<UserShortDto>>.FromSuccess(result);
+        }
+
+        public async Task<bool> AddUserToRoleAsync(UserEntity user, RoleType roleType)
+        {
+            var role = await _context.Roles.FirstOrDefaultAsync(x => x.Type == roleType);
+            if (role == null)
+            {
+                return false;
+            }
+
+            user.Roles ??= new();
+            user.Roles.Add(role);
+
+            return true;
         }
 
         public async Task<ExecutionResult> ChangeUserBlockStatusAsync(bool isBlock, Guid userId)

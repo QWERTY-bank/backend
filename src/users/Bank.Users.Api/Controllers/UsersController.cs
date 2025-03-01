@@ -1,6 +1,7 @@
 ﻿using Bank.Common.Api.Controllers;
 using Bank.Common.Api.DTOs;
 using Bank.Common.Auth.Attributes;
+using Bank.Common.Models.Auth;
 using Bank.Users.Application.Users;
 using Bank.Users.Application.Users.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -18,7 +19,7 @@ namespace Bank.Users.Api.Controllers
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    [BankAuthorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [BankAuthorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, MinimalRoleType = RoleType.Employee)]
     public class UsersController : BaseController
     {
         private readonly IUserService _userService;

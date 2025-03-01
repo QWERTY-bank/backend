@@ -6,16 +6,13 @@ namespace Bank.Common.Auth.Attributes
 {
     public class BankAuthorizeAttribute : AuthorizeAttribute
     {
-        public BankAuthorizeAttribute()
-        {
-            SetPolicy(new PolicyModel());
-        }
+        public RoleType MinimalRoleType { get; set; }
 
-        public BankAuthorizeAttribute(RoleType minimalRoleType)
+        public BankAuthorizeAttribute()
         {
             SetPolicy(new PolicyModel
             {
-                MinimalRoleType = minimalRoleType,
+                MinimalRoleType = MinimalRoleType,
             });
         }
 

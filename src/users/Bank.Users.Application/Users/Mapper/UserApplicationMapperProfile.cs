@@ -9,6 +9,7 @@ namespace Bank.Users.Application.Users.Mapper
         public UserApplicationMapperProfile()
         {
             CreateMap<UserEntity, UserDto>();
+            CreateMap<UserEntity, UserShortDto>();
         }
     }
 }

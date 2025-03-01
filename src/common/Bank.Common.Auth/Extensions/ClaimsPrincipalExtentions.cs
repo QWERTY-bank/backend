@@ -27,7 +27,7 @@ namespace Bank.Common.Auth.Extensions
             var value = user.FindFirst(BankClaimTypes.MaxRole)?.Value;
             return user.Identity?.IsAuthenticated == null || value == null
                 ? null
-                : Enum.Parse<RoleType>(value);
+                : Enum.Parse<RoleType>(value, ignoreCase: true);
         }
     }
 }

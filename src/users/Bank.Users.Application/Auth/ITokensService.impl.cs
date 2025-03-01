@@ -100,7 +100,7 @@ namespace Bank.Users.Application.Auth
             {
                 new Claim(JwtRegisteredClaimNames.Jti, accessTokenJTI.ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(BankClaimTypes.MaxRole, JsonSerializer.Serialize(roles.Max().ToString())),
+                new Claim(BankClaimTypes.MaxRole, roles.Max().ToString()),
                 new Claim(BankClaimTypes.Roles, JsonSerializer.Serialize(roles.Select(x => x.ToString()))),
             };
 

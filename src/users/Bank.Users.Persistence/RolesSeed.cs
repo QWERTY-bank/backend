@@ -2,22 +2,24 @@
 
 namespace Bank.Users.Persistence
 {
-    public static class Seed
+    public class RolesSeed
     {
-        public static void SeedData(this UsersDbContext context)
+        private readonly UsersDbContext _context;
+
+        public RolesSeed(UsersDbContext context)
         {
-            context.SeedRoles();
+            _context = context;
         }
 
-        private static void SeedRoles(this UsersDbContext context)
+        public void SeedRoles()
         {
-            var roles = context.Roles.ToList();
+            var roles = _context.Roles.ToList();
 
             foreach (var roleType in Enum.GetValues<RoleType>())
             {
                 if (!roles.Any(x => x.Type == roleType))
                 {
-                    context.Roles.Add(new()
+                    _context.Roles.Add(new()
                     {
                         RoleName = roleType.ToString(),
                         Type = roleType
@@ -25,7 +27,7 @@ namespace Bank.Users.Persistence
                 }
             }
 
-            context.SaveChanges();
+            _context.SaveChanges();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Bank.Common.Models.Auth;
 using Bank.Users.Application.Auth.Models;
+using Bank.Users.Application.Users;
 using Bank.Users.Domain.Users;
 using Bank.Users.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -12,22 +13,25 @@ namespace Bank.Users.Application.Auth
     {
         private readonly ITokensService _tokensService;
         private readonly IPasswordService _passwordService;
+        private readonly IUserService _userService;
         private readonly UsersDbContext _context;
         private readonly ILogger<AuthService> _logger;
 
         public AuthService(
             ITokensService tokensService,
             IPasswordService passwordService,
+            IUserService userService,
             UsersDbContext context,
             ILogger<AuthService> logger)
         {
             _tokensService = tokensService;
             _passwordService = passwordService;
+            _userService = userService;
             _context = context;
             _logger = logger;
         }
 
-        public async Task<ExecutionResult<TokensDTO>> RegistrationAsync(RegistrationDTO model, RoleType role)
+        public async Task<ExecutionResult<TokensDTO>> RegistrationAsync(RegistrationDTO model)
         {
             var userIsExist = await _context.Users.AnyAsync(x => x.Phone == model.Phone);
             if (userIsExist)
@@ -54,7 +58,7 @@ namespace Bank.Users.Application.Auth
 
             await _context.Users.AddAsync(newUser);
 
-            var addingToRoleResult = await AddUserToRoleAsync(newUser, role);
+            var addingToRoleResult = await _userService.AddUserToRoleAsync(newUser, RoleType.Default);
             if (!addingToRoleResult)
             {
                 _logger.LogCritical($"Role '{RoleType.Default.ToString()}' does not found.");
@@ -64,20 +68,6 @@ namespace Bank.Users.Application.Auth
             await _context.SaveChangesAsync();
 
             return await _tokensService.CreateTokensAsync(newUser);
-        }
-
-        private async Task<bool> AddUserToRoleAsync(UserEntity user, RoleType roleType)
-        {
-            var role = await _context.Roles.FirstOrDefaultAsync(x => x.Type == roleType);
-            if (role == null)
-            {
-                return false;
-            }
-
-            user.Roles ??= new();
-            user.Roles.Add(role);
-
-            return true;
         }
 
         public async Task<ExecutionResult<TokensDTO>> LoginAsync(LoginDTO model)
@@ -94,7 +84,7 @@ namespace Bank.Users.Application.Auth
             if (user.IsBlocked)
             {
                 _logger.LogInformation($"User with id = '{user.Id}' is blocked.");
-                return ExecutionResult<TokensDTO>.FromBadRequest("LoginFail", "The user has been blocked.");
+                return ExecutionResult<TokensDTO>.FromForbid("UserBlocked", "The user has been blocked.");
             }
 
             var checkingPasswordResult = _passwordService.CheckPassword(model.Password, user.PasswordHash);
@@ -122,6 +112,12 @@ namespace Bank.Users.Application.Auth
             {
                 _logger.LogInformation($"The user with id {userId} could not be found for unknown reasons.");
                 return ExecutionResult<TokensDTO>.FromInternalServer("UpdateAccessTokenFail", "Unknow error.");
+            }
+
+            if (user.IsBlocked)
+            {
+                _logger.LogInformation($"User with id = '{user.Id}' is blocked.");
+                return ExecutionResult<TokensDTO>.FromForbid("UserBlocked", "The user has been blocked.");
             }
 
             return await _tokensService.CreateTokensAsync(user);

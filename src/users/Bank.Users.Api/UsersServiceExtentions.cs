@@ -8,6 +8,7 @@ using Bank.Users.Application.Users;
 using Bank.Users.Application.Users.Mapper;
 using Bank.Users.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -30,6 +31,9 @@ namespace Bank.Users.Api
             services.AddScoped<IPasswordService, PasswordService>();
 
             services.AddScoped<IUserService, UserService>();
+
+            services.AddScoped<RolesSeed>();
+            services.AddScoped<UsersSeed>();
         }
 
         /// <summary>
@@ -100,9 +104,13 @@ namespace Bank.Users.Api
         /// </summary>
         public static void AddDatabaseSeed(this IServiceProvider services)
         {
-            using (var context = services.CreateScope().ServiceProvider.GetRequiredService<UsersDbContext>())
+            using (var scope = services.CreateScope())
             {
-                context.SeedData();
+                var rolesSeed = scope.ServiceProvider.GetRequiredService<RolesSeed>();
+                rolesSeed.SeedRoles();
+
+                var usersSeed = scope.ServiceProvider.GetRequiredService<UsersSeed>();
+                usersSeed.SeedUsers();
             }
         }
     }

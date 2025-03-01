@@ -7,6 +7,9 @@ namespace Bank.Common.Models.Auth
         [Description("Пользователь")]
         Default = 1,
 
+        [Description("Сотрудник")]
+        Employee = 30,
+
         [Description("Администратор")]
         Admin = 50
     }
