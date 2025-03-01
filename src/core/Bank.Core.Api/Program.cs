@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
-using Bank.Common.Api.Configurations;
 using Bank.Common.Api.Middlewares.Extensions;
+using Bank.Common.Auth.Extensions;
 using Bank.Core.Api.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
