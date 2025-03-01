@@ -18,6 +18,4 @@ public abstract class BaseController : ControllerBase
                 : Guid.Parse(value);
         }
     }
-    
-    
 }

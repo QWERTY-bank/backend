@@ -1,8 +1,11 @@
 using System.Net;
+using Bank.Core.Api.Infrastructure.Extensions;
 using Bank.Core.Api.Models.Accounts;
-using Bank.Core.Api.Models.Common;
+using Bank.Core.Application.Accounts;
 using Bank.Core.Application.Accounts.Models;
+using Bank.Core.Application.Accounts.Read;
 using Bank.Core.Application.Common;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,19 +18,32 @@ namespace Bank.Core.Api.Controllers;
 [Route("accounts")]
 public class AccountController : BaseController
 {
+    private readonly IMediator _mediator;
+
+    public AccountController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
     /// <summary>
     /// Возвращает счета пользователя
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet]
-    [ProducesResponseType(typeof(Page<AccountDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(IReadOnlyCollection<AccountDto>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.Forbidden)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-    public Task<IResult> GetAccounts(CancellationToken cancellationToken)
+    public async Task<IResult> GetAccounts(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var query = new GetUserAccountsQuery
+        {
+            UserId = UserId
+        };
+        var result = await _mediator.Send(query, cancellationToken);
+
+        return result.ToEndpointResult();
     }
     
     /// <summary>
@@ -41,11 +57,18 @@ public class AccountController : BaseController
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-    public Task<IResult> CreateAccount(
+    public async Task<IResult> CreateAccount(
         [FromBody] CreateAccountRequest request,
         CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var command = new CreateAccountCommand
+        {
+            Title = request.Title,
+            UserId = UserId
+        };
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return result.ToEndpointResult();
     }
     
     /// <summary>
@@ -122,10 +145,17 @@ public class AccountController : BaseController
     [ProducesResponseType((int)HttpStatusCode.Forbidden)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-    public Task<IResult> CloseAccount(
+    public async Task<IResult> CloseAccount(
         [FromRoute] long id,
         CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var command = new CloseAccountCommand
+        {
+            AccountId = id,
+            UserId = UserId
+        };
+        var result = await _mediator.Send(command, cancellationToken);
+        
+        return result.ToEndpointResult();
     }
 }
