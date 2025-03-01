@@ -11,6 +11,7 @@ COPY ["src/core/Bank.Core.Api/Bank.Core.Api.csproj", "src/core/Bank.Core.Api/"]
 COPY ["src/core/Bank.Core.Application/Bank.Core.Application.csproj", "src/core/Bank.Core.Application/"]
 COPY ["src/core/Bank.Core.Domain/Bank.Core.Domain.csproj", "src/core/Bank.Core.Domain/"]
 COPY ["src/common/Bank.Common.Api/Bank.Common.Api.csproj", "src/common/Bank.Common.Api/"]
+COPY ["src/core/Bank.Core.Persistence/Bank.Core.Persistence.csproj", "src/core/Bank.Core.Persistence/"]
 RUN dotnet restore "src/core/Bank.Core.Api/Bank.Core.Api.csproj"
 COPY . .
 WORKDIR "/src/src/core/Bank.Core.Api"

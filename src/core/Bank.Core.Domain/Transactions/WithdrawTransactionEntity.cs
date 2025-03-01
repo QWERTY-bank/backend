@@ -1,8 +1,8 @@
 namespace Bank.Core.Domain.Transactions;
 
-public class WithdrawTransaction : TransactionEntity
+public class WithdrawTransactionEntity : TransactionEntity
 {
-    public WithdrawTransaction()
+    public WithdrawTransactionEntity()
     {
         Type = TransactionType.Withdraw;
     }

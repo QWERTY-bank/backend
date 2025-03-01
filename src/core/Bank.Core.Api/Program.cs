@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCoreSwagger();
 builder.Services.AddJwtAuthentication();
+builder.Services.AddCoreDatabase(builder.Configuration);
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

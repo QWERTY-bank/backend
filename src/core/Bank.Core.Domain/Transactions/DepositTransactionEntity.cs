@@ -1,8 +1,8 @@
 namespace Bank.Core.Domain.Transactions;
 
-public class DepositTransaction : TransactionEntity
+public class DepositTransactionEntity : TransactionEntity
 {
-    public DepositTransaction()
+    public DepositTransactionEntity()
     {
         Type = TransactionType.Deposit;
     }

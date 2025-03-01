@@ -6,7 +6,6 @@ using Microsoft.IdentityModel.JsonWebTokens;
 namespace Bank.Core.Api.Controllers;
 
 [ApiController]
-[Authorize]
 public abstract class BaseController : ControllerBase
 {
     protected Guid UserId

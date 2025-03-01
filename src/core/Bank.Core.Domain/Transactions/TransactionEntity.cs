@@ -33,14 +33,14 @@ public abstract class TransactionEntity : BaseEntity<long>
     /// <summary>
     /// Отменена ли транзакция
     /// </summary>
-    public bool IsCancel { get; init; } = false;
+    public bool IsCancel { get; init; }
     
     public required long AccountId { get; init; }
 
     /// <summary>
-    /// Дочерние транзакции.
+    /// Дочерние транзакции
     /// </summary>
-    public List<Transaction> ChildTransactions = [];
+    public List<TransactionEntity> ChildTransactions = [];
     
     public List<TransactionCurrency> Currencies = [];
 }

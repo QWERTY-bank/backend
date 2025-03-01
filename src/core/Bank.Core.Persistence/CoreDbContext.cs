@@ -14,7 +14,7 @@ public class CoreDbContext : DbContext
     {
     }
     
-    public DbSet<AccountEntity> Accounts { get; set; }
+    public DbSet<AccountBaseEntity> Accounts { get; set; }
     public DbSet<TransactionEntity> Transactions { get; set; }
     public DbSet<CurrencyEntity> Currencies { get; set; }
     public DbSet<AccountCurrencyEntity> AccountCurrencies { get; set; }

@@ -23,7 +23,7 @@ public class AccountDto
     public required Guid UserId { get; init; }
     
     /// <summary>
-    ///     Значения валюты на счете
+    ///     Значения валют на счете
     /// </summary>
     [Required]
     public required IReadOnlyCollection<CurrencyValueDto> CurrencyValues { get; init; }
