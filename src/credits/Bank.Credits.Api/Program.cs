@@ -1,28 +1,20 @@
 using Bank.Common.Api.Configurations;
-using Bank.Common.Auth.Extensions;
-using System.Reflection;
-using System.Text.Json.Serialization;
+using Bank.Common.Api.Cors;
+using Bank.Users.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSwaggerGen(options =>
-{
-    var filePath = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
-    options.IncludeXmlComments(filePath);
-});
+builder.Services.AddCorsConfigure();
 
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    });
-
-// Configuration extensions
-builder.Services.AddSwaggerConfigure();
-builder.Services.AddModalStateConfigure();
-builder.Services.AddJwtAuthentication();
+builder.ConfigureAppsettings();
+builder.Services.AddCreditConfigurations();
+builder.Services.AddCreditServices();
+builder.Services.AddAutoMapperProfiles();
+builder.AddCreditDbContext();
 
 var app = builder.Build();
+
+app.Services.AddAutoMigration();
 
 app.UseSwagger();
 app.UseSwaggerUI();

@@ -8,7 +8,6 @@ using Bank.Users.Application.Users;
 using Bank.Users.Application.Users.Mapper;
 using Bank.Users.Persistence;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 using System.Reflection;
 using System.Text.Json.Serialization;
