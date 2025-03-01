@@ -5,7 +5,6 @@ using Bank.Common.Auth.Attributes;
 using Bank.Credits.Api.Models.Tariffs;
 using Bank.Credits.Application.Tariffs;
 using Bank.Credits.Application.Tariffs.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Bank.Common.Application.Extensions.PagedListExtensions;
 
@@ -17,7 +16,6 @@ namespace Bank.Credits.Api.Controllers
     [Route("api/tariffs")]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     [BankAuthorize]
-    [AllowAnonymous]
     public class TariffController : BaseController
     {
         private readonly ITariffsService _tariffsService;
