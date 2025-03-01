@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Bank.Common.Api.Configurations.Others;
+using Bank.Common.Api.Configurations.Swagger;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Bank.Common.Api.Configurations.Others;
-using Bank.Common.Api.Configurations.Authorization;
 
 namespace Bank.Common.Api.Configurations
 {
@@ -21,15 +22,16 @@ namespace Bank.Common.Api.Configurations
             return services;
         }
 
-        public static AuthenticationBuilder AddJwtAuthentication(this IServiceCollection services)
+        public static void ConfigureAppsettings(this WebApplicationBuilder builder)
         {
-            services.ConfigureOptions<AuthorizationOptionsConfigure>();
+            var environment = Environment.GetEnvironmentVariable("RUNTIME_ENVIRONMENT");
 
-            services.ConfigureOptions<JwtBearerOptionsConfigure>();
-            services.ConfigureOptions<JwtOptionsConfigure>();
+            builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
-            return services.AddAuthentication()
-                    .AddJwtBearer();
+            if (environment == "Docker")
+            {
+                builder.Configuration.AddJsonFile("appsettings.Docker.json", optional: true, reloadOnChange: true);
+            }
         }
     }
 }

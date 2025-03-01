@@ -7,8 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="StackExchange.Redis" Version="2.8.24" />
+    <PackageReference Include="Z1all.ExecutionResult" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\common\Bank.Common.Application\Bank.Common.Application.csproj" />
-    <ProjectReference Include="..\Bank.Users.Domain\Bank.Users.Domain.csproj" />
+    <ProjectReference Include="..\..\common\Bank.Common.Auth\Bank.Common.Auth.csproj" />
+    <ProjectReference Include="..\Bank.Users.Persistence\Bank.Users.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

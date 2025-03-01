@@ -1,4 +1,5 @@
 using Bank.Common.Api.Configurations;
+using Bank.Common.Auth.Extensions;
 using System.Reflection;
 using System.Text.Json.Serialization;
 

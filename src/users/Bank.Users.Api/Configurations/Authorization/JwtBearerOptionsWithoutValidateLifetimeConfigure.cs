@@ -1,4 +1,4 @@
-﻿using Bank.Common.Api.Configurations.Authorization;
+﻿using Bank.Common.Auth.Configurations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

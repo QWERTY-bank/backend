@@ -13,6 +13,13 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/users/Bank.Users.Api/Bank.Users.Api.csproj", "src/users/Bank.Users.Api/"]
+COPY ["src/common/Bank.Common.Api/Bank.Common.Api.csproj", "src/common/Bank.Common.Api/"]
+COPY ["src/common/Bank.Common.Auth/Bank.Common.Auth.csproj", "src/common/Bank.Common.Auth/"]
+COPY ["src/common/Bank.Common.Models/Bank.Common.Models.csproj", "src/common/Bank.Common.Models/"]
+COPY ["src/users/Bank.Users.Application/Bank.Users.Application.csproj", "src/users/Bank.Users.Application/"]
+COPY ["src/common/Bank.Common.Application/Bank.Common.Application.csproj", "src/common/Bank.Common.Application/"]
+COPY ["src/users/Bank.Users.Persistence/Bank.Users.Persistence.csproj", "src/users/Bank.Users.Persistence/"]
+COPY ["src/users/Bank.Users.Domain/Bank.Users.Domain.csproj", "src/users/Bank.Users.Domain/"]
 RUN dotnet restore "./src/users/Bank.Users.Api/Bank.Users.Api.csproj"
 COPY . .
 WORKDIR "/src/src/users/Bank.Users.Api"

@@ -1,16 +1,19 @@
 ﻿using Bank.Common.Api.Controllers;
 using Bank.Common.Api.DTOs;
+using Bank.Common.Auth.Attributes;
 using Bank.Credits.Api.Models.Credits;
 using Bank.Credits.Application.Credits;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Bank.Common.Application.Extensions.PagedListExtensions;
 
 namespace Bank.Credits.Api.Controllers
 {
+    /// <summary>
+    /// Отвечает за кредиты
+    /// </summary>
     [Route("api/credits")]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    [Authorize]
+    [BankAuthorize]
     public class CreditsController : BaseController
     {
         /// <summary>

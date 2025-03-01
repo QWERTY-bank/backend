@@ -2,6 +2,9 @@
 
 namespace Bank.Credits.Api.Models.Credits
 {
+    /// <summary>
+    /// Запрос на уменьения суммы кредита
+    /// </summary>
     public class ReduceCreditRequest
     {
         /// <summary>

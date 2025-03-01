@@ -1,38 +1,59 @@
-﻿using Bank.Common.Api.Controllers;
+﻿using AutoMapper;
+using Bank.Common.Api.Controllers;
 using Bank.Common.Api.DTOs;
+using Bank.Common.Auth.Attributes;
 using Bank.Users.Api.Models.Profile;
 using Bank.Users.Application.Users;
+using Bank.Users.Application.Users.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bank.Users.Api.Controllers
 {
+    /// <summary>
+    /// Отвечает за профиль текущего пользователя
+    /// </summary>
     [Route("api/profile")]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [BankAuthorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ProfileController : BaseController
     {
+        private readonly IUserService _userService;
+        private readonly IMapper _mapper;
+
         /// <summary>
-        /// Профиль текущего пользователя
+        /// Конструктор
         /// </summary>
-        [HttpGet]
-        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
-        public Task<ActionResult> GetProfileAsync()
+        public ProfileController(
+            IUserService userService, 
+            IMapper mapper)
         {
-            throw new NotImplementedException();
+            _userService = userService;
+            _mapper = mapper;
         }
 
         /// <summary>
-        /// Обновление почты
+        /// Профиль текущего пользователя 
+        /// </summary>
+        [HttpGet]
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<UserDto>> GetProfileAsync()
+        {
+            return await ExecutionResultHandlerAsync(() 
+                => _userService.GetUserAsync(UserId));
+        }
+
+        /// <summary>
+        /// Обновление номера
         /// </summary>
         [HttpPut("phone")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public Task<ActionResult> ChangePhoneAsync([FromBody] ChangePhoneProfileRequest request)
+        public async Task<ActionResult> ChangePhoneAsync([FromBody] ChangePhoneProfileRequest request)
         {
-            throw new NotImplementedException();
+            return await ExecutionResultHandlerAsync(()
+                => _userService.ChangePhoneAsync(_mapper.Map<ChangePhoneDto>(request), UserId));
         }
 
         /// <summary>
@@ -40,9 +61,10 @@ namespace Bank.Users.Api.Controllers
         /// </summary>
         [HttpPut("password")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public Task<ActionResult> ChangePasswordAsync([FromBody] ChangePasswordProfileRequest request)
+        public async Task<ActionResult> ChangePasswordAsync([FromBody] ChangePasswordProfileRequest request)
         {
-            throw new NotImplementedException();
+            return await ExecutionResultHandlerAsync(()
+                => _userService.ChangePasswordAsync(_mapper.Map<ChangePasswordDto>(request), UserId));
         }
 
         /// <summary>
@@ -50,9 +72,10 @@ namespace Bank.Users.Api.Controllers
         /// </summary>
         [HttpPut("profile")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public Task<ActionResult> ChangeProfileAsync([FromBody] ChangeProfileRequest request)
+        public async Task<ActionResult> ChangeProfileAsync([FromBody] ChangeProfileRequest request)
         {
-            throw new NotImplementedException();
+            return await ExecutionResultHandlerAsync(()
+                => _userService.ChangeProfileAsync(_mapper.Map<ChangeProfileDto>(request), UserId));
         }
     }
 }
