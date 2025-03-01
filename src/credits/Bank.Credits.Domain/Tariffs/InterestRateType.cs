@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel;
 
-namespace Bank.Credits.Domain.Enums
+namespace Bank.Credits.Domain.Tariffs
 {
     public enum InterestRateType
     {
-        [Description("Годавая ставка")]
+        [Description("Годовая ставка")]
         Annual = 0,
 
-        [Description("Ежемесечная ставка")]
+        [Description("Ежемесячная ставка")]
         Monthly = 1,
 
         [Description("Дневная ставка")]

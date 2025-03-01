@@ -1,12 +1,12 @@
-﻿using Bank.Credits.Domain.Enums;
+﻿using Bank.Credits.Domain.Tariffs;
 using System.ComponentModel.DataAnnotations;
 
-namespace Bank.Credits.Api.Models.Tarifs
+namespace Bank.Credits.Api.Models.Tariffs
 {
     /// <summary>
     /// Запрос на создание запроса
     /// </summary>
-    public class CreateTariffRequest
+    public class CreateTariffRequest : IValidatableObject
     {
         /// <summary>
         /// Название тарифа
@@ -37,5 +37,26 @@ namespace Bank.Credits.Api.Models.Tarifs
         /// </summary>
         [Required]
         public required int MaxPeriodDays { get; set; }
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (InterestRate <= 0)
+            {
+                yield return new ValidationResult("InterestRate must be greater than 0", new[] { nameof(InterestRate) });
+            }
+
+            if (MinPeriodDays <= 0)
+            {
+                yield return new ValidationResult("MinPeriodDays must be greater than 0", new[] { nameof(MinPeriodDays) });
+            }
+
+            if (MinPeriodDays > MaxPeriodDays)
+            {
+                yield return new ValidationResult("MinPeriodDays must be less than or equal to MaxPeriodDays", new[] { nameof(MinPeriodDays), nameof(MaxPeriodDays) });
+            }
+        }
     }
 }

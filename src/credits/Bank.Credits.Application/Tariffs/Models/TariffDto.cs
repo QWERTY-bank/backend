@@ -1,6 +1,6 @@
-﻿using Bank.Credits.Domain.Enums;
+﻿using Bank.Credits.Domain.Tariffs;
 
-namespace Bank.Credits.Application.Tarifs
+namespace Bank.Credits.Application.Tariffs.Models
 {
     public class TariffDto
     {

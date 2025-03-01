@@ -37,7 +37,7 @@ namespace Bank.Users.Api.Controllers
         /// </summary>
         [HttpGet]
         [ProducesResponseType(typeof(PagedListWithMetadata<UserShortDto>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<IPagedList<UserShortDto>>> GetUsersAsync([FromQuery] Pagination pagination)
+        public async Task<IActionResult> GetUsersAsync([FromQuery] Pagination pagination)
         {
             return await ExecutionResultHandlerAsync(()
                 => _userService.GetUsersAsync(pagination.Page, pagination.Size));
@@ -48,7 +48,7 @@ namespace Bank.Users.Api.Controllers
         /// </summary>
         [HttpGet("{userId}")]
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
-        public async Task<ActionResult<UserDto>> GetUserAsync([FromRoute] Guid userId)
+        public async Task<IActionResult> GetUserAsync([FromRoute] Guid userId)
         {
             return await ExecutionResultHandlerAsync(()
                 => _userService.GetUserAsync(userId));
@@ -59,7 +59,7 @@ namespace Bank.Users.Api.Controllers
         /// </summary>
         [HttpPost("{userId}/block")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> BlockUserAsync([FromRoute] Guid userId)
+        public async Task<IActionResult> BlockUserAsync([FromRoute] Guid userId)
         {
             return await ExecutionResultHandlerAsync(()
                 => _userService.ChangeUserBlockStatusAsync(true, userId));
@@ -70,7 +70,7 @@ namespace Bank.Users.Api.Controllers
         /// </summary>
         [HttpPost("{userId}/unblock")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> UnblockUserAsync([FromRoute] Guid userId)
+        public async Task<IActionResult> UnblockUserAsync([FromRoute] Guid userId)
         {
             return await ExecutionResultHandlerAsync(()
                 => _userService.ChangeUserBlockStatusAsync(false, userId));

@@ -39,7 +39,7 @@ namespace Bank.Users.Api.Controllers
         /// </summary>
         [HttpGet]
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
-        public async Task<ActionResult<UserDto>> GetProfileAsync()
+        public async Task<IActionResult> GetProfileAsync()
         {
             return await ExecutionResultHandlerAsync(() 
                 => _userService.GetUserAsync(UserId));
@@ -50,7 +50,7 @@ namespace Bank.Users.Api.Controllers
         /// </summary>
         [HttpPut("phone")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> ChangePhoneAsync([FromBody] ChangePhoneProfileRequest request)
+        public async Task<IActionResult> ChangePhoneAsync([FromBody] ChangePhoneProfileRequest request)
         {
             return await ExecutionResultHandlerAsync(()
                 => _userService.ChangePhoneAsync(_mapper.Map<ChangePhoneDto>(request), UserId));
@@ -61,7 +61,7 @@ namespace Bank.Users.Api.Controllers
         /// </summary>
         [HttpPut("password")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> ChangePasswordAsync([FromBody] ChangePasswordProfileRequest request)
+        public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordProfileRequest request)
         {
             return await ExecutionResultHandlerAsync(()
                 => _userService.ChangePasswordAsync(_mapper.Map<ChangePasswordDto>(request), UserId));
@@ -72,7 +72,7 @@ namespace Bank.Users.Api.Controllers
         /// </summary>
         [HttpPut("profile")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> ChangeProfileAsync([FromBody] ChangeProfileRequest request)
+        public async Task<IActionResult> ChangeProfileAsync([FromBody] ChangeProfileRequest request)
         {
             return await ExecutionResultHandlerAsync(()
                 => _userService.ChangeProfileAsync(_mapper.Map<ChangeProfileDto>(request), UserId));
