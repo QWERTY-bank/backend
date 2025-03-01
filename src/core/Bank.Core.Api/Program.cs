@@ -1,9 +1,13 @@
 using System.Text.Json.Serialization;
+using Bank.Common.Api.Configurations;
+using Bank.Common.Api.Middlewares.Extensions;
 using Bank.Core.Api.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCoreSwagger();
+builder.Services.AddJwtAuthentication();
+builder.Services.AddCoreDatabase(builder.Configuration);
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -12,6 +16,8 @@ builder.Services.AddControllers()
     });
 
 var app = builder.Build();
+
+app.UseExceptionsHandler();
 
 app.UseSwagger();
 app.UseSwaggerUI();

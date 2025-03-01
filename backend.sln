@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bank.Credits.Domain", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bank.Credits.Application", "src\credits\Bank.Credits.Application\Bank.Credits.Application.csproj", "{04657BC3-837D-44E3-985E-E4C52B0AAB9C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bank.Core.Persistence", "src\core\Bank.Core.Persistence\Bank.Core.Persistence.csproj", "{09BF9201-558F-4192-B1A1-DE8F2E8B24BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +99,10 @@ Global
 		{04657BC3-837D-44E3-985E-E4C52B0AAB9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04657BC3-837D-44E3-985E-E4C52B0AAB9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04657BC3-837D-44E3-985E-E4C52B0AAB9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09BF9201-558F-4192-B1A1-DE8F2E8B24BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09BF9201-558F-4192-B1A1-DE8F2E8B24BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09BF9201-558F-4192-B1A1-DE8F2E8B24BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09BF9201-558F-4192-B1A1-DE8F2E8B24BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -118,6 +124,7 @@ Global
 		{9B624DBA-FD6A-4898-8C1D-9267F3CAF602} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 		{144C9721-51AC-4287-8069-02E0AF5D7332} = {8542170C-C877-4C3C-90B4-01BAF573D9AC}
 		{04657BC3-837D-44E3-985E-E4C52B0AAB9C} = {8542170C-C877-4C3C-90B4-01BAF573D9AC}
+		{09BF9201-558F-4192-B1A1-DE8F2E8B24BF} = {53BA4D2A-683D-497F-B7AC-387B1D17A041}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {12763DB4-07C3-4231-9EC1-021CE5B1C0EF}

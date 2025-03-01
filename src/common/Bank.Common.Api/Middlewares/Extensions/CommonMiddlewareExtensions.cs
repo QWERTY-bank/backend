@@ -1,5 +1,4 @@
-﻿using Bank.Common.Api.Middlewares;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 
 namespace Bank.Common.Api.Middlewares.Extensions
 {

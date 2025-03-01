@@ -3,6 +3,8 @@ using Bank.Core.Api.Models.Accounts;
 using Bank.Core.Api.Models.Common;
 using Bank.Core.Application.Accounts.Models;
 using Bank.Core.Application.Common;
+using Bank.Core.Persistence;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bank.Core.Api.Controllers;
@@ -10,6 +12,7 @@ namespace Bank.Core.Api.Controllers;
 /// <summary>
 /// Отвечает за счета пользователей
 /// </summary>
+[Authorize]
 [Route("accounts")]
 public class AccountController : BaseController
 {
@@ -53,7 +56,7 @@ public class AccountController : BaseController
     /// Возвращает транзакции счета
     /// </summary>
     /// <param name="id"></param>
-    /// <param name="pagination"></param>
+    /// <param name="period"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet("{id:long}/transactions")]
@@ -63,7 +66,7 @@ public class AccountController : BaseController
     [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
     public Task<IResult> GetAccountTransactions(
         [FromRoute] long id,
-        [FromQuery] Pagination pagination,
+        [FromQuery] Period period,
         CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
