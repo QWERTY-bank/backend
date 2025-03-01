@@ -8,7 +8,6 @@ using Bank.Users.Application.Users;
 using Bank.Users.Application.Users.Mapper;
 using Bank.Users.Persistence;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -95,8 +94,11 @@ namespace Bank.Users.Api
         /// </summary>
         public static void AddAutoMigration(this IServiceProvider services)
         {
-            using var dbContext = services.CreateScope().ServiceProvider.GetRequiredService<UsersDbContext>();
-            dbContext.Database.Migrate();
+            using (var scope = services.CreateScope())
+            {
+                using var dbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+                dbContext.Database.Migrate();
+            }
         }
 
         /// <summary>

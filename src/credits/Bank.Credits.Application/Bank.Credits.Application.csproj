@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\common\Bank.Common.Application\Bank.Common.Application.csproj" />
-    <ProjectReference Include="..\Bank.Credits.Domain\Bank.Credits.Domain.csproj" />
+    <ProjectReference Include="..\Bank.Credits.Persistence\Bank.Credits.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,10 @@
 using Bank.Common.Api.Configurations;
+using Bank.Common.Api.Cors;
 using Bank.Users.Api;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCorsConfigure();
 
 builder.ConfigureAppsettings();
 builder.Services.AddUsersConfigurations();
