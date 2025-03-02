@@ -3,6 +3,7 @@ using System;
 using Bank.Credits.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bank.Credits.Persistence.Migrations
 {
     [DbContext(typeof(CreditsDbContext))]
-    partial class CreditsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250302131552_AddCreditEntity")]
+    partial class AddCreditEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

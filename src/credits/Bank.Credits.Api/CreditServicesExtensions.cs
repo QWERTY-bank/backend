@@ -2,6 +2,8 @@
 using Bank.Common.Auth.Extensions;
 using Bank.Credits.Api.Mappers;
 using Bank.Credits.Application.Credits;
+using Bank.Credits.Application.Credits.Mapper;
+using Bank.Credits.Application.Requests;
 using Bank.Credits.Application.Tariffs;
 using Bank.Credits.Application.Tariffs.Mapper;
 using Bank.Credits.Persistence;
@@ -23,6 +25,9 @@ namespace Bank.Credits.Api
         {
             services.AddScoped<ICreditsService, CreditsService>();
             services.AddScoped<ITariffsService, TariffsService>();
+
+            services.AddScoped<ICoreRequestService, CoreRequestService>();
+            services.AddScoped<ITokenService, TokenService>();
         }
 
         /// <summary>

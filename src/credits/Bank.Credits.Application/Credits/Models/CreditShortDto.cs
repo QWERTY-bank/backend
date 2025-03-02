@@ -1,8 +1,15 @@
-﻿namespace Bank.Credits.Application.Credits.Models
+﻿using Bank.Credits.Domain.Credits;
+
+namespace Bank.Credits.Application.Credits.Models
 {
     public class CreditShortDto
     {
         public required Guid Id { get; init; }
+
+        /// <summary>
+        /// Статус кредита
+        /// </summary>
+        public required CreditStatusType Status { get; set; }
 
         /// <summary>
         /// Сумма долга

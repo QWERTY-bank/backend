@@ -1,4 +1,9 @@
-﻿using Bank.Credits.Application.Credits.Models;
+﻿using AutoMapper;
+using Bank.Credits.Application.Credits.Models;
+using Bank.Credits.Domain.Credits;
+using Bank.Credits.Persistence;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using X.PagedList;
 using Z1all.ExecutionResult.StatusCode;
 
@@ -6,19 +11,25 @@ namespace Bank.Credits.Application.Credits
 {
     /*
         ...
-        Добавить сервис для запроса токенов
-        Добавить сервис для отправки запросов в другие сервисы
+        + Добавить сервис для запроса токенов
+        + Добавить сервис для отправки запросов в другие сервисы
     
-        Добавить кредиту статусы: Запрошен, Активный, Закрыт, Отменен    
+        + Добавить кредиту статусы: Запрошен, Активный, Закрыт, Отменен    
+
+        ... 
+        ?2 Добавить блокировку доступа к id кредита при его обработке, чтобы не было двойных списаний
 
         ...
-        При взятии кредита, создаем кредит со статусом Запрошен, туда сохраняем ключ идемпотентности
-        Далее в джобе выполняем пополнение счета пользователя с счета банка. Добавляем платеж + Ставим статус Активный
+        + При взятии кредита, создаем кредит со статусом Запрошен, туда сохраняем ключ идемпотентности
+        ?1 Далее в джобе выполняем пополнение счета пользователя с счета банка. Добавляем платеж + Ставим статус Активный
 
         ...
-        Добавить планировщик задач, который будет генерировать запросы на начисление процента и списание денег по кредитам
-        Для этого добавить специальный интовый id, который будет уникальным для каждого запроса на начисление процента и списание денег и будет выдаваться в порядке создания кредита
-        Раз в день запускать планировщик, который будет генерировать запросы на начисление процента и списание денег по кредитам, в каждом запросе будет указан отрезок idшников кредитов, которые нужно обработать, также у запроса будет статус
+        ?+ Добавить планировщик задач, который будет генерировать запросы на начисление процента и списание денег по кредитам
+        ?+ Для этого добавить специальный интовый id, который будет уникальным для каждого запроса на начисление процента и списание денег и будет выдаваться в порядке создания кредита
+        ?+ Раз в день запускать планировщик, который будет генерировать запросы на начисление процента и списание денег по кредитам, в каждом запросе будет указан отрезок idшников кредитов, которые нужно обработать, также у запроса будет статус
+
+        Нужно убедится что планировщик один на все инстансы сервиса
+        Планировщик запускаем раз 10 минут. После запуска смотрим на уже созданные запросы и ориентируемся на последний, чтобы начать создавать запросы от него
 
         ...
         Добавить джобу для списания денег по кредиту
@@ -39,6 +50,19 @@ namespace Bank.Credits.Application.Credits
     */
     public class CreditsService : ICreditsService
     {
+        private readonly CreditsDbContext _context;
+        private readonly ILogger<CreditsService> _logger;
+        private readonly IMapper _mapper;
+
+        public CreditsService(
+            CreditsDbContext context,
+            ILogger<CreditsService> logger,
+            IMapper mapper)
+        {
+            _context = context;
+            _logger = logger;
+            _mapper = mapper;
+        }
 
         public Task<ExecutionResult<IPagedList<CreditShortDto>>> GetCreditsAsync(CreditsFilter filter, int page, int pageSize, Guid userId)
         {
@@ -50,9 +74,23 @@ namespace Bank.Credits.Application.Credits
             throw new NotImplementedException();
         }
 
-        public Task<ExecutionResult> TakeCreditAsync(TakeCreditDto model, Guid userId)
+        public async Task<ExecutionResult> TakeCreditAsync(TakeCreditDto model, Guid userId)
         {
-            throw new NotImplementedException();
+            var creditAlreadyRequested = await _context.Credits.AnyAsync(x => x.Key == model.Key);
+            if (creditAlreadyRequested)
+            {
+                _logger.LogWarning($"Credit with key = '{model.Key}' already requested");
+                return ExecutionResult.FromBadRequest("TakeCredit", "Credit already requested");
+            }
+
+            var newCredit = _mapper.Map<Credit>(model);
+
+            newCredit.UserId = userId;
+
+            await _context.Credits.AddAsync(newCredit);
+            await _context.SaveChangesAsync();
+
+            return ExecutionResult.FromSuccess();
         }
 
         public Task<ExecutionResult> ReduceCreditAsync(Guid creditId, ReduceCreditDto model, Guid userId)
