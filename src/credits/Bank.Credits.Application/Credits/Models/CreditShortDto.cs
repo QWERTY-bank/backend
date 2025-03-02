@@ -1,4 +1,4 @@
-﻿namespace Bank.Credits.Application.Credits
+﻿namespace Bank.Credits.Application.Credits.Models
 {
     public class CreditShortDto
     {

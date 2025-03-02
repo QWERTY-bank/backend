@@ -63,7 +63,7 @@ namespace Bank.Credits.Application.Tariffs
         {
             var nameExists = await _context.Tariffs
                 .GetUndeleted()
-                .AnyAsync(x => x.Name == model.Name.Trim());
+                .AnyAsync(x => x.Name == model.Name);
             if (nameExists)
             {
                 _logger.LogInformation($"Tariff with the same name '{model.Name.Trim()}' already exists.");

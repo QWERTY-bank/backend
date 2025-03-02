@@ -1,6 +1,4 @@
-﻿using Bank.Credits.Application.Credits;
-
-namespace Bank.Credits.Api.Models.Credits
+﻿namespace Bank.Credits.Application.Credits.Models
 {
     /// <summary>
     /// Фильтры для истории кредитов

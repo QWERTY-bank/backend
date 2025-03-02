@@ -14,7 +14,8 @@ namespace Bank.Credits.Api.Mappers
         /// </summary>
         public TariffApiMapperProfile()
         {
-            CreateMap<CreateTariffRequest, CreateTariffDto>();
+            CreateMap<CreateTariffRequest, CreateTariffDto>()
+                .ForMember(x => x.Name, opt => opt.MapFrom(x => x.Name.Trim()));
         }
     }
 }

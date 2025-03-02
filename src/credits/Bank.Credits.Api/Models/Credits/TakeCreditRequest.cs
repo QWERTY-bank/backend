@@ -15,6 +15,11 @@ namespace Bank.Credits.Api.Models.Credits
         public required Guid Key { get; init; }
 
         /// <summary>
+        /// Номер счета, на который берем кредит
+        /// </summary>
+        public required long AccountId { get; set; }
+
+        /// <summary>
         /// Id тарифа
         /// </summary>
         [Required]

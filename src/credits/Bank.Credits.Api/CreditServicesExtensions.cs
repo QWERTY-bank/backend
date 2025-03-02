@@ -1,6 +1,7 @@
 ﻿using Bank.Common.Api.Configurations;
 using Bank.Common.Auth.Extensions;
 using Bank.Credits.Api.Mappers;
+using Bank.Credits.Application.Credits;
 using Bank.Credits.Application.Tariffs;
 using Bank.Credits.Application.Tariffs.Mapper;
 using Bank.Credits.Persistence;
@@ -20,6 +21,7 @@ namespace Bank.Credits.Api
         /// </summary>
         public static void AddCreditServices(this IServiceCollection services)
         {
+            services.AddScoped<ICreditsService, CreditsService>();
             services.AddScoped<ITariffsService, TariffsService>();
         }
 
@@ -29,6 +31,7 @@ namespace Bank.Credits.Api
         public static void AddAutoMapperProfiles(this IServiceCollection services)
         {
             services.AddAutoMapper(
+                typeof(CreditApplicationMapperProfile), typeof(CreditApiMapperProfile),
                 typeof(TariffApplicationMapperProfile), typeof(TariffApiMapperProfile)
             );
         }
