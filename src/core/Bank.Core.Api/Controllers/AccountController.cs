@@ -48,7 +48,7 @@ public class AccountController : BaseController
     }
     
     /// <summary>
-    /// Создает новый счет
+    /// Создает новый счет пользователя
     /// </summary>
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
@@ -73,7 +73,7 @@ public class AccountController : BaseController
     }
     
     /// <summary>
-    /// Возвращает транзакции счета
+    /// Возвращает транзакции счета пользователя
     /// </summary>
     /// <param name="id"></param>
     /// <param name="period"></param>
@@ -101,7 +101,7 @@ public class AccountController : BaseController
     }
     
     /// <summary>
-    /// Вносит деньги на счет
+    /// Вносит деньги на счет пользователя
     /// </summary>
     /// <param name="id"></param>
     /// <param name="request"></param>
@@ -131,7 +131,7 @@ public class AccountController : BaseController
     }
     
     /// <summary>
-    /// Снимает деньги со счета
+    /// Снимает деньги со счета пользователя
     /// </summary>
     /// <param name="id"></param>
     /// <param name="request"></param>
@@ -161,7 +161,7 @@ public class AccountController : BaseController
     }
     
     /// <summary>
-    /// Закрывает счет
+    /// Закрывает счет пользователя
     /// </summary>
     /// <param name="id"></param>
     /// <param name="cancellationToken"></param>

@@ -16,4 +16,15 @@ public abstract class BaseController : ControllerBase
                 : Guid.Parse(value);
         }
     }
+    
+    protected Guid UnitId
+    {
+        get
+        {
+            var value = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return User.Identity?.IsAuthenticated == null || value == null
+                ? Guid.Empty
+                : Guid.Parse(value);
+        }
+    }
 }

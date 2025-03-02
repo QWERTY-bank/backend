@@ -1,7 +1,9 @@
 using System.Text.Json.Serialization;
 using Bank.Common.Api.Middlewares.Extensions;
 using Bank.Common.Auth.Extensions;
+using Bank.Core.Api.Infrastructure.Auth;
 using Bank.Core.Api.Infrastructure.Extensions;
+using Bank.Core.Application.Common;
 using Microsoft.AspNetCore.Http.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +13,15 @@ builder.Services
     .AddCoreDatabase(builder.Configuration)
     .AddCoreMediatR()
     .AddJwtAuthentication();
+
+builder.Services
+    .AddAuthorization(options =>
+    {
+        options.AddPolicy(Policies.UnitAccount,
+            policy => { policy.RequireClaim("scope", "unit-account"); });
+    });
+
+builder.Services.AddScoped<AccountService>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
