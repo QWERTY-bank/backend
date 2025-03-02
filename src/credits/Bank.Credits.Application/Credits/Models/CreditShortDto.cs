@@ -25,10 +25,5 @@ namespace Bank.Credits.Application.Credits.Models
         /// Дата следующего платежа
         /// </summary>
         public required DateOnly NextPaymentDateOnly { get; init; }
-
-        /// <summary>
-        /// Погашен ли кредит
-        /// </summary>
-        public required bool IsRepaid { get; init; }
     }
 }

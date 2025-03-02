@@ -61,7 +61,10 @@ namespace Bank.Credits.Persistence
             modelBuilder.Entity<IssuingCreditsPlan>()
                 .ToTable(nameof(IssuingCreditsPlans), BankCreditsPlanSchema);
             modelBuilder.Entity<IssuingCreditsPlan>()
-                .HasKey(x => x.Id); 
+                .HasKey(x => x.Id);
+            modelBuilder.Entity<IssuingCreditsPlan>()
+                .Property(x => x.Status)
+                .HasDefaultValue(PlanStatusType.Wait);
 
             #endregion
         }

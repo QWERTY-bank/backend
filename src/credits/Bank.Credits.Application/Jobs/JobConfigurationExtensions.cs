@@ -1,5 +1,6 @@
 ﻿using Bank.Common.Api.Configurations.Swagger;
 using Bank.Credits.Application.Jobs.Configurations;
+using Bank.Credits.Application.Jobs.IssuingCredits;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
@@ -11,18 +12,42 @@ namespace Bank.Credits.Application.Jobs
         public static void AddJobs(this IServiceCollection services, IConfiguration configuration)
         {
             services.ConfigureOptions<IssuingCreditsPlannerOptionsConfigure>();
+            services.ConfigureOptions<IssuingCreditsHandlerOptionsConfigure>();
 
-            var jobsSection = configuration.GetRequiredSection("Jobs").Get<JobsOptions>();
+            var jobsOptions = configuration.GetRequiredSection("Jobs").Get<JobsOptions>();
+            if (jobsOptions == null)
+            {
+                throw new NullReferenceException("Section JobsConfiguration was not found in application settings");
+            }
 
             services.AddQuartz(q =>
             {
-                //q.AddJob<CreditHandler>(j => j
-                //    .StoreDurably()
-                //    .WithIdentity("CreditHandler"));
-                //q.AddTrigger(t => t
-                //    .ForJob("CreditHandler")
-                //    .WithIdentity("CreditHandler-trigger")
-                //    .WithCronSchedule("0 0 0/1 1/1 * ? *"));
+                int startDelaySeconds = 10;
+
+                q.AddJob<IssuingCreditsPlanner>(j => j
+                    .StoreDurably()
+                    .WithIdentity(nameof(IssuingCreditsPlanner)));
+                q.AddTrigger(t => t
+                    .ForJob(nameof(IssuingCreditsPlanner))
+                    .WithIdentity($"{nameof(IssuingCreditsPlanner)}Trigger", $"{nameof(IssuingCreditsPlanner)}Group")
+                    .StartAt(DateTime.UtcNow.AddSeconds(startDelaySeconds))
+                    .WithSimpleSchedule(x => x
+                            .WithInterval(jobsOptions.IssuingCredits.Planner.Interval)
+                            .RepeatForever()));
+
+                startDelaySeconds += 10;
+
+                q.AddJob<IssuingCreditsHandler>(j => j
+                    .StoreDurably()
+                    .WithIdentity(nameof(IssuingCreditsHandler)));
+                q.AddTrigger(t => t
+                    .ForJob(nameof(IssuingCreditsHandler))
+                    .WithIdentity($"{nameof(IssuingCreditsHandler)}Trigger", $"{nameof(IssuingCreditsHandler)}Group")
+                    .StartAt(DateTime.UtcNow.AddSeconds(startDelaySeconds))
+                    .WithSimpleSchedule(x => x
+                            .WithInterval(jobsOptions.IssuingCredits.Handler.Interval)
+                            .RepeatForever()));
+
             });
             services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
         }

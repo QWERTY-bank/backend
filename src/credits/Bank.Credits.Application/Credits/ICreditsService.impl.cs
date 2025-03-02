@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Bank.Credits.Application.Credits.Models;
+using Bank.Credits.Application.Tariffs.Models;
 using Bank.Credits.Domain.Credits;
+using Bank.Common.Application.Extensions;
 using Bank.Credits.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -64,14 +66,32 @@ namespace Bank.Credits.Application.Credits
             _mapper = mapper;
         }
 
-        public Task<ExecutionResult<IPagedList<CreditShortDto>>> GetCreditsAsync(CreditsFilter filter, int page, int pageSize, Guid userId)
+        public async Task<ExecutionResult<IPagedList<CreditShortDto>>> GetCreditsAsync(CreditsFilter filter, int page, int pageSize, Guid userId)
         {
-            throw new NotImplementedException();
+            var creditsQuery = _context.Credits
+                .Where(x => x.UserId == userId)
+                .AsQueryable();
+
+            var credits = await creditsQuery.ToPagedListAsync(page, pageSize);
+
+            var result = credits.ToMappedPagedList<Credit, CreditShortDto>(_mapper);
+            return ExecutionResult<IPagedList<CreditShortDto>>.FromSuccess(result);
         }
 
-        public Task<ExecutionResult<CreditDto>> GetCreditAsync(Guid creditId, Guid userId)
+        public async Task<ExecutionResult<CreditDto>> GetCreditAsync(Guid creditId, Guid userId)
         {
-            throw new NotImplementedException();
+            var credit = await _context.Credits
+                //.Include(x => x.PaymentHistory)
+                .FirstOrDefaultAsync(x => x.Id == creditId && x.UserId == userId);
+            if (credit == null)
+            {
+                _logger.LogWarning($"Credit with id = '{creditId}' not found");
+                return ExecutionResult<CreditDto>.FromNotFound("GetCredit", $"Credit with id = '{creditId}' not found");
+            }
+
+            var result = _mapper.Map<CreditDto>(credit);
+
+            return ExecutionResult<CreditDto>.FromSuccess(result);
         }
 
         public async Task<ExecutionResult> TakeCreditAsync(TakeCreditDto model, Guid userId)

@@ -57,7 +57,7 @@ namespace Bank.Credits.Application.Jobs.IssuingCredits
                     {
                         issuingCreditsPlans.Add(new IssuingCreditsPlan
                         {
-                            FromPlanId = minPlanId + i * _options.CreditsInOneRequest,
+                            FromPlanId = minPlanId + i * _options.CreditsInOneRequest, // TODO: Проверить правильность расчета
                             ToPlanId = minPlanId + (i + 1) * _options.CreditsInOneRequest,
                         });
                     }
@@ -76,7 +76,7 @@ namespace Bank.Credits.Application.Jobs.IssuingCredits
                     await _dbContext.SaveChangesAsync();
                 }
 
-                scope.Commit(); 
+                await scope.CommitAsync(); 
             }
             catch (Exception e)
             {

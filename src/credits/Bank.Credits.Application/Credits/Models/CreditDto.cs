@@ -17,11 +17,6 @@ namespace Bank.Credits.Application.Credits.Models
         public required decimal DebtAmount { get; init; }
 
         /// <summary>
-        /// Погашен ли кредит
-        /// </summary>
-        public required bool IsRepaid { get; init; }
-
-        /// <summary>
         /// Дата взятия кредита
         /// </summary>
         public required DateOnly TakingDate { get; init; }

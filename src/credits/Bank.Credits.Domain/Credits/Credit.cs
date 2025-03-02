@@ -28,12 +28,12 @@ namespace Bank.Credits.Domain.Credits
         /// <summary>
         /// Дата выдачи кредита, устанавливаем только, когда кредит переходит из "Ожидание" в статус "Активный" 
         /// </summary>
-        public required DateOnly? CreateDate { get; set; }
+        public required DateOnly? TakingDate { get; set; }
 
         /// <summary>
         /// Сумма долга по кредиту в текущий момент 
         /// </summary>
-        public required decimal LoanAmount { get; set; }
+        public required decimal DebtAmount { get; set; }
 
         /// <summary>
         /// Id тарифа, по которому выдан кредит

@@ -4,11 +4,15 @@ namespace Bank.Credits.Persistence
 {
     public static class CreditDbContextExtensions
     {
-        public static Task<int> SelectCreditsForUpdate(this CreditsDbContext dbContext, List<Guid> creditIds)
+        // TODO: Добавить блокировку кредитов + добавить фильтр на статус кредита Requested
+        public static Task<int> CloseIssuingCreditsForUpdate(this CreditsDbContext dbContext, long fromPlanId, long toPlanId)
         {
-            var creditIdsString = string.Join(",", creditIds);
+            throw new NotImplementedException();
+        }
 
-            var command = $"SELECT id FROM bank_credits.Credits WHERE id IN ({creditIdsString}) AND is_closed = false FOR UPDATE;";
+        public static Task<int> CloseIssuingCreditsPlanForUpdate(this CreditsDbContext dbContext, long planId)
+        {
+            var command = $"SELECT * FROM bank_plans.IssuingCreditsPlans WHERE id IN ({planId}) AND is_closed = false FOR UPDATE;";
             return dbContext.Database.ExecuteSqlRawAsync(command);
         }
 
