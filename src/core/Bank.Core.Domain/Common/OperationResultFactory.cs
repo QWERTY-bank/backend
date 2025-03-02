@@ -9,19 +9,25 @@ public static class OperationResultFactory
     public static OperationResult<T> FromError<T>(Error error) => new(error);
 
     public static OperationResult<T> NameIsNotUnique<T>(string title, string objectName) =>
-        new OperationResult<T>(
+        new(
             new Error(
                 OperationErrorCodes.InvalidData,
                 $"{objectName} c названием {title} уже существует"));
     
     public static OperationResult<T> NotFound<T>(long id) =>
-        new OperationResult<T>(
+        new(
             new Error(
                 OperationErrorCodes.NotFound,
                 $"Сущность с идентификатором {id} не найдена"));
     
+    public static OperationResult<T> NotFound<T>() =>
+        new(
+            new Error(
+                OperationErrorCodes.NotFound,
+                $"Сущность не найдена"));
+    
     public static OperationResult<T> InvalidData<T>(string message) =>
-        new OperationResult<T>(
+        new(
             new Error(
                 OperationErrorCodes.InvalidData,
                 message));
