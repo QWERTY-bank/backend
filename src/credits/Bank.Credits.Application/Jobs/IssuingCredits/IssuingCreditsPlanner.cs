@@ -1,4 +1,5 @@
-﻿using Bank.Credits.Application.Jobs.IssuingCredits.Configurations;
+﻿using Bank.Credits.Application.Jobs.Helpers;
+using Bank.Credits.Application.Jobs.IssuingCredits.Configurations;
 using Bank.Credits.Domain.Credits;
 using Bank.Credits.Domain.Jobs;
 using Bank.Credits.Persistence;
@@ -33,43 +34,42 @@ namespace Bank.Credits.Application.Jobs.IssuingCredits
                 await _dbContext.CloseIssuingCreditsPlansForUpdate();
 
                 var creditsQuery = _dbContext.Credits
-                    .Where(x => x.Status == CreditStatusType.Requested)
-                    .Select(x => x.PlanId);
+                    .Where(x => x.Status == CreditStatusType.Requested);
+
+                var creditsExists = await creditsQuery.AnyAsync();
+                if (!creditsExists)
+                {
+                    return;
+                }
 
                 // Запрашиваем минимальный и максимальный planId кредита со статусом Requested
-                var minPlanId = await creditsQuery.MinAsync();
-                var maxPlanId = await creditsQuery.MaxAsync();
+                var minPlanId = await creditsQuery.MinAsync(x => x.PlanId);
+                var maxPlanId = await creditsQuery.MaxAsync(x => x.PlanId);
 
                 // Запрашиваем последний запрос и берем от туда ToPlanId
                 var lastIssuingCreditsPlan = await _dbContext.IssuingCreditsPlans
                     .OrderByDescending(x => x.Id)
                     .FirstOrDefaultAsync();
 
-                minPlanId = lastIssuingCreditsPlan == null || lastIssuingCreditsPlan.ToPlanId < minPlanId
+                minPlanId = lastIssuingCreditsPlan == null || lastIssuingCreditsPlan.ToPlanId + 1 < minPlanId
                     ? minPlanId
-                    : lastIssuingCreditsPlan.ToPlanId;
+                    : lastIssuingCreditsPlan.ToPlanId + 1;
 
-                if (minPlanId < maxPlanId)
+                if (minPlanId <= maxPlanId)
                 {
                     var issuingCreditsPlans = new List<IssuingCreditsPlan>();
 
-                    for (var i = 0; i < (maxPlanId - minPlanId) / _options.CreditsInOneRequest; i++)
+                    for (var i = 0; i < (maxPlanId - minPlanId + 1) / _options.CreditsInOneRequest; i++)
                     {
-                        issuingCreditsPlans.Add(new IssuingCreditsPlan
-                        {
-                            FromPlanId = minPlanId + i * _options.CreditsInOneRequest, // TODO: Проверить правильность расчета
-                            ToPlanId = minPlanId + (i + 1) * _options.CreditsInOneRequest,
-                        });
+                        var plan = PlanFabric.CreatePlan<IssuingCreditsPlan>(minPlanId, maxPlanId, _options.CreditsInOneRequest, i);
+                        issuingCreditsPlans.Add(plan);
                     }
 
                     // Если есть остаток от деления, то добавляем еще один запрос для обработки оставшихся кредитов
-                    if ((maxPlanId - minPlanId) % _options.CreditsInOneRequest > 0)
+                    if ((maxPlanId - minPlanId + 1) % _options.CreditsInOneRequest > 0)
                     {
-                        issuingCreditsPlans.Add(new IssuingCreditsPlan
-                        {
-                            FromPlanId = minPlanId + issuingCreditsPlans.Count * _options.CreditsInOneRequest,
-                            ToPlanId = maxPlanId,
-                        });
+                        var plan = PlanFabric.CreatePlan<IssuingCreditsPlan>(minPlanId, maxPlanId, _options.CreditsInOneRequest, issuingCreditsPlans.Count);
+                        issuingCreditsPlans.Add(plan);
                     }
 
                     await _dbContext.IssuingCreditsPlans.AddRangeAsync(issuingCreditsPlans);

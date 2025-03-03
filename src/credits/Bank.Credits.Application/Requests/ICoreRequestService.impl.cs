@@ -18,8 +18,10 @@ namespace Bank.Credits.Application.Requests
             throw new NotImplementedException();
         }
 
-        public Task<ExecutionResult> UnitAccountDepositTransfer(TransactionDto model)
+        public async Task<ExecutionResult> UnitAccountDepositTransfer(TransactionDto model)
         {
+            return ExecutionResult.FromSuccess();
+
             throw new NotImplementedException();
         }
 

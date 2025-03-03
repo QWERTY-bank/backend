@@ -3,6 +3,7 @@ using System;
 using Bank.Credits.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bank.Credits.Persistence.Migrations
 {
     [DbContext(typeof(CreditsDbContext))]
-    partial class CreditsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250302181355_AddIssuingCreditsPlanEntity")]
+    partial class AddIssuingCreditsPlanEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,8 +61,6 @@ namespace Bank.Credits.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PlanId");
-
                     b.HasIndex("TariffId");
 
                     b.ToTable("Credits", "bank_credits");
@@ -88,9 +89,6 @@ namespace Bank.Credits.Persistence.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
 
                     b.ToTable("IssuingCreditsPlans", "bank_plans");
                 });

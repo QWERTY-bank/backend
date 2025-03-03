@@ -1,4 +1,5 @@
-﻿using Bank.Credits.Application.Jobs.IssuingCredits.Configurations;
+﻿using Bank.Credits.Application.Jobs.Helpers;
+using Bank.Credits.Application.Jobs.IssuingCredits.Configurations;
 using Bank.Credits.Application.Requests;
 using Bank.Credits.Application.Requests.Models;
 using Bank.Credits.Domain.Credits;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Quartz;
+using System.Data;
 
 namespace Bank.Credits.Application.Jobs.IssuingCredits
 {
@@ -40,20 +42,14 @@ namespace Bank.Credits.Application.Jobs.IssuingCredits
 
             try
             {
-                for (var i = 0; i < (creditRequest.ToPlanId - creditRequest.FromPlanId) / _options.CreditsInOneRequest; i++)
+                for (var i = 0; i < (creditRequest.ToPlanId - creditRequest.FromPlanId + 1) / _options.CreditsInOneRequest; i++)
                 {
-                    await HandleCredits(
-                        creditRequest.FromPlanId + _options.CreditsInOneRequest * i + (i == 0 ? 0 : 1),
-                        creditRequest.FromPlanId + _options.CreditsInOneRequest * (i + 1)
-                    );
+                    await HandleCredits(creditRequest.FromPlanId, creditRequest.ToPlanId, i);
                 }
 
-                if ((creditRequest.ToPlanId - creditRequest.FromPlanId) % _options.CreditsInOneRequest > 0)
+                if ((creditRequest.ToPlanId - creditRequest.FromPlanId + 1) % _options.CreditsInOneRequest > 0)
                 {
-                    await HandleCredits(
-                        creditRequest.FromPlanId + _options.CreditsInOneRequest * ((creditRequest.ToPlanId - creditRequest.FromPlanId) / _options.CreditsInOneRequest) + 1,
-                        creditRequest.ToPlanId
-                    );
+                    await HandleCredits(creditRequest.FromPlanId, creditRequest.ToPlanId, (creditRequest.ToPlanId - creditRequest.FromPlanId + 1) / _options.CreditsInOneRequest);
                 }
             }
             catch (Exception ex)
@@ -70,13 +66,13 @@ namespace Bank.Credits.Application.Jobs.IssuingCredits
             await _dbContext.SaveChangesAsync();
         }
 
-        private async Task HandleCredits(long fromPlanId, long toPlanId)
+        private async Task HandleCredits(long startFrom, long endAt, long segmentIndex)
         {
-            using var scope = await _dbContext.Database.BeginTransactionAsync();
+            (long fromPlanId, long toPlanId) = PlanFabric.GetSegment(startFrom, endAt, _options.CreditsInOneRequest, segmentIndex);
+
+            using var scope = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
             try
             {
-                await _dbContext.CloseIssuingCreditsForUpdate(fromPlanId, toPlanId);
-
                 var credits = await _dbContext.Credits
                     .Where(x => x.Status == CreditStatusType.Requested)
                     .Where(x => fromPlanId <= x.PlanId && x.PlanId <= toPlanId)
@@ -113,17 +109,13 @@ namespace Bank.Credits.Application.Jobs.IssuingCredits
                .Where(x => x.Status == PlanStatusType.Wait || x.Status == PlanStatusType.Error ||
                            x.Status == PlanStatusType.InProcess && x.StatusUpdatedAt < DateTime.UtcNow.AddMinutes(-1));
 
-            var creditRequest = await creditRequestQuery
-                .FirstOrDefaultAsync();
+            var creditRequest = await creditRequestQuery.FirstOrDefaultAsync();
             if (creditRequest != null)
             {
-                using var scope = await _dbContext.Database.BeginTransactionAsync();
+                using var scope = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
                 try
                 {
-                    await _dbContext.CloseIssuingCreditsPlanForUpdate(creditRequest.Id);
-
-                    creditRequest = await creditRequestQuery
-                        .FirstOrDefaultAsync(x => x.Id == creditRequest.Id);
+                    creditRequest = await creditRequestQuery.FirstOrDefaultAsync(x => x.Id == creditRequest.Id);
                     if (creditRequest == null)
                     {
                         return null;

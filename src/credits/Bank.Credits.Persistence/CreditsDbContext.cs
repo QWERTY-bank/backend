@@ -53,6 +53,8 @@ namespace Bank.Credits.Persistence
             modelBuilder.Entity<Credit>()
                 .Property(x => x.PlanId)
                 .ValueGeneratedOnAdd();
+            modelBuilder.Entity<Credit>()
+                .HasIndex(x => x.PlanId);
 
             #endregion
 
@@ -65,6 +67,9 @@ namespace Bank.Credits.Persistence
             modelBuilder.Entity<IssuingCreditsPlan>()
                 .Property(x => x.Status)
                 .HasDefaultValue(PlanStatusType.Wait);
+            modelBuilder.Entity<IssuingCreditsPlan>()
+                .HasIndex(x => x.Id)
+                .IsUnique();
 
             #endregion
         }

@@ -1,8 +1,7 @@
-﻿using Bank.Credits.Application.Jobs.IssuingCredits.Configurations;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace Bank.Common.Api.Configurations.Swagger
+namespace Bank.Credits.Application.Jobs.IssuingCredits.Configurations
 {
     public class IssuingCreditsHandlerOptionsConfigure(IConfiguration configuration) : IConfigureOptions<IssuingCreditsHandlerOptions>
     {
