@@ -4,6 +4,7 @@ using Bank.Users.Api.Configurations.Authorization;
 using Bank.Users.Api.Mappers;
 using Bank.Users.Application;
 using Bank.Users.Application.Auth;
+using Bank.Users.Application.Auth.Configurations;
 using Bank.Users.Application.Auth.Mapper;
 using Bank.Users.Application.Users;
 using Bank.Users.Application.Users.Mapper;
@@ -26,6 +27,7 @@ namespace Bank.Users.Api
         public static void AddUsersServices(this IServiceCollection services)
         {
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IServiceTokenService, ServiceTokenService>();
             services.AddScoped<ITokensService, TokensService>();
             services.AddScoped<IRefreshTokenStore, RefreshTokenStore>();
             services.AddScoped<IPasswordService, PasswordService>();
@@ -68,6 +70,7 @@ namespace Bank.Users.Api
             services.AddModalStateConfigure();
             services.ConfigureOptions<JwtBearerOptionsWithoutValidateLifetimeConfigure>();
             services.ConfigureOptions<AuthorizationOptionsWithoutValidateLifetimeConfigure>();
+            services.ConfigureOptions<JwtServiceOptionsConfigure>();
             services.AddJwtAuthentication()
                 .AddJwtBearer(JwtBearerWithoutValidateLifetimeDefaults.CheckOnlySignature);
         }

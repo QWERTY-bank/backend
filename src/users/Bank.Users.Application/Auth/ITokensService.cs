@@ -6,7 +6,7 @@ namespace Bank.Users.Application.Auth
 {
     public interface ITokensService
     {
-        Task<ExecutionResult<TokensDTO>> CreateTokensAsync(UserEntity user);
+        Task<ExecutionResult<TokensDTO>> CreateUserTokensAsync(UserEntity user);
         Task<ExecutionResult> RemoveRefreshAsync(Guid accessTokenJTI);
         Task<ExecutionResult> RemoveRefreshAsync(string refreshToken, Guid accessTokenJTI);
     }
