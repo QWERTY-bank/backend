@@ -11,7 +11,7 @@ internal static class CoreDbContextExtensions
     {
         var accountIdsString = string.Join(",", accountIds);
         
-        var command = $"SELECT id FROM bank_core.account_entity WHERE id IN ({accountIdsString}) AND is_closed = false FOR UPDATE;";
+        var command = $"SELECT id FROM bank_core.account_entity WHERE id IN ({accountIdsString}) FOR UPDATE;";
         return dbContext.Database.ExecuteSqlRawAsync(command, cancellationToken);
     }
     public static Task<int> SelectAccountForUpdate(
@@ -19,7 +19,7 @@ internal static class CoreDbContextExtensions
         long accountId,
         CancellationToken cancellationToken)
     {
-        var command = $"SELECT id FROM bank_core.account_entity WHERE id = {accountId} AND is_closed = false FOR UPDATE;";
+        var command = $"SELECT id FROM bank_core.account_entity WHERE id = {accountId} FOR UPDATE;";
         return dbContext.Database.ExecuteSqlRawAsync(command, cancellationToken);
     }
 }

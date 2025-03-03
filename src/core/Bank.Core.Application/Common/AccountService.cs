@@ -35,7 +35,7 @@ public class AccountService
             cancellationToken);
 
         var accountById = await _dbContext.Accounts
-            .Where(account => accountIds.Contains(account.Id))
+            .Where(account => accountIds.Contains(account.Id) && !account.IsClosed)
             .Include(account => account.AccountCurrencies)
             .ToDictionaryAsync(
                 account => account.Id,
