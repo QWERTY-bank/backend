@@ -9,9 +9,7 @@ namespace Bank.Credits.Application.Tariffs.Mapper
         public TariffApplicationMapperProfile()
         {
             CreateMap<Tariff, TariffDto>();
-
-            CreateMap<CreateTariffDto, Tariff>()
-                .ForMember(x => x.Name, opt => opt.MapFrom(x => x.Name.Trim()));
+            CreateMap<CreateTariffDto, Tariff>();
         }
     }
 }

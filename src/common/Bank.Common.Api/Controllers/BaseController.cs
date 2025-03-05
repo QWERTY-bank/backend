@@ -41,7 +41,7 @@ namespace Bank.Common.Api.Controllers
             return Ok(response.Result.AddMetaData());
         }
 
-        private ActionResult ExecutionResultHandler(ExecutionResult executionResult, string? otherMassage = null)
+        protected ActionResult ExecutionResultHandler(ExecutionResult executionResult, string? otherMassage = null)
         {
             if (executionResult.IsSuccess)
             {

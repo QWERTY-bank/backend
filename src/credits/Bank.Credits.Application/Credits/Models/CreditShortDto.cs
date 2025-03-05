@@ -1,8 +1,15 @@
-﻿namespace Bank.Credits.Application.Credits
+﻿using Bank.Credits.Domain.Credits;
+
+namespace Bank.Credits.Application.Credits.Models
 {
     public class CreditShortDto
     {
         public required Guid Id { get; init; }
+
+        /// <summary>
+        /// Статус кредита
+        /// </summary>
+        public required CreditStatusType Status { get; set; }
 
         /// <summary>
         /// Сумма долга
@@ -18,10 +25,5 @@
         /// Дата следующего платежа
         /// </summary>
         public required DateOnly NextPaymentDateOnly { get; init; }
-
-        /// <summary>
-        /// Погашен ли кредит
-        /// </summary>
-        public required bool IsRepaid { get; init; }
     }
 }

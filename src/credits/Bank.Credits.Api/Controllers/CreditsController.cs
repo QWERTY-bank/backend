@@ -1,8 +1,10 @@
-﻿using Bank.Common.Api.Controllers;
+﻿using AutoMapper;
+using Bank.Common.Api.Controllers;
 using Bank.Common.Api.DTOs;
 using Bank.Common.Auth.Attributes;
 using Bank.Credits.Api.Models.Credits;
 using Bank.Credits.Application.Credits;
+using Bank.Credits.Application.Credits.Models;
 using Microsoft.AspNetCore.Mvc;
 using static Bank.Common.Application.Extensions.PagedListExtensions;
 
@@ -16,14 +18,29 @@ namespace Bank.Credits.Api.Controllers
     [BankAuthorize]
     public class CreditsController : BaseController
     {
+        private readonly ICreditsService _creditsService;
+        private readonly IMapper _mapper;
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        public CreditsController(
+            ICreditsService creditsService,
+            IMapper mapper)
+        {
+            _creditsService = creditsService;
+            _mapper = mapper;
+        }
+
         /// <summary>
         /// Получить историю кредитов
         /// </summary>
         [HttpGet]
         [ProducesResponseType(typeof(PagedListWithMetadata<CreditShortDto>), StatusCodes.Status200OK)]
-        public Task<ActionResult> GetCreditsAsync([FromQuery] CreditsFilter filter, [FromQuery] Pagination pagination)
+        public async Task<IActionResult> GetCreditsAsync([FromQuery] CreditsFilter filter, [FromQuery] Pagination pagination)
         {
-            throw new NotImplementedException();
+            return await ExecutionResultHandlerAsync(()
+                => _creditsService.GetCreditsAsync(filter, pagination.Page, pagination.Size, UserId));
         }
 
         /// <summary>
@@ -31,9 +48,10 @@ namespace Bank.Credits.Api.Controllers
         /// </summary>
         [HttpGet("{creditId}")]
         [ProducesResponseType(typeof(CreditDto), StatusCodes.Status200OK)]
-        public Task<ActionResult> GetCreditAsync([FromRoute] Guid creditId)
+        public async Task<IActionResult> GetCreditAsync([FromRoute] Guid creditId)
         {
-            throw new NotImplementedException();
+            return await ExecutionResultHandlerAsync(()
+                => _creditsService.GetCreditAsync(creditId, UserId));
         }
 
         /// <summary>
@@ -41,18 +59,20 @@ namespace Bank.Credits.Api.Controllers
         /// </summary>
         [HttpPost("apply")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public Task<ActionResult> TakeCreditAsync([FromBody] TakeCreditRequest request)
+        public async Task<IActionResult> TakeCreditAsync([FromBody] TakeCreditRequest request)
         {
-            throw new NotImplementedException();
+            return await ExecutionResultHandlerAsync(()
+                => _creditsService.TakeCreditAsync(_mapper.Map<TakeCreditDto>(request), UserId));
         }
 
         /// <summary>
         /// Уменьшить сумму долга по кредиту
         /// </summary>
         [HttpPost("{creditId}/reduce_payment")]
-        public Task<ActionResult> ReduceCreditAsync([FromBody] ReduceCreditRequest request, [FromRoute] Guid creditId)
+        public async Task<IActionResult> ReduceCreditAsync([FromBody] ReduceCreditRequest request, [FromRoute] Guid creditId)
         {
-            throw new NotImplementedException();
+            return await ExecutionResultHandlerAsync(()
+                => _creditsService.ReduceCreditAsync(creditId, _mapper.Map<ReduceCreditDto>(request), UserId));
         }
     }
 }

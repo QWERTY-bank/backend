@@ -2,10 +2,10 @@
 using Bank.Common.Api.Controllers;
 using Bank.Common.Api.DTOs;
 using Bank.Common.Auth.Attributes;
+using Bank.Common.Models.Auth;
 using Bank.Credits.Api.Models.Tariffs;
 using Bank.Credits.Application.Tariffs;
 using Bank.Credits.Application.Tariffs.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Bank.Common.Application.Extensions.PagedListExtensions;
 
@@ -16,8 +16,6 @@ namespace Bank.Credits.Api.Controllers
     /// </summary>
     [Route("api/tariffs")]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    [BankAuthorize]
-    [AllowAnonymous]
     public class TariffController : BaseController
     {
         private readonly ITariffsService _tariffsService;
@@ -39,6 +37,7 @@ namespace Bank.Credits.Api.Controllers
         /// </summary>
         [HttpGet]
         [ProducesResponseType(typeof(PagedListWithMetadata<TariffDto>), StatusCodes.Status200OK)]
+        [BankAuthorize]
         public async Task<IActionResult> GetTariffsAsync([FromQuery] TariffsFilters filters, [FromQuery] Pagination pagination)
         {
             return await ExecutionResultHandlerAsync(()
@@ -50,6 +49,7 @@ namespace Bank.Credits.Api.Controllers
         /// </summary>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [BankAuthorize(RoleType.Employee)]
         public async Task<IActionResult> CreateTariffAsync([FromBody] CreateTariffRequest request)
         {
             return await ExecutionResultHandlerAsync(()
@@ -60,6 +60,7 @@ namespace Bank.Credits.Api.Controllers
         /// Удалить тариф (для сотрудников)
         /// </summary>
         [HttpDelete("{tariffId}")]
+        [BankAuthorize(RoleType.Employee)]
         public async Task<IActionResult> DeleteTariffAsync([FromRoute] Guid tariffId)
         {
             return await ExecutionResultHandlerAsync(()

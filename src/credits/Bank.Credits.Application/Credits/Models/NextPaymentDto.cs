@@ -1,4 +1,4 @@
-﻿namespace Bank.Credits.Application.Payments
+﻿namespace Bank.Credits.Application.Credits.Models
 {
     public class NextPaymentDto
     {

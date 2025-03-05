@@ -1,20 +1,20 @@
-﻿using Bank.Credits.Application.Payments;
+﻿using Bank.Credits.Domain.Credits;
 
-namespace Bank.Credits.Application.Credits
+namespace Bank.Credits.Application.Credits.Models
 {
     public class CreditDto
     {
         public required Guid Id { get; init; }
 
         /// <summary>
+        /// Статус кредита
+        /// </summary>
+        public required CreditStatusType Status { get; set; }
+
+        /// <summary>
         /// Сумма долга
         /// </summary>
         public required decimal DebtAmount { get; init; }
-
-        /// <summary>
-        /// Погашен ли кредит
-        /// </summary>
-        public required bool IsRepaid { get; init; }
 
         /// <summary>
         /// Дата взятия кредита

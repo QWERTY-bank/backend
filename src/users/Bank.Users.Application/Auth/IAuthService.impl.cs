@@ -67,7 +67,7 @@ namespace Bank.Users.Application.Auth
 
             await _context.SaveChangesAsync();
 
-            return await _tokensService.CreateTokensAsync(newUser);
+            return await _tokensService.CreateUserTokensAsync(newUser);
         }
 
         public async Task<ExecutionResult<TokensDTO>> LoginAsync(LoginDTO model)
@@ -94,7 +94,7 @@ namespace Bank.Users.Application.Auth
                 return ExecutionResult<TokensDTO>.FromBadRequest("LoginFail", "login fail.");
             }
 
-            return await _tokensService.CreateTokensAsync(user);
+            return await _tokensService.CreateUserTokensAsync(user);
         }
 
         public async Task<ExecutionResult<TokensDTO>> UpdateAccessTokenAsync(string refresh, Guid accessTokenJTI, Guid userId)
@@ -120,7 +120,7 @@ namespace Bank.Users.Application.Auth
                 return ExecutionResult<TokensDTO>.FromForbid("UserBlocked", "The user has been blocked.");
             }
 
-            return await _tokensService.CreateTokensAsync(user);
+            return await _tokensService.CreateUserTokensAsync(user);
         }
     }
 }

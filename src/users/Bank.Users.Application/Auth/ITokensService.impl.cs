@@ -1,14 +1,12 @@
 ﻿using Bank.Common.Auth;
 using Bank.Common.Auth.Configurations;
+using Bank.Users.Application.Auth.Helpers;
 using Bank.Users.Application.Auth.Models;
 using Bank.Users.Domain.Users;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 using Z1all.ExecutionResult.StatusCode;
 
@@ -19,7 +17,6 @@ namespace Bank.Users.Application.Auth
         private readonly IRefreshTokenStore _refreshTokenStore;
         private readonly ILogger<TokensService> _logger;
         private readonly JwtOptions _jwtOptions;
-        private readonly JwtSecurityTokenHandler _tokenHandler;
 
         public TokensService(
             IRefreshTokenStore refreshTokenStore,
@@ -29,20 +26,19 @@ namespace Bank.Users.Application.Auth
             _refreshTokenStore = refreshTokenStore;
             _logger = logger;
             _jwtOptions = options.Value;
-            _tokenHandler = new();
         }
 
-        public async Task<ExecutionResult<TokensDTO>> CreateTokensAsync(UserEntity user)
+        public async Task<ExecutionResult<TokensDTO>> CreateUserTokensAsync(UserEntity user)
         {
             Guid accessTokenJTI = Guid.NewGuid();
 
             List<Claim> claims = GetClaims(user, accessTokenJTI);
 
             var accessTokenExpired = DateTime.UtcNow.AddMinutes(_jwtOptions.AccessTokenTimeLifeMinutes);
-            var accessToken = GenerateJwtToken(claims, accessTokenExpired);
+            var accessToken = TokensHelper.GenerateJwtToken(claims, accessTokenExpired, _jwtOptions.SecretKey);
 
             var refreshTokenTimeLife = new TimeSpan(_jwtOptions.RefreshTokenTimeLifeDays, 0, 0, 0);
-            var refreshToken = GenerateRefreshToken();
+            var refreshToken = TokensHelper.GenerateRefreshToken();
 
             var saveRefreshTokenResult = await _refreshTokenStore.SaveAsync(refreshToken, accessTokenJTI, refreshTokenTimeLife);
             if (!saveRefreshTokenResult)
@@ -105,32 +101,6 @@ namespace Bank.Users.Application.Auth
             };
 
             return claims;
-        }
-
-        private string GenerateJwtToken(List<Claim> claims, DateTime expired)
-        {
-            byte[] key = Encoding.ASCII.GetBytes(_jwtOptions.SecretKey);
-
-            var tokenDescription = new SecurityTokenDescriptor()
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = expired,
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-            };
-
-            var token = _tokenHandler.CreateToken(tokenDescription);
-            return _tokenHandler.WriteToken(token);
-        }
-
-        private string GenerateRefreshToken()
-        {
-            var randomNumber = new byte[64];
-
-            using var generator = RandomNumberGenerator.Create();
-
-            generator.GetBytes(randomNumber);
-
-            return Convert.ToBase64String(randomNumber);
         }
     }
 }
