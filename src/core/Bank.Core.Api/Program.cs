@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Bank.Common.Api.Configurations;
 using Bank.Common.Api.Middlewares.Extensions;
 using Bank.Common.Auth.Extensions;
 using Bank.Core.Api.Infrastructure.Auth;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Http.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.ConfigureAppsettings();
 builder.Services
     .AddCoreSwagger()
     .AddCoreDatabase(builder.Configuration)
