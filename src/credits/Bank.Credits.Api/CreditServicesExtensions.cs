@@ -4,6 +4,7 @@ using Bank.Credits.Api.Mappers;
 using Bank.Credits.Application.Credits;
 using Bank.Credits.Application.Credits.Mapper;
 using Bank.Credits.Application.Requests;
+using Bank.Credits.Application.Requests.Configurations;
 using Bank.Credits.Application.Tariffs;
 using Bank.Credits.Application.Tariffs.Mapper;
 using Bank.Credits.Persistence;
@@ -28,6 +29,7 @@ namespace Bank.Credits.Api
 
             services.AddScoped<ICoreRequestService, CoreRequestService>();
             services.AddScoped<ITokenService, TokenService>();
+            services.AddMemoryCache();
         }
 
         /// <summary>
@@ -61,6 +63,9 @@ namespace Bank.Credits.Api
             services.AddSwaggerConfigure();
             services.AddModalStateConfigure();
             services.AddJwtAuthentication();
+
+            services.ConfigureOptions<TokenServiceOptionsConfigure>();
+            services.ConfigureOptions<CoreRequestOptionsConfigure>();
         }
 
         /// <summary>

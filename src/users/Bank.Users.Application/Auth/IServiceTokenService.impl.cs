@@ -1,6 +1,7 @@
-﻿using Bank.Users.Application.Auth.Configurations;
+﻿using Bank.Common.Application.Models;
+using Bank.Common.Auth;
+using Bank.Users.Application.Auth.Configurations;
 using Bank.Users.Application.Auth.Helpers;
-using Bank.Users.Application.Auth.Models;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -29,6 +30,7 @@ namespace Bank.Users.Application.Auth
             return ExecutionResult<ServiceTokenDto>.FromSuccess(new ServiceTokenDto
             {
                 Token = token,
+                ExpiredDateTime = tokenExpired
             });
         }
 
@@ -38,6 +40,7 @@ namespace Bank.Users.Application.Auth
             {
                 new Claim(JwtRegisteredClaimNames.Jti, accessTokenJTI.ToString()),
                 new Claim(ClaimTypes.NameIdentifier, "a99fb2a5-c52e-4168-8ac9-b28878d3b407"),
+                new Claim(BankClaimTypes.Scope, "unit-account"),
             };
 
             return claims;

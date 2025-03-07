@@ -1,4 +1,4 @@
-﻿namespace Bank.Users.Application.Auth.Models
+﻿namespace Bank.Common.Application.Models
 {
     public class ServiceTokenDto
     {

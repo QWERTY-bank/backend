@@ -80,7 +80,7 @@ namespace Bank.Credits.Application.Jobs.IssuingCredits
 
                 foreach (var credit in credits)
                 {
-                    var result = await _coreRequestService.UnitAccountDepositTransfer(new()
+                    var result = await _coreRequestService.UnitAccountDepositTransferAsync(new()
                     {
                         Key = credit.Key,
                         CurrencyValues = [
@@ -90,7 +90,7 @@ namespace Bank.Credits.Application.Jobs.IssuingCredits
                                 Value = credit.DebtAmount
                             }
                         ]
-                    });
+                    }, credit.AccountId);
 
                     credit.Status = result.IsSuccess ? CreditStatusType.Active : CreditStatusType.Canceled;
                 }
