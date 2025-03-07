@@ -73,6 +73,31 @@ public class AccountController : BaseController
     }
     
     /// <summary>
+    /// Возвращает баланс счета
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpGet("{id:long}/balance")]
+    [ProducesResponseType(typeof(MyBalanceDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
+    public async Task<IResult> GetMyAccountBalance(
+        [FromRoute] long id,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetMyAccountBalanceQuery
+        {
+            UserId = UserId,
+            AccountId = id
+        };
+        var result = await _mediator.Send(query, cancellationToken);
+
+        return result.ToEndpointResult();
+    }
+    
+    /// <summary>
     /// Возвращает транзакции счета пользователя
     /// </summary>
     /// <param name="id"></param>
