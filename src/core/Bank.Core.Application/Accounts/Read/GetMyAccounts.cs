@@ -7,7 +7,7 @@ namespace Bank.Core.Application.Accounts.Read;
 
 public class GetMyAccountsQuery : IRequest<OperationResult<IReadOnlyCollection<AccountDto>>>
 {
-    public Guid UserId { get; init; }
+    public required Guid UserId { get; init; }
 }
 
 public class GetMyAccountsQueryHandler : IRequestHandler<GetMyAccountsQuery, OperationResult<IReadOnlyCollection<AccountDto>>>
