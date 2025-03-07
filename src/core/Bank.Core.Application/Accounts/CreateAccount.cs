@@ -1,5 +1,6 @@
 using Bank.Core.Domain.Accounts;
 using Bank.Core.Domain.Common;
+using Bank.Core.Domain.Currencies;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -26,7 +27,15 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
         var account = new PersonalAccountEntity
         {
             Title = command.Title,
-            UserId = command.UserId
+            UserId = command.UserId,
+            AccountCurrencies =
+            [
+                new AccountCurrencyEntity
+                {
+                    Code = CurrencyCode.Rub,
+                    Value = 0
+                }
+            ]
         };
         
         _dbContext.Accounts.Add(account);
