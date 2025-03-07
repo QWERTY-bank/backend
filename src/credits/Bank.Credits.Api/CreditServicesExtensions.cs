@@ -65,6 +65,7 @@ namespace Bank.Credits.Api
             services.AddJwtAuthentication();
 
             services.ConfigureOptions<TokenServiceOptionsConfigure>();
+            services.ConfigureOptions<CoreRequestOptionsConfigure>();
         }
 
         /// <summary>

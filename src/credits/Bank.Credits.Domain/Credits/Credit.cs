@@ -16,6 +16,11 @@ namespace Bank.Credits.Domain.Credits
         public required Guid UserId { get; set; }
 
         /// <summary>
+        /// Номер счета, на который выдан кредит
+        /// </summary>
+        public required long AccountId { get; set; }
+
+        /// <summary>
         /// Статус кредита
         /// </summary>
         public required CreditStatusType Status { get; set; }

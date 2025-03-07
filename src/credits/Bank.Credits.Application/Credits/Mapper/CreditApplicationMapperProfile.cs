@@ -9,6 +9,7 @@ namespace Bank.Credits.Application.Credits.Mapper
         public CreditApplicationMapperProfile()
         {
             CreateMap<TakeCreditDto, Credit>()
+                .ForMember(x => x.DebtAmount, opt => opt.MapFrom(x => x.LoanAmount))
                 .ForMember(x => x.UserId, opt => opt.Ignore())
                 .ForMember(x => x.UserId, opt => opt.Ignore());
 

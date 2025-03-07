@@ -4,5 +4,6 @@
     {
         public const string MaxRole = "MaxRole";
         public const string Roles = "Roles";
+        public const string Scope = "scope";
     }
 }

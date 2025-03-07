@@ -1,4 +1,5 @@
 ﻿using Bank.Common.Application.Models;
+using Bank.Common.Auth;
 using Bank.Users.Application.Auth.Configurations;
 using Bank.Users.Application.Auth.Helpers;
 using Microsoft.Extensions.Options;
@@ -39,6 +40,7 @@ namespace Bank.Users.Application.Auth
             {
                 new Claim(JwtRegisteredClaimNames.Jti, accessTokenJTI.ToString()),
                 new Claim(ClaimTypes.NameIdentifier, "a99fb2a5-c52e-4168-8ac9-b28878d3b407"),
+                new Claim(BankClaimTypes.Scope, "unit-account"),
             };
 
             return claims;
