@@ -1,6 +1,6 @@
-﻿using Bank.Users.Application.Auth.Configurations;
+﻿using Bank.Common.Application.Models;
+using Bank.Users.Application.Auth.Configurations;
 using Bank.Users.Application.Auth.Helpers;
-using Bank.Users.Application.Auth.Models;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -29,6 +29,7 @@ namespace Bank.Users.Application.Auth
             return ExecutionResult<ServiceTokenDto>.FromSuccess(new ServiceTokenDto
             {
                 Token = token,
+                ExpiredDateTime = tokenExpired
             });
         }
 

@@ -20,6 +20,8 @@ namespace Bank.Credits.Application.Requests
 
         public async Task<ExecutionResult> UnitAccountDepositTransfer(TransactionDto model)
         {
+            var token = await _tokenService.GetServiceTokenAsync();
+
             return ExecutionResult.FromSuccess();
 
             throw new NotImplementedException();

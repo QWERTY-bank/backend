@@ -1,7 +1,8 @@
 ﻿using Bank.Common.Api.Controllers;
 using Bank.Common.Api.DTOs;
+using Bank.Common.Application.Models;
+using Bank.Users.Api.Models.ServiceAuth;
 using Bank.Users.Application.Auth;
-using Bank.Users.Application.Auth.Models;
 using Microsoft.AspNetCore.Mvc;
 using Z1all.ExecutionResult.StatusCode;
 
@@ -16,25 +17,30 @@ namespace Bank.Users.Api.Controllers
     public class ServiceAuthController : BaseController
     {
         private readonly IServiceTokenService _serviceTokenService;
+        private readonly string _secret;
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        public ServiceAuthController(IServiceTokenService serviceTokenService)
+        public ServiceAuthController(IServiceTokenService serviceTokenService, IConfiguration configuration)
         {
             _serviceTokenService = serviceTokenService;
+            _secret = configuration.GetRequiredSection("TokenService:Secret").Value!;
         }
 
         /// <summary>
         /// Создает токены сервисов для back to back взаимодействия
         /// </summary>
-        [HttpGet("login")]
+        [HttpPost("login")]
         [ProducesResponseType(typeof(ServiceTokenDto), StatusCodes.Status200OK)]
-        public IActionResult ServiceLogin()
+        public IActionResult ServiceLogin(LoginServiceAuthRequest request)
         {
-            var result = _serviceTokenService.CreateServiceTokens();
+            if (request.Secret != _secret)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden);
+            }
 
-            // TODO: Добавить проверку пароля
+            var result = _serviceTokenService.CreateServiceTokens();
 
             if (!result.IsSuccess) return ExecutionResultHandler(ExecutionResult.FromError(result));
             return Ok(result.Result!);
