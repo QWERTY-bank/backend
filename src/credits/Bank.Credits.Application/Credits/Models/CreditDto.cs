@@ -19,7 +19,7 @@ namespace Bank.Credits.Application.Credits.Models
         /// <summary>
         /// Дата взятия кредита
         /// </summary>
-        public required DateOnly TakingDate { get; init; }
+        public required DateOnly? TakingDate { get; init; }
 
         /// <summary>
         /// Следующие платежи

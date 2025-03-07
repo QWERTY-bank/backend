@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
-using Bank.Credits.Application.Credits.Models;
-using Bank.Credits.Application.Tariffs.Models;
-using Bank.Credits.Domain.Credits;
 using Bank.Common.Application.Extensions;
+using Bank.Credits.Application.Credits.Models;
+using Bank.Credits.Domain.Credits;
 using Bank.Credits.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -85,7 +84,7 @@ namespace Bank.Credits.Application.Credits
                 .FirstOrDefaultAsync(x => x.Id == creditId && x.UserId == userId);
             if (credit == null)
             {
-                _logger.LogWarning($"Credit with id = '{creditId}' not found");
+                _logger.LogInformation($"Credit with id = '{creditId}' not found");
                 return ExecutionResult<CreditDto>.FromNotFound("GetCredit", $"Credit with id = '{creditId}' not found");
             }
 
@@ -99,8 +98,21 @@ namespace Bank.Credits.Application.Credits
             var creditAlreadyRequested = await _context.Credits.AnyAsync(x => x.Key == model.Key);
             if (creditAlreadyRequested)
             {
-                _logger.LogWarning($"Credit with key = '{model.Key}' already requested");
+                _logger.LogInformation($"Credit with key = '{model.Key}' already requested");
                 return ExecutionResult.FromBadRequest("TakeCredit", "Credit already requested");
+            }
+
+            var tariff = await _context.Tariffs.FirstOrDefaultAsync(x => x.Id == model.TariffId);
+            if (tariff == null)
+            {
+                _logger.LogInformation($"Tariff with id = '{model.TariffId}' not found");
+                return ExecutionResult.FromBadRequest("TakeCredit", $"Tariff with id = '{model.TariffId}' not found");
+            }
+
+            if (model.PeriodDays < tariff.MinPeriodDays || tariff.MaxPeriodDays < model.PeriodDays)
+            {
+                _logger.LogInformation($"The number of days must be from {tariff.MinPeriodDays} to {tariff.MaxPeriodDays}");
+                return ExecutionResult.FromBadRequest("TakeCredit", $"The number of days must be from {tariff.MinPeriodDays} to {tariff.MaxPeriodDays}");
             }
 
             var newCredit = _mapper.Map<Credit>(model);

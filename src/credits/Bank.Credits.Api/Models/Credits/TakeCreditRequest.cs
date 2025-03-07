@@ -5,7 +5,7 @@ namespace Bank.Credits.Api.Models.Credits
     /// <summary>
     /// Запрос на получения кредита
     /// </summary>
-    public class TakeCreditRequest
+    public class TakeCreditRequest : IValidatableObject
     {
         /// <summary>
         /// Уникальный идентификатор транзакции
@@ -23,7 +23,7 @@ namespace Bank.Credits.Api.Models.Credits
         /// Id тарифа
         /// </summary>
         [Required]
-        public required Guid TarifId { get; set; }
+        public required Guid TariffId { get; set; }
 
         /// <summary>
         /// На дней сколько берем кредит
@@ -36,5 +36,21 @@ namespace Bank.Credits.Api.Models.Credits
         /// </summary>
         [Required]
         public required decimal LoanAmount { get; set; }
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (PeriodDays <= 0)
+            {
+                yield return new ValidationResult("PeriodDays must be greater than 0", new[] { nameof(PeriodDays) });
+            }
+
+            if (LoanAmount <= 0)
+            {
+                yield return new ValidationResult("LoanAmount must be greater than 0", new[] { nameof(LoanAmount) });
+            }
+        }
     }
 }
