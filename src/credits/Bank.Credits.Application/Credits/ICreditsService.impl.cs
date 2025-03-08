@@ -101,6 +101,38 @@ namespace Bank.Credits.Application.Credits
 
             var result = _mapper.Map<CreditDto>(credit);
 
+            result.NextPayments =
+            [
+                new () 
+                {
+                    PaymentAmount = 100,
+                    PaymentDateOnly = DateOnly.FromDateTime(DateTime.Now.AddDays(10))
+                },
+                new ()
+                {
+                    PaymentAmount = 100,
+                    PaymentDateOnly = DateOnly.FromDateTime(DateTime.Now.AddDays(20))
+                },
+                new ()
+                {
+                    PaymentAmount = 99,
+                    PaymentDateOnly = DateOnly.FromDateTime(DateTime.Now.AddDays(30))
+                }
+            ];
+            result.PaymentHistory = 
+            [
+                new() 
+                {
+                    PaymentAmount = 100,
+                    PaymentDateTime = DateTime.Today
+                },
+                new()
+                {
+                    PaymentAmount = 321,
+                    PaymentDateTime = DateTime.Today.AddDays(1)
+                }
+            ];
+
             return ExecutionResult<CreditDto>.FromSuccess(result);
         }
 
@@ -136,9 +168,9 @@ namespace Bank.Credits.Application.Credits
             return ExecutionResult.FromSuccess();
         }
 
-        public Task<ExecutionResult> ReduceCreditAsync(Guid creditId, ReduceCreditDto model, Guid userId)
+        public async Task<ExecutionResult> ReduceCreditAsync(Guid creditId, ReduceCreditDto model, Guid userId)
         {
-            throw new NotImplementedException();
+            return ExecutionResult.FromSuccess();
         }
     }
 }

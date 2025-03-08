@@ -24,11 +24,11 @@ namespace Bank.Credits.Application.Credits.Models
         /// <summary>
         /// Следующие платежи
         /// </summary>
-        public required List<NextPaymentDto> NextPayments { get; init; }
+        public required List<NextPaymentDto> NextPayments { get; set; }
 
         /// <summary>
         /// История платежей
         /// </summary>
-        public required List<PaymentDto> PaymentHistory { get; init; }
+        public required List<PaymentDto> PaymentHistory { get; set; }
     }
 }
