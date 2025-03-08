@@ -2,6 +2,7 @@
 using Bank.Common.Api.DTOs;
 using Bank.Common.Auth.Attributes;
 using Bank.Common.Models.Auth;
+using Bank.Users.Api.Models.Users;
 using Bank.Users.Application.Users;
 using Bank.Users.Application.Users.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -30,6 +31,20 @@ namespace Bank.Users.Api.Controllers
         public UsersController(IUserService userService)
         {
             _userService = userService;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
+        {
+            return await ExecutionResultHandlerAsync(()
+                => _userService.CreateUserAsync(new CreateUserDto()
+                {
+                    Birthday = request.Birthday,
+                    FullName = request.FullName,
+                    Gender = request.Gender,
+                    Password = request.Password,
+                    Phone = request.Phone,
+                }, request.Role));
         }
 
         /// <summary>
