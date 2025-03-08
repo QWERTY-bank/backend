@@ -21,6 +21,7 @@ namespace Bank.Credits.Persistence
 
         public DbSet<Tariff> Tariffs { get; set; }
         public DbSet<Credit> Credits { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
         #endregion
 
@@ -44,7 +45,9 @@ namespace Bank.Credits.Persistence
                 .ToTable(nameof(Tariffs));
 
             modelBuilder.Entity<Credit>()
-                .ToTable(nameof(Credits));   
+                .ToTable(nameof(Credits));
+            modelBuilder.Entity<Credit>()
+                .OwnsOne(x => x.PaymentsInfo);
             modelBuilder.Entity<Credit>()
                 .HasOne(x => x.Tariff)
                 .WithMany()
@@ -55,6 +58,14 @@ namespace Bank.Credits.Persistence
                 .ValueGeneratedOnAdd();
             modelBuilder.Entity<Credit>()
                 .HasIndex(x => x.PlanId);
+
+            modelBuilder.Entity<Payment>()
+                .ToTable(nameof(Payments));
+            modelBuilder.Entity<Payment>()
+                .HasOne(x => x.Credit)
+                .WithMany(x => x.PaymentHistory)
+                .HasForeignKey(x => x.CreditId)
+                .IsRequired();
 
             #endregion
 

@@ -1,10 +1,13 @@
 ﻿using Bank.Credits.Domain.Common;
 using Bank.Credits.Domain.Tariffs;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Bank.Credits.Domain.Credits
 {
     public class Credit : JobPlannedBaseEntity
     {
+        public CreditPaymentsInfo PaymentsInfo { get; set; } = null!;
+
         /// <summary>
         /// Ключ идемпотентности, с которым был создан кредит
         /// </summary>
@@ -36,6 +39,12 @@ namespace Bank.Credits.Domain.Credits
         public required DateOnly? TakingDate { get; set; }
 
         /// <summary>
+        /// День последнего платежа по кредиту
+        /// </summary>
+        [NotNullIfNotNull(nameof(TakingDate))]
+        public DateOnly? LastDate { get => TakingDate?.AddDays(PeriodDays - 1); }
+
+        /// <summary>
         /// Сумма долга по кредиту в текущий момент 
         /// </summary>
         public required decimal DebtAmount { get; set; }
@@ -49,5 +58,10 @@ namespace Bank.Credits.Domain.Credits
         /// Тариф, по которому выдан кредит
         /// </summary>
         public Tariff? Tariff { get; set; }
+
+        /// <summary>
+        /// История платежей по кредиту
+        /// </summary>
+        public List<Payment>? PaymentHistory { get; set; }
     }
 }

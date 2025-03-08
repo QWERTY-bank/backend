@@ -1,4 +1,4 @@
-﻿namespace Bank.Credits.Application.Credits.Constants
+﻿namespace Bank.Credits.Application.Constants
 {
     public static class CreditConstants
     {
