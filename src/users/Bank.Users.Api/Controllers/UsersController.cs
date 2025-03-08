@@ -6,7 +6,6 @@ using Bank.Users.Api.Models.Users;
 using Bank.Users.Application.Users;
 using Bank.Users.Application.Users.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Bank.Common.Application.Extensions.PagedListExtensions;
 
@@ -55,7 +54,7 @@ namespace Bank.Users.Api.Controllers
         public async Task<IActionResult> GetUsersAsync([FromQuery] Pagination pagination)
         {
             return await ExecutionResultHandlerAsync(()
-                => _userService.GetUsersAsync(pagination.Page, pagination.Size));
+                => _userService.GetUsersAsync(pagination.Page, pagination.Size, UserId));
         }
 
         /// <summary>
