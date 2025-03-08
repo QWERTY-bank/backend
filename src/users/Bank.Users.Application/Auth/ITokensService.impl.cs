@@ -34,7 +34,7 @@ namespace Bank.Users.Application.Auth
 
             List<Claim> claims = GetClaims(user, accessTokenJTI);
 
-            var accessTokenExpired = DateTime.UtcNow.AddMinutes(_jwtOptions.AccessTokenTimeLifeMinutes);
+            var accessTokenExpired = DateTime.UtcNow.Add(_jwtOptions.AccessTokenTimeLife);
             var accessToken = TokensHelper.GenerateJwtToken(claims, accessTokenExpired, _jwtOptions.SecretKey);
 
             var refreshTokenTimeLife = new TimeSpan(_jwtOptions.RefreshTokenTimeLifeDays, 0, 0, 0);
