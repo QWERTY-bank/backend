@@ -18,8 +18,9 @@ namespace Bank.Credits.Application.Credits.Mapper
                  .ForMember(x => x.NextPaymentDateOnly, opt => opt.MapFrom(_ => new DateOnly(2025, 4, 4)));
 
             CreateMap<Credit, CreditDto>()
-                .ForMember(x => x.NextPayments, opt => opt.MapFrom(_ => new List<NextPaymentDto>()))
-                .ForMember(x => x.PaymentHistory, opt => opt.MapFrom(_ => new List<PaymentDto>()));  
+                .ForMember(x => x.NextPayments, opt => opt.Ignore());
+
+            CreateMap<Payment, PaymentDto>();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Bank.Credits.Application.Jobs.Helpers;
+﻿using Bank.Credits.Application.Credits.Helpers;
+using Bank.Credits.Application.Jobs.Helpers;
 using Bank.Credits.Application.Jobs.IssuingCredits.Configurations;
 using Bank.Credits.Application.Requests;
 using Bank.Credits.Application.Requests.Models;
@@ -74,6 +75,8 @@ namespace Bank.Credits.Application.Jobs.IssuingCredits
             try
             {
                 var credits = await _dbContext.Credits
+                    .Include(x => x.Tariff)
+                    .Include(x => x.PaymentHistory)
                     .Where(x => x.Status == CreditStatusType.Requested)
                     .Where(x => fromPlanId <= x.PlanId && x.PlanId <= toPlanId)
                     .ToListAsync();
@@ -93,6 +96,8 @@ namespace Bank.Credits.Application.Jobs.IssuingCredits
                     }, credit.AccountId);
 
                     credit.Status = result.IsSuccess ? CreditStatusType.Active : CreditStatusType.Canceled;
+                    credit.TakingDate = CreditHelper.CurrentDate;
+                    credit.UpdateCreditPaymentsInfo();
                 }
 
                 await _dbContext.SaveChangesAsync();

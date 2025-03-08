@@ -78,7 +78,7 @@ namespace Bank.Credits.Application.Credits
                         PaymentAmount = credit.PaymentsInfo.Payment,
                         PaymentDateOnly = nextDate,
                     });
-                    nextDate.AddDays(CreditConstants.PaymentPeriodDays);
+                    nextDate = nextDate.AddDays(CreditConstants.PaymentPeriodDays);
                 }
 
                 result.NextPayments.Add(new()
@@ -136,7 +136,7 @@ namespace Bank.Credits.Application.Credits
                 return ExecutionResult.FromNotFound("ReduceCredit", $"Credit with id = '{creditId}' not found");
             }
 
-            if (credit.PaymentHistory != null)
+            if (credit.PaymentHistory?.Any() ?? false)
             {
                 _logger.LogInformation($"Payment with key = '{model.Key}' already requested");
                 return ExecutionResult.FromBadRequest("ReduceCredit", "Payment already requested");

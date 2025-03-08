@@ -45,7 +45,7 @@ namespace Bank.Credits.Application.Credits.Helpers
 
             var nextPaymentDate = CalculateNextPaymentDate(credit);
 
-            var daysLeft = credit.LastDate!.Value.DayNumber - nextPaymentDate.DayNumber;
+            var daysLeft = credit.LastDate!.Value.DayNumber - nextPaymentDate.DayNumber + 1;
             var remainedPaymentsCount = daysLeft > 0
                 ? (daysLeft / CreditConstants.PaymentPeriodDays) + (daysLeft % CreditConstants.PaymentPeriodDays == 0 ? 0 : 1)
                 : 1;
@@ -53,8 +53,10 @@ namespace Bank.Credits.Application.Credits.Helpers
             var interestRateType = credit.CalculateInterestRateForPeriod();
             var temp = Pow(1 + interestRateType, remainedPaymentsCount);
 
-            credit.PaymentsInfo.Payment = (int)Math.Ceiling(credit.DebtAmount * (interestRateType * temp) / (temp - 1));
-            credit.PaymentsInfo.LastPayment = credit.DebtAmount - credit.PaymentsInfo.Payment * remainedPaymentsCount;
+            var paymentForPeriod = Math.Round(credit.DebtAmount * (interestRateType * temp) / (temp - 1), 2);
+
+            credit.PaymentsInfo.Payment = (int)Math.Ceiling(paymentForPeriod);
+            credit.PaymentsInfo.LastPayment = paymentForPeriod * remainedPaymentsCount - credit.PaymentsInfo.Payment * (remainedPaymentsCount - 1);
         }
 
         private static decimal CalculateInterestRateForPeriod(this Credit credit)

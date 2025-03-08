@@ -42,7 +42,7 @@ namespace Bank.Credits.Domain.Credits
         /// День последнего платежа по кредиту
         /// </summary>
         [NotNullIfNotNull(nameof(TakingDate))]
-        public DateOnly? LastDate { get => TakingDate?.AddDays(PeriodDays); }
+        public DateOnly? LastDate { get => TakingDate?.AddDays(PeriodDays - 1); }
 
         /// <summary>
         /// Сумма долга по кредиту в текущий момент 
