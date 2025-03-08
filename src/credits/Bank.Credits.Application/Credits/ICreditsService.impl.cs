@@ -124,12 +124,20 @@ namespace Bank.Credits.Application.Credits
                 new() 
                 {
                     PaymentAmount = 100,
-                    PaymentDateTime = DateTime.Today
+                    PaymentDateTime = DateTime.Today,
+                    PaymentStatus = PaymentStatusType.InProcess,
                 },
                 new()
                 {
                     PaymentAmount = 321,
-                    PaymentDateTime = DateTime.Today.AddDays(1)
+                    PaymentDateTime = DateTime.Today.AddDays(1),
+                    PaymentStatus = PaymentStatusType.Conducted,
+                },
+                new()
+                {
+                    PaymentAmount = 321,
+                    PaymentDateTime = DateTime.Today.AddDays(1),
+                    PaymentStatus = PaymentStatusType.Canceled,
                 }
             ];
 

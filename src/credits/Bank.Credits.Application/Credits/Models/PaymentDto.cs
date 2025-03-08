@@ -1,4 +1,6 @@
-﻿namespace Bank.Credits.Application.Credits.Models
+﻿using Bank.Credits.Domain.Credits;
+
+namespace Bank.Credits.Application.Credits.Models
 {
     public class PaymentDto
     {
@@ -11,5 +13,10 @@
         /// Дата и время совершенного платежа
         /// </summary>
         public required DateTime PaymentDateTime { get; init; }
+
+        /// <summary>
+        /// Статус платежа
+        /// </summary>
+        public required PaymentStatusType PaymentStatus { get; init; }
     }
 }
