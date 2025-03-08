@@ -49,5 +49,10 @@ namespace Bank.Credits.Domain.Credits
         /// Тариф, по которому выдан кредит
         /// </summary>
         public Tariff? Tariff { get; set; }
+
+        /// <summary>
+        /// История платежей по кредиту
+        /// </summary>
+        public List<Payment>? PaymentHistory { get; set; }
     }
 }
