@@ -56,6 +56,7 @@ namespace Bank.Credits.Application.Credits
         {
             var credit = await _context.Credits
                 .Include(x => x.PaymentHistory)
+                .Include(x => x.Tariff)
                 .FirstOrDefaultAsync(x => x.Id == creditId && x.UserId == userId);
             if (credit == null)
             {
