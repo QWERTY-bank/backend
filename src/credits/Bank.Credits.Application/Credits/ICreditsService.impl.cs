@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Bank.Common.Application.Extensions;
 using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
+using Bank.Credits.Application.Constants;
+using Bank.Credits.Application.Credits.Helpers;
 using Bank.Credits.Application.Credits.Models;
 using Bank.Credits.Domain.Credits;
 using Bank.Credits.Persistence;
@@ -11,12 +13,14 @@ using X.PagedList;
 namespace Bank.Credits.Application.Credits
 {
     /*
-     
-        1. Добавить джобу по начислению процента
+        1. Добавить джобу по обработке платежей
+        2. Добавить джобу по созданию платежей на погашение, чтобы сохранять ключ идемпонтентности 
+
+
         2. Добавить джобу по списанию денег по кредиту
-        3. * Добавить просмотр истории платежей
-        4. * Добавить просмотр будущих платежей
-        5. * Добавить возможность уменьшить кредит
+        3. + Добавить просмотр истории платежей
+        4. + Добавить просмотр будущих платежей
+        5. + Добавить возможность уменьшить кредит
         6. * Учитывать константу CreditConstants.DayLength при списании денег
 
      */
@@ -61,38 +65,30 @@ namespace Bank.Credits.Application.Credits
 
             var result = _mapper.Map<CreditDto>(credit);
 
-            result.NextPayments =
-            [
-                new ()
-                {
-                    PaymentAmount = 100,
-                    PaymentDateOnly = DateOnly.FromDateTime(DateTime.Now.AddDays(10))
-                },
-                new ()
-                {
-                    PaymentAmount = 100,
-                    PaymentDateOnly = DateOnly.FromDateTime(DateTime.Now.AddDays(20))
-                },
-                new ()
-                {
-                    PaymentAmount = 99,
-                    PaymentDateOnly = DateOnly.FromDateTime(DateTime.Now.AddDays(30))
-                }
-            ];
+            if (credit.TakingDate.HasValue)
+            {
+                result.NextPayments ??= [];
 
-            // D - сколько должны сейчас
-            // y - сколько платежей = На сколько дней взяли \ продолжительность периода в днях
-            // i процент за день/месяц/год
-            // X - равный платеж, кроме последнего Y, который либо равен либо меньше x
-            // 
-            // Сохраняем в кредит X и Y, при уменьшении кредита в ReduceCreditAsync пересчитываем их
-            // 
-            // При авто-погашении сначала умножаем текущий долг на процент потом вычитаем от туда X или Y если это последний платеж и сохраняем в сумму долга
-            // 
-            // Если предыдущего погашения не было -> пересчитываем X и Y для суммы долга с учетом процента за пропущенные периоды
-            // + Для платежей сделать два типа: уменьшение и погашение
-            // 
-            // .
+                var nextDate = CreditHelper.CalculateNextPaymentDate(credit);
+
+                while (nextDate < credit.LastDate!.Value)
+                {
+                    result.NextPayments.Add(new()
+                    {
+                        PaymentAmount = credit.PaymentsInfo.Payment,
+                        PaymentDateOnly = nextDate,
+                    });
+                    nextDate.AddDays(CreditConstants.PaymentPeriodDays);
+                }
+
+                result.NextPayments.Add(new()
+                {
+                    PaymentAmount = credit.PaymentsInfo.LastPayment,
+                    PaymentDateOnly = CreditHelper.CurrentDate <= credit.LastDate!.Value
+                        ? credit.LastDate!.Value
+                        : CreditHelper.CurrentDate,
+                });
+            }
 
             return ExecutionResult<CreditDto>.FromSuccess(result);
         }
@@ -131,6 +127,33 @@ namespace Bank.Credits.Application.Credits
 
         public async Task<ExecutionResult> ReduceCreditAsync(Guid creditId, ReduceCreditDto model, Guid userId)
         {
+            var credit = await _context.Credits
+              .Include(x => x.PaymentHistory!.Where(x => x.Key == model.Key))
+              .FirstOrDefaultAsync(x => x.Id == creditId && x.UserId == userId);
+            if (credit == null)
+            {
+                _logger.LogInformation($"Credit with id = '{creditId}' not found");
+                return ExecutionResult.FromNotFound("ReduceCredit", $"Credit with id = '{creditId}' not found");
+            }
+
+            if (credit.PaymentHistory != null)
+            {
+                _logger.LogInformation($"Payment with key = '{model.Key}' already requested");
+                return ExecutionResult.FromBadRequest("ReduceCredit", "Payment already requested");
+            }
+
+            await _context.Payments.AddAsync(new ReducePayment()
+            {
+                Key = credit.Key,
+                AccountId = credit.AccountId,
+                CreditId = credit.Id,
+                PaymentAmount = model.Value,
+                PaymentDateTime = DateTime.UtcNow,
+                PaymentStatus = PaymentStatusType.InProcess,
+            });
+
+            await _context.SaveChangesAsync();
+
             return ExecutionResult.FromSuccess();
         }
     }

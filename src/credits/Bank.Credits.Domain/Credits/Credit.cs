@@ -1,5 +1,6 @@
 ﻿using Bank.Credits.Domain.Common;
 using Bank.Credits.Domain.Tariffs;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Bank.Credits.Domain.Credits
 {
@@ -36,6 +37,12 @@ namespace Bank.Credits.Domain.Credits
         /// Дата выдачи кредита, устанавливаем только, когда кредит переходит из "Ожидание" в статус "Активный" 
         /// </summary>
         public required DateOnly? TakingDate { get; set; }
+
+        /// <summary>
+        /// День последнего платежа по кредиту
+        /// </summary>
+        [NotNullIfNotNull(nameof(TakingDate))]
+        public DateOnly? LastDate { get => TakingDate?.AddDays(PeriodDays); }
 
         /// <summary>
         /// Сумма долга по кредиту в текущий момент 

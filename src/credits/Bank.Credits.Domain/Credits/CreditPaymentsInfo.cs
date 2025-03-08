@@ -10,6 +10,6 @@
         /// <summary>
         /// Размер платежа по последнему периоду
         /// </summary>
-        public int LastPayment { get; set; }
+        public decimal LastPayment { get; set; }
     }
 }
