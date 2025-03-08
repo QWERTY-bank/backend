@@ -3,7 +3,7 @@
     public class JwtOptions
     {
         public string SecretKey { get; set; } = null!;
-        public int AccessTokenTimeLifeMinutes { get; set; }
+        public TimeSpan AccessTokenTimeLife { get; set; }
         public int RefreshTokenTimeLifeDays { get; set; }
     }
 }

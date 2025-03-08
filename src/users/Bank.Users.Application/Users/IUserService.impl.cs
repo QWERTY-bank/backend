@@ -3,6 +3,7 @@ using Bank.Common.Application.Extensions;
 using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
 using Bank.Common.Models.Auth;
 using Bank.Users.Application.Auth;
+using Bank.Users.Application.Auth.Models;
 using Bank.Users.Application.Users.Models;
 using Bank.Users.Domain.Users;
 using Bank.Users.Persistence;
@@ -31,9 +32,59 @@ namespace Bank.Users.Application.Users
             _mapper = mapper;
         }
 
+        public async Task<ExecutionResult> CreateUserAsync(CreateUserDto model, RoleType roleType)
+        {
+            var userIsExist = await _context.Users.AnyAsync(x => x.Phone == model.Phone);
+            if (userIsExist)
+            {
+                return ExecutionResult.FromBadRequest("UserIsExist", "User with this phone number already exist.");
+            }
+
+            var hashPasswordResult = _passwordService.HashPassword(model.Password);
+            if (hashPasswordResult.IsNotSuccess)
+            {
+                _logger.LogError($"Password hashing error");
+                return ExecutionResult.FromInternalServer("RegistrationFail", "Unknow error.");
+            }
+
+            UserEntity newUser = new()
+            {
+                Phone = model.Phone,
+                FullName = model.FullName,
+                Birthday = model.Birthday,
+                Gender = model.Gender,
+                IsBlocked = false,
+                PasswordHash = hashPasswordResult.Result
+            };
+
+            await _context.Users.AddAsync(newUser);
+
+            var addingToRoleResult = await AddUserToRoleAsync(newUser, roleType);
+            if (!addingToRoleResult)
+            {
+                _logger.LogCritical($"Role '{roleType.ToString()}' does not found.");
+                return ExecutionResult.FromInternalServer("CreateUserFail", "Unknow error.");
+            }
+
+            if (roleType == RoleType.Employee)
+            {
+                var addingToDefaultRoleResult = await AddUserToRoleAsync(newUser, RoleType.Default);
+                if (!addingToDefaultRoleResult)
+                {
+                    _logger.LogCritical($"Role '{RoleType.Default.ToString()}' does not found.");
+                    return ExecutionResult.FromInternalServer("CreateUserFail", "Unknow error.");
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return ExecutionResult.FromSuccess();
+        }
+
         public async Task<ExecutionResult<UserDto>> GetUserAsync(Guid userId)
         {
             var user = await _context.Users
+                .Include(x => x.Roles)
                 .FirstOrDefaultAsync(x => x.Id == userId);
             if (user == null)
             {
@@ -46,6 +97,7 @@ namespace Bank.Users.Application.Users
         public async Task<ExecutionResult<IPagedList<UserShortDto>>> GetUsersAsync(int page, int pageSize)
         {
             var users = await _context.Users
+                .Include(x => x.Roles)
                 .ToPagedListAsync(page, pageSize);
 
             var result = users.ToMappedPagedList<UserEntity, UserShortDto>(_mapper);
