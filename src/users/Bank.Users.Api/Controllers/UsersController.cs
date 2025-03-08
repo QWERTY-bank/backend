@@ -6,8 +6,8 @@ using Bank.Users.Api.Models.Users;
 using Bank.Users.Application.Users;
 using Bank.Users.Application.Users.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using X.PagedList;
 using static Bank.Common.Application.Extensions.PagedListExtensions;
 
 namespace Bank.Users.Api.Controllers
