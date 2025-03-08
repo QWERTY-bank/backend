@@ -51,7 +51,7 @@ namespace Bank.Credits.Application.Credits
         public async Task<ExecutionResult<CreditDto>> GetCreditAsync(Guid creditId, Guid userId)
         {
             var credit = await _context.Credits
-                //.Include(x => x.PaymentHistory)
+                .Include(x => x.PaymentHistory)
                 .FirstOrDefaultAsync(x => x.Id == creditId && x.UserId == userId);
             if (credit == null)
             {
@@ -77,27 +77,6 @@ namespace Bank.Credits.Application.Credits
                 {
                     PaymentAmount = 99,
                     PaymentDateOnly = DateOnly.FromDateTime(DateTime.Now.AddDays(30))
-                }
-            ];
-            result.PaymentHistory = 
-            [
-                new() 
-                {
-                    PaymentAmount = 100,
-                    PaymentDateTime = DateTime.Today,
-                    PaymentStatus = PaymentStatusType.InProcess,
-                },
-                new()
-                {
-                    PaymentAmount = 321,
-                    PaymentDateTime = DateTime.Today.AddDays(1),
-                    PaymentStatus = PaymentStatusType.Conducted,
-                },
-                new()
-                {
-                    PaymentAmount = 321,
-                    PaymentDateTime = DateTime.Today.AddDays(1),
-                    PaymentStatus = PaymentStatusType.Canceled,
                 }
             ];
 
