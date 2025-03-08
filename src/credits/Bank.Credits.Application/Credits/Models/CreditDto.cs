@@ -1,4 +1,5 @@
-﻿using Bank.Credits.Domain.Credits;
+﻿using Bank.Credits.Application.Tariffs.Models;
+using Bank.Credits.Domain.Credits;
 
 namespace Bank.Credits.Application.Credits.Models
 {
@@ -10,6 +11,11 @@ namespace Bank.Credits.Application.Credits.Models
         /// Статус кредита
         /// </summary>
         public required CreditStatusType Status { get; set; }
+
+        /// <summary>
+        /// Тариф кредита
+        /// </summary>
+        public required TariffDto Tariff { get; set; }
 
         /// <summary>
         /// Сумма долга
