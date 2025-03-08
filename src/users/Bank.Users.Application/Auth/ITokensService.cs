@@ -1,6 +1,6 @@
-﻿using Bank.Users.Application.Auth.Models;
+﻿using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
+using Bank.Users.Application.Auth.Models;
 using Bank.Users.Domain.Users;
-using Z1all.ExecutionResult.StatusCode;
 
 namespace Bank.Users.Application.Auth
 {

@@ -10,7 +10,6 @@
     <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="StackExchange.Redis" Version="2.8.24" />
-    <PackageReference Include="Z1all.ExecutionResult" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>

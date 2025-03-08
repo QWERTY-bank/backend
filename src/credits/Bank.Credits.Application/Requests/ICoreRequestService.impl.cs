@@ -1,10 +1,10 @@
-﻿using Bank.Credits.Application.Requests.Configurations;
+﻿using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
+using Bank.Credits.Application.Requests.Configurations;
 using Bank.Credits.Application.Requests.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using Z1all.ExecutionResult.StatusCode;
 
 namespace Bank.Credits.Application.Requests
 {
@@ -34,7 +34,7 @@ namespace Bank.Credits.Application.Requests
             var getTokenResult = await _tokenService.GetServiceTokenAsync();
             if (getTokenResult.IsNotSuccess)
             {
-                return ExecutionResult<BalanceDto>.FromError(getTokenResult.StatusCode, getTokenResult.Errors);
+                return ExecutionResult<BalanceDto>.FromError(getTokenResult);
             }
 
             var request = new HttpRequestMessage(HttpMethod.Get, SetPathId(_options.GetAccountBalance, accountId))
@@ -47,14 +47,14 @@ namespace Bank.Credits.Application.Requests
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError($"Error while sending request to {_options.GetAccountBalance}. StatusCode: {response.StatusCode}");
-                return ExecutionResult<BalanceDto>.FromError(StatusCodeExecutionResult.InternalServer, "GetAccountBalance", $"Error while sending request to {_options.GetAccountBalance}. StatusCode: {response.StatusCode}");
+                return ExecutionResult<BalanceDto>.FromInternalServer("GetAccountBalance", $"Error while sending request to {_options.GetAccountBalance}. StatusCode: {response.StatusCode}");
             }
 
             var balance = await response.Content.ReadFromJsonAsync<BalanceDto>();
             if (balance == null)
             {
                 _logger.LogError($"Error while deserializing response from {_options.GetAccountBalance}");
-                return ExecutionResult<BalanceDto>.FromError(StatusCodeExecutionResult.InternalServer, "GetAccountBalance", $"Error while deserializing response from {_options.GetAccountBalance}");
+                return ExecutionResult<BalanceDto>.FromInternalServer("GetAccountBalance", $"Error while deserializing response from {_options.GetAccountBalance}");
             }
 
             return ExecutionResult<BalanceDto>.FromSuccess(balance);
@@ -89,7 +89,7 @@ namespace Bank.Credits.Application.Requests
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError($"Error while sending request to {path}. StatusCode: {response.StatusCode}");
-                return ExecutionResult.FromError(StatusCodeExecutionResult.InternalServer, "UnitAccountDepositTransfer", $"Error while sending request to {path}. StatusCode: {response.StatusCode}");
+                return ExecutionResult.FromInternalServer("UnitAccountDepositTransfer", $"Error while sending request to {path}. StatusCode: {response.StatusCode}");
             }
 
             return ExecutionResult.FromSuccess();

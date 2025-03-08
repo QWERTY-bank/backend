@@ -1,4 +1,5 @@
 ﻿using Bank.Common.Application.Models;
+using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
 using Bank.Credits.Application.Requests.Configurations;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -6,7 +7,6 @@ using Microsoft.Extensions.Options;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http.Json;
-using Z1all.ExecutionResult.StatusCode;
 
 namespace Bank.Credits.Application.Requests
 {

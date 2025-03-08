@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="X.PagedList" Version="8.4.7" />
-    <PackageReference Include="Z1all.ExecutionResult" Version="1.1.0" />
     <PackageReference Include="AutoMapper" Version="14.0.0" />
   </ItemGroup>
 

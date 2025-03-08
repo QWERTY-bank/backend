@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Bank.Common.Application.Extensions;
+using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
 using Bank.Common.Models.Auth;
 using Bank.Users.Application.Auth;
 using Bank.Users.Application.Users.Models;
@@ -8,7 +9,6 @@ using Bank.Users.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using X.PagedList;
-using Z1all.ExecutionResult.StatusCode;
 
 namespace Bank.Users.Application.Users
 {

@@ -1,5 +1,5 @@
-﻿using Bank.Credits.Application.Requests.Models;
-using Z1all.ExecutionResult.StatusCode;
+﻿using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
+using Bank.Credits.Application.Requests.Models;
 
 namespace Bank.Credits.Application.Requests
 {

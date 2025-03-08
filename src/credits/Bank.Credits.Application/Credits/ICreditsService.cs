@@ -1,6 +1,6 @@
-﻿using Bank.Credits.Application.Credits.Models;
+﻿using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
+using Bank.Credits.Application.Credits.Models;
 using X.PagedList;
-using Z1all.ExecutionResult.StatusCode;
 
 namespace Bank.Credits.Application.Credits
 {

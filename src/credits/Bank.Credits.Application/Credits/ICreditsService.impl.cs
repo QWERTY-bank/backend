@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using Bank.Common.Application.Extensions;
+using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
 using Bank.Credits.Application.Credits.Models;
 using Bank.Credits.Domain.Credits;
 using Bank.Credits.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using X.PagedList;
-using Z1all.ExecutionResult.StatusCode;
 
 namespace Bank.Credits.Application.Credits
 {
@@ -52,16 +52,12 @@ namespace Bank.Credits.Application.Credits
 
     /*
      
-        1. + Добавить запрос токена из UserService
-        2. + Добавить пароль на логин сервисов в UserService
-        3. Добавить перевод денег на счет пользователя при обработке кредита
-
-        4. Добавить джобу по начислению процента
-        5. Добавить джобу по списанию денег по кредиту
-        6. Добавить просмотр истории платежей
-        7. Добавить просмотр будущих платежей
-        8. Добавить возможность уменьшить кредит
-        9. Учитывать константу CreditConstants.DayLength при списании денег
+        1. Добавить джобу по начислению процента
+        2. Добавить джобу по списанию денег по кредиту
+        3. Добавить просмотр истории платежей
+        4. Добавить просмотр будущих платежей
+        5. Добавить возможность уменьшить кредит
+        6. Учитывать константу CreditConstants.DayLength при списании денег
 
      */
     public class CreditsService : ICreditsService
