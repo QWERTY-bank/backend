@@ -45,7 +45,9 @@ namespace Bank.Credits.Persistence
                 .ToTable(nameof(Tariffs));
 
             modelBuilder.Entity<Credit>()
-                .ToTable(nameof(Credits));   
+                .ToTable(nameof(Credits));
+            modelBuilder.Entity<Credit>()
+                .OwnsOne(x => x.PaymentsInfo);
             modelBuilder.Entity<Credit>()
                 .HasOne(x => x.Tariff)
                 .WithMany()

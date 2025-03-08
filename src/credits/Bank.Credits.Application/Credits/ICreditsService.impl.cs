@@ -63,7 +63,7 @@ namespace Bank.Credits.Application.Credits
 
             result.NextPayments =
             [
-                new () 
+                new ()
                 {
                     PaymentAmount = 100,
                     PaymentDateOnly = DateOnly.FromDateTime(DateTime.Now.AddDays(10))
@@ -79,6 +79,20 @@ namespace Bank.Credits.Application.Credits
                     PaymentDateOnly = DateOnly.FromDateTime(DateTime.Now.AddDays(30))
                 }
             ];
+
+            // D - сколько должны сейчас
+            // y - сколько платежей = На сколько дней взяли \ продолжительность периода в днях
+            // i процент за день/месяц/год
+            // X - равный платеж, кроме последнего Y, который либо равен либо меньше x
+            // 
+            // Сохраняем в кредит X и Y, при уменьшении кредита в ReduceCreditAsync пересчитываем их
+            // 
+            // При авто-погашении сначала умножаем текущий долг на процент потом вычитаем от туда X или Y если это последний платеж и сохраняем в сумму долга
+            // 
+            // Если предыдущего погашения не было -> пересчитываем X и Y для суммы долга с учетом процента за пропущенные периоды
+            // + Для платежей сделать два типа: уменьшение и погашение
+            // 
+            // .
 
             return ExecutionResult<CreditDto>.FromSuccess(result);
         }

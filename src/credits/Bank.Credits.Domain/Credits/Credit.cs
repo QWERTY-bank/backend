@@ -5,6 +5,8 @@ namespace Bank.Credits.Domain.Credits
 {
     public class Credit : JobPlannedBaseEntity
     {
+        public CreditPaymentsInfo PaymentsInfo { get; set; } = null!;
+
         /// <summary>
         /// Ключ идемпотентности, с которым был создан кредит
         /// </summary>
