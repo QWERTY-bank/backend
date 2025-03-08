@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Bank.Common.Application.Extensions;
+using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
 using Bank.Credits.Application.Tariffs.Models;
 using Bank.Credits.Domain.Tariffs;
 using Bank.Credits.Persistence;
@@ -7,7 +8,6 @@ using Bank.Credits.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using X.PagedList;
-using Z1all.ExecutionResult.StatusCode;
 
 namespace Bank.Credits.Application.Tariffs
 {

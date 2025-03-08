@@ -1,4 +1,4 @@
-﻿using Z1all.ExecutionResult.StatusCode;
+﻿using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
 
 namespace Bank.Credits.Application.Requests
 {

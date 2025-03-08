@@ -1,8 +1,8 @@
-﻿using Bank.Common.Models.Auth;
+﻿using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
+using Bank.Common.Models.Auth;
 using Bank.Users.Application.Users.Models;
 using Bank.Users.Domain.Users;
 using X.PagedList;
-using Z1all.ExecutionResult.StatusCode;
 
 namespace Bank.Users.Application.Users
 {

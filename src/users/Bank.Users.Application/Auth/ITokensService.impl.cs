@@ -1,4 +1,5 @@
-﻿using Bank.Common.Auth;
+﻿using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
+using Bank.Common.Auth;
 using Bank.Common.Auth.Configurations;
 using Bank.Users.Application.Auth.Helpers;
 using Bank.Users.Application.Auth.Models;
@@ -8,7 +9,6 @@ using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text.Json;
-using Z1all.ExecutionResult.StatusCode;
 
 namespace Bank.Users.Application.Auth
 {

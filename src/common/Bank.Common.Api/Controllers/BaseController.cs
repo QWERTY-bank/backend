@@ -4,9 +4,9 @@ using Bank.Common.Auth.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using X.PagedList;
-using Z1all.ExecutionResult.StatusCode;
 using Bank.Common.Application.Extensions;
 using static Bank.Common.Application.Extensions.PagedListExtensions;
+using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
 
 namespace Bank.Common.Api.Controllers
 {

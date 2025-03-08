@@ -1,11 +1,11 @@
-﻿using Bank.Common.Models.Auth;
+﻿using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
+using Bank.Common.Models.Auth;
 using Bank.Users.Application.Auth.Models;
 using Bank.Users.Application.Users;
 using Bank.Users.Domain.Users;
 using Bank.Users.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Z1all.ExecutionResult.StatusCode;
 
 namespace Bank.Users.Application.Auth
 {

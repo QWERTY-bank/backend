@@ -1,10 +1,10 @@
 ﻿using Bank.Common.Api.Controllers;
 using Bank.Common.Api.DTOs;
 using Bank.Common.Application.Models;
+using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
 using Bank.Users.Api.Models.ServiceAuth;
 using Bank.Users.Application.Auth;
 using Microsoft.AspNetCore.Mvc;
-using Z1all.ExecutionResult.StatusCode;
 
 namespace Bank.Users.Api.Controllers
 {
