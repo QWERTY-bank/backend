@@ -6,8 +6,8 @@ using Bank.Users.Api.Models.Users;
 using Bank.Users.Application.Users;
 using Bank.Users.Application.Users.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using X.PagedList;
 using static Bank.Common.Application.Extensions.PagedListExtensions;
 
 namespace Bank.Users.Api.Controllers
@@ -21,6 +21,7 @@ namespace Bank.Users.Api.Controllers
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     [BankAuthorize(RoleType.Employee, JwtBearerDefaults.AuthenticationScheme)]
+    [AllowAnonymous]
     public class UsersController : BaseController
     {
         private readonly IUserService _userService;

@@ -84,6 +84,7 @@ namespace Bank.Users.Application.Users
         public async Task<ExecutionResult<UserDto>> GetUserAsync(Guid userId)
         {
             var user = await _context.Users
+                .Include(x => x.Roles)
                 .FirstOrDefaultAsync(x => x.Id == userId);
             if (user == null)
             {
@@ -96,6 +97,7 @@ namespace Bank.Users.Application.Users
         public async Task<ExecutionResult<IPagedList<UserShortDto>>> GetUsersAsync(int page, int pageSize)
         {
             var users = await _context.Users
+                .Include(x => x.Roles)
                 .ToPagedListAsync(page, pageSize);
 
             var result = users.ToMappedPagedList<UserEntity, UserShortDto>(_mapper);

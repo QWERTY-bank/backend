@@ -8,8 +8,10 @@ namespace Bank.Users.Application.Users.Mapper
     {
         public UserApplicationMapperProfile()
         {
-            CreateMap<UserEntity, UserDto>();
-            CreateMap<UserEntity, UserShortDto>();
+            CreateMap<UserEntity, UserDto>()
+                .ForMember(x => x.MaxRole, opt => opt.MapFrom(y => y.Roles.Max(z => z.Type)));
+            CreateMap<UserEntity, UserShortDto>()
+                .ForMember(x => x.MaxRole, opt => opt.MapFrom(y => y.Roles.Max(z => z.Type)));
         }
     }
 }
