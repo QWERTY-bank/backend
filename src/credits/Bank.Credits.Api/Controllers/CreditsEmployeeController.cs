@@ -51,7 +51,7 @@ namespace Bank.Credits.Api.Controllers
         public async Task<IActionResult> GetCreditAsync([FromRoute] Guid creditId, [FromRoute] Guid userId)
         {
             return await ExecutionResultHandlerAsync(()
-                => _creditsService.GetCreditAsync(creditId, UserId));
+                => _creditsService.GetCreditAsync(creditId, userId));
         }
     }
 }
