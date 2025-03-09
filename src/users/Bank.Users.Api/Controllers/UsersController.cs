@@ -33,6 +33,7 @@ namespace Bank.Users.Api.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(UserShortDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
         {
             return await ExecutionResultHandlerAsync(()
