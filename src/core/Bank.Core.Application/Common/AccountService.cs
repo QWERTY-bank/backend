@@ -50,7 +50,7 @@ public class AccountService
 
         var withdrawTransaction = new WithdrawTransactionEntity
         {
-            AccountId = toAccountId,
+            AccountId = fromAccountId,
             Key = transactionKey,
             CreatedDate = DateTime.UtcNow,
             OperationDate = DateTime.UtcNow,

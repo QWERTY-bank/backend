@@ -1,4 +1,3 @@
-using System.Transactions;
 using Bank.Core.Domain.Accounts;
 using Bank.Core.Domain.Common;
 
@@ -43,6 +42,6 @@ public abstract class TransactionEntity : BaseEntity<long>
     /// <summary>
     /// Дочерние транзакции
     /// </summary>
-    public IReadOnlyCollection<TransactionEntity> ChildTransactions { get; }= [];
-    public IReadOnlyCollection<TransactionCurrency> Currencies { get; init; }= [];
+    public List<TransactionEntity> ChildTransactions { get; init; } = [];
+    public IReadOnlyCollection<TransactionCurrency> Currencies { get; init; } = [];
 }
