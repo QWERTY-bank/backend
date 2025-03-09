@@ -148,7 +148,7 @@ namespace Bank.Credits.Application.Credits
 
             await _context.Payments.AddAsync(new ReducePayment()
             {
-                Key = credit.Key,
+                Key = model.Key,
                 AccountId = credit.AccountId,
                 CreditId = credit.Id,
                 PaymentAmount = model.Value,
