@@ -3,6 +3,7 @@ using System;
 using Bank.Credits.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bank.Credits.Persistence.Migrations
 {
     [DbContext(typeof(CreditsDbContext))]
-    partial class CreditsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250309074924_AddPaymentsAndRepaymentsPlans")]
+    partial class AddPaymentsAndRepaymentsPlans
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,9 +40,6 @@ namespace Bank.Credits.Persistence.Migrations
 
                     b.Property<Guid>("Key")
                         .HasColumnType("uuid");
-
-                    b.Property<DateOnly?>("LastInterestChargeDate")
-                        .HasColumnType("date");
 
                     b.Property<int>("PeriodDays")
                         .HasColumnType("integer");
@@ -89,20 +89,11 @@ namespace Bank.Credits.Persistence.Migrations
                     b.Property<decimal>("PaymentAmount")
                         .HasColumnType("numeric");
 
-                    b.Property<DateOnly>("PaymentDate")
-                        .HasColumnType("date");
-
                     b.Property<DateTime>("PaymentDateTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("PaymentStatus")
                         .HasColumnType("integer");
-
-                    b.Property<long>("PlanId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("PlanId"));
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
@@ -110,8 +101,6 @@ namespace Bank.Credits.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreditId");
-
-                    b.HasIndex("PlanId");
 
                     b.ToTable("Payments", "bank_credits");
                 });

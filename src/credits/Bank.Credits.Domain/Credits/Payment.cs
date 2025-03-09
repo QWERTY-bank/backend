@@ -2,7 +2,7 @@
 
 namespace Bank.Credits.Domain.Credits
 {
-    public class Payment : BaseEntity
+    public class Payment : JobPlannedBaseEntity
     {
         /// <summary>
         /// Ключ идемпотентности, с которым был создан платеж
@@ -16,6 +16,7 @@ namespace Bank.Credits.Domain.Credits
 
         public required decimal PaymentAmount { get; set; }
         public required DateTime PaymentDateTime { get; set; }
+        public required DateOnly PaymentDate { get; set; }
         public required PaymentStatusType PaymentStatus { get; set; }
         public PaymentType Type { get; set; }
 

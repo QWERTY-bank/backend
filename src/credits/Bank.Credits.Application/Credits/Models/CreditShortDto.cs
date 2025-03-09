@@ -19,11 +19,11 @@ namespace Bank.Credits.Application.Credits.Models
         /// <summary>
         /// Сумма следующего платежа
         /// </summary>
-        public required decimal NextPaymentAmount { get; init; }
+        public required decimal NextPaymentAmount { get; set; }
 
         /// <summary>
         /// Дата следующего платежа
         /// </summary>
-        public required DateOnly NextPaymentDateOnly { get; init; }
+        public required DateOnly NextPaymentDateOnly { get; set; }
     }
 }
