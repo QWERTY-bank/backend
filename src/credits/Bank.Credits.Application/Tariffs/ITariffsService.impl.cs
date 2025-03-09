@@ -59,7 +59,7 @@ namespace Bank.Credits.Application.Tariffs
             return ExecutionResult<IPagedList<TariffDto>>.FromSuccess(result);
         }
 
-        public async Task<ExecutionResult> CreateTariffAsync(CreateTariffDto model)
+        public async Task<ExecutionResult<TariffDto>> CreateTariffAsync(CreateTariffDto model)
         {
             var nameExists = await _context.Tariffs
                 .GetUndeleted()
@@ -67,7 +67,7 @@ namespace Bank.Credits.Application.Tariffs
             if (nameExists)
             {
                 _logger.LogInformation($"Tariff with the same name '{model.Name.Trim()}' already exists.");
-                return ExecutionResult.FromBadRequest("CreateTariff", $"Tariff with the same name '{model.Name.Trim()}' already exists.");
+                return ExecutionResult<TariffDto>.FromBadRequest("CreateTariff", $"Tariff with the same name '{model.Name.Trim()}' already exists.");
             }
 
             var tariff = _mapper.Map<Tariff>(model);
@@ -76,7 +76,7 @@ namespace Bank.Credits.Application.Tariffs
 
             await _context.SaveChangesAsync();
 
-            return ExecutionResult.FromSuccess();
+            return ExecutionResult<TariffDto>.FromSuccess(_mapper.Map<TariffDto>(tariff));
         }
 
         public async Task<ExecutionResult> DeleteTariffAsync(Guid tariffId)
