@@ -31,6 +31,7 @@ namespace Bank.Credits.Application.Credits
         public async Task<ExecutionResult<IPagedList<CreditShortDto>>> GetCreditsAsync(CreditsFilter filter, int page, int pageSize, Guid userId)
         {
             var creditsQuery = _context.Credits
+                .Include(x => x.PaymentHistory)
                 .Where(x => x.UserId == userId)
                 .AsQueryable();
 
