@@ -43,6 +43,11 @@ namespace Bank.Credits.Application.Credits
             {
                 var credit = credits.FirstOrDefault(x => x.Id == item.Id);
 
+                if (!(credit?.TakingDate.HasValue ?? false))
+                {
+                    continue;
+                }
+
                 item.NextPaymentAmount = credit?.CalculateNextPaymentAmount() ?? 0M;
                 item.NextPaymentDateOnly = credit?.CalculateNextPaymentDate() ?? DateOnly.MinValue;
             }
