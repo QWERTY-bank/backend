@@ -53,7 +53,7 @@ namespace Bank.Credits.Application.Jobs.IssuingCredits
                 credit.Status = result.IsSuccess ? CreditStatusType.Active : CreditStatusType.Canceled;
                 if (credit.Status == CreditStatusType.Active)
                 {
-                    credit.TakingDate = CreditHelper.CurrentDate;
+                    credit.TakingDate = DateHelper.CurrentDate;
                     credit.UpdateCreditPaymentsInfo();
                 }
             }
