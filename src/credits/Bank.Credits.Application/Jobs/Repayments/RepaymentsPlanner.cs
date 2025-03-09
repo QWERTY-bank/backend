@@ -1,9 +1,9 @@
-﻿using Bank.Credits.Application.Jobs.Base;
+﻿using Bank.Credits.Application.Credits.Helpers;
+using Bank.Credits.Application.Jobs.Base;
 using Bank.Credits.Application.Jobs.Repayments.Configurations;
 using Bank.Credits.Domain.Credits;
 using Bank.Credits.Domain.Jobs;
 using Bank.Credits.Persistence;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -19,14 +19,20 @@ namespace Bank.Credits.Application.Jobs.Repayments
 
         protected override IQueryable<Credit> FilterPlannedEntity()
         {
-            throw new NotImplementedException();
+            // Учитываем только те кредиты, которые не имеют завершенного или находящегося в ожидании платежа
+            return _dbContext.Credits
+                .Where(x => x.Status == CreditStatusType.Active)
+                .Where(x => !x.PaymentHistory!.Any(x => x.PaymentDate == CreditHelper.CurrentDate && x.Type == PaymentType.Repayment
+                                                    && (x.PaymentStatus == PaymentStatusType.InProcess || x.PaymentStatus == PaymentStatusType.Conducted)));
         }
 
         protected override Task<RepaymentPlan?> GetLastPlanAsync()
         {
-            return _dbContext.RepaymentPlans
-                .OrderByDescending(x => x.Id)
-                .FirstOrDefaultAsync();
+            return Task.FromResult<RepaymentPlan?>(new()
+            {
+                FromPlanId = -1,
+                ToPlanId = -1,
+            });
         }
 
         protected override Task AddPlansAsync(List<RepaymentPlan> newPlans)

@@ -139,6 +139,7 @@ namespace Bank.Credits.Application.Credits
                 PaymentAmount = model.Value,
                 PaymentDateTime = DateTime.UtcNow,
                 PaymentStatus = PaymentStatusType.InProcess,
+                PaymentDate = CreditHelper.CurrentDate
             });
 
             await _context.SaveChangesAsync();

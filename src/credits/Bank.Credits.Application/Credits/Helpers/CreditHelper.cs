@@ -11,7 +11,7 @@ namespace Bank.Credits.Application.Credits.Helpers
         /// <summary>
         /// Нужно загрузить PaymentHistory
         /// </summary>
-        public static DateOnly CalculateNextPaymentDate(Credit credit)
+        public static DateOnly CalculateNextPaymentDate(this Credit credit)
         {
             var passedDaysFromTaking = CurrentDate.DayNumber - credit.TakingDate!.Value.DayNumber;
 
@@ -73,6 +73,12 @@ namespace Bank.Credits.Application.Credits.Helpers
             credit.PaymentsInfo.LastPayment = paymentForPeriod * remainedPaymentsCount - credit.PaymentsInfo.Payment * (remainedPaymentsCount - 1);
         }
 
+        public static void ApplyInterestRate(this Credit credit)
+        {
+            credit.DebtAmount *= (1 + credit.Tariff!.NormalizedInterestRate);
+            credit.LastInterestChargeDate = CurrentDate;
+        }
+
         public static void MakePayment(this Credit credit, decimal value)
         {
             credit.DebtAmount -= value;
@@ -93,9 +99,9 @@ namespace Bank.Credits.Application.Credits.Helpers
         {
             return CreditConstants.PaymentPeriodDays * (credit.Tariff!.InterestRateType switch
             {
-                InterestRateType.Annual => credit.Tariff.InterestRate / 365,
-                InterestRateType.Monthly => credit.Tariff.InterestRate / 30,
-                InterestRateType.Daytime => credit.Tariff.InterestRate,
+                InterestRateType.Annual => credit.Tariff.NormalizedInterestRate / 365,
+                InterestRateType.Monthly => credit.Tariff.NormalizedInterestRate / 30,
+                InterestRateType.Daytime => credit.Tariff.NormalizedInterestRate,
                 _ => throw new NotImplementedException(),
             });
         }

@@ -50,6 +50,12 @@ namespace Bank.Credits.Domain.Credits
         public required decimal DebtAmount { get; set; }
 
         /// <summary>
+        /// Последний раз, когда начислялся процент
+        /// </summary>
+        public DateOnly? LastInterestChargeDate { get; set; }
+
+
+        /// <summary>
         /// Id тарифа, по которому выдан кредит
         /// </summary>
         public required Guid TariffId { get; set; }

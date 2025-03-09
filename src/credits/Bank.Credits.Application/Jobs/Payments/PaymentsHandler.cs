@@ -12,21 +12,6 @@ using Microsoft.Extensions.Options;
 
 namespace Bank.Credits.Application.Jobs.Payments
 {
-    /*
-        1. Добавить джобу по обработке платежей
-        2. Добавить джобу по созданию платежей на погашение, чтобы сохранять ключ идемпонтентности 
-
-        В джобе по созданию погашений создаем платеж с текущей инфой по кредиту
-        В джобе по обработке платежа перед этим заново расчитываем платеж, так как перед этим пользователь мог уменьшить сумму кредита
-
-        Обработка платежа будет проходить 5 на 1, 5 - период запуска планера, 1 - период запуска хендлера
-        Обработка создания погашения тоже 5 на 1. Запрашивать нужно будет те кредиты у которых нет платежа в статусе ВПроцессе или Выполнен в день платежа
-
-        В джобе по созданию погашений добавить начисление проценка и в кредит поставить последнюю дату начисления процента и перед начислением стравнивать текущую дату в выставленной, если не равна то начисляем процент
-
-
-        Добавить сервис который будет в зависимости от CreditConstants.DayLength переводить часы в день и заменить получение текущей даты на него
-    */
     public class PaymentsHandler : BaseHandler<PaymentsPlan, PaymentsHandler>
     {
         private readonly ICoreRequestService _coreRequestService;
@@ -45,7 +30,7 @@ namespace Bank.Credits.Application.Jobs.Payments
         {
             var payments = await _dbContext.Payments
                 .Include(x => x.Credit)
-                    .ThenInclude(x => x.Tariff)
+                    .ThenInclude(x => x!.Tariff)
                 .Where(x => x.PaymentStatus == PaymentStatusType.InProcess)
                 .Where(x => fromPlanId <= x.PlanId && x.PlanId <= toPlanId)
                 .ToListAsync();
@@ -61,11 +46,6 @@ namespace Bank.Credits.Application.Jobs.Payments
                         await HandleRepaymentAsync(payment);
                         break;
                 };
-
-                if (payment.PaymentStatus == PaymentStatusType.Conducted)
-                {
-                    payment.Credit!.ReduceDebt(payment.PaymentAmount);
-                }
             }
         }
 
@@ -78,6 +58,11 @@ namespace Bank.Credits.Application.Jobs.Payments
             }
 
             await TransferAsync(payment);
+
+            if (payment.PaymentStatus == PaymentStatusType.Conducted)
+            {
+                payment.Credit!.ReduceDebt(payment.PaymentAmount);
+            }
         }
 
         private async Task HandleRepaymentAsync(Payment payment)
@@ -91,6 +76,12 @@ namespace Bank.Credits.Application.Jobs.Payments
             payment.PaymentAmount = payment.Credit!.CalculateNextPaymentAmount();
 
             await TransferAsync(payment);
+
+            if (payment.PaymentStatus == PaymentStatusType.Conducted)
+            {
+                payment.Credit.ApplyInterestRate();
+                payment.Credit!.MakePayment(payment.PaymentAmount);
+            }
         }
 
         private async Task TransferAsync(Payment payment)
