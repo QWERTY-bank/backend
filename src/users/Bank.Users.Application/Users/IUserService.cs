@@ -8,7 +8,7 @@ namespace Bank.Users.Application.Users
 {
     public interface IUserService
     {
-        Task<ExecutionResult> CreateUserAsync(CreateUserDto model, RoleType roleType);
+        Task<ExecutionResult<UserShortDto>> CreateUserAsync(CreateUserDto model, RoleType roleType);
         Task<ExecutionResult<UserDto>> GetUserAsync(Guid userId);
         Task<ExecutionResult<IPagedList<UserShortDto>>> GetUsersAsync(int page, int pageSize, Guid userId);
         Task<bool> AddUserToRoleAsync(UserEntity user, RoleType roleType);
