@@ -48,8 +48,8 @@ namespace Bank.Credits.Api.Controllers
         /// Создать новый тариф (для сотрудников)
         /// </summary>
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [BankAuthorize(RoleType.Employee)]
+        [ProducesResponseType(typeof(TariffDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> CreateTariffAsync([FromBody] CreateTariffRequest request)
         {
             return await ExecutionResultHandlerAsync(()
