@@ -7,6 +7,6 @@
         /// </summary>
         public static readonly int PaymentPeriodDays = 1;
 
-        public static readonly TimeSpan DayLength = new TimeSpan(hours: 0, minutes: 20, seconds: 0);
+        public static readonly TimeSpan DayLength = new TimeSpan(hours: 0, minutes: 10, seconds: 0);
     }
 }

@@ -69,7 +69,7 @@ namespace Bank.Credits.Application.Credits
 
             var result = _mapper.Map<CreditDto>(credit);
 
-            if (credit.TakingDate.HasValue)
+            if (credit.Status == CreditStatusType.Active && credit.TakingDate.HasValue)
             {
                 result.NextPayments ??= [];
 

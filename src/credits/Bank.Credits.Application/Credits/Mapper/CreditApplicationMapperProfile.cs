@@ -14,10 +14,12 @@ namespace Bank.Credits.Application.Credits.Mapper
                 .ForMember(x => x.UserId, opt => opt.Ignore());
 
             CreateMap<Credit, CreditShortDto>()
-                 .ForMember(x => x.NextPaymentAmount, opt => opt.MapFrom(_ => 100M))
-                 .ForMember(x => x.NextPaymentDateOnly, opt => opt.MapFrom(_ => new DateOnly(2025, 4, 4)));
+                .ForMember(x => x.DebtAmount, opt => opt.MapFrom(x => Math.Round(x.DebtAmount, 2)))
+                .ForMember(x => x.NextPaymentAmount, opt => opt.MapFrom(_ => 0M))
+                .ForMember(x => x.NextPaymentDateOnly, opt => opt.MapFrom(_ => new DateOnly(1, 1, 1)));
 
             CreateMap<Credit, CreditDto>()
+                .ForMember(x => x.DebtAmount, opt => opt.MapFrom(x => Math.Round(x.DebtAmount, 2)))
                 .ForMember(x => x.NextPayments, opt => opt.Ignore());
 
             CreateMap<Payment, PaymentDto>();
