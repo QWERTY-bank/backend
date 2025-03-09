@@ -22,8 +22,6 @@ namespace Bank.Credits.Application.Jobs.Repayments
         }
 
         protected override DbSet<RepaymentPlan> SelectPlans()
-        {
-            throw new NotImplementedException();
-        }
+            => _dbContext.RepaymentPlans;
     }
 }

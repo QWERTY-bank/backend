@@ -22,8 +22,6 @@ namespace Bank.Credits.Application.Jobs.Payments
         }
 
         protected override DbSet<PaymentsPlan> SelectPlans()
-        {
-            throw new NotImplementedException();
-        }
+            => _dbContext.PaymentsPlans;
     }
 }

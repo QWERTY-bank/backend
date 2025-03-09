@@ -24,13 +24,13 @@ namespace Bank.Credits.Application.Jobs.Payments
 
         protected override Task<PaymentsPlan?> GetLastPlanAsync()
         {
-            throw new NotImplementedException();
+            return _dbContext.PaymentsPlans
+                .OrderByDescending(x => x.Id)
+                .FirstOrDefaultAsync();
         }
 
         protected override Task AddPlansAsync(List<PaymentsPlan> newPlans)
-        {
-            throw new NotImplementedException();
-        }
+            => _dbContext.PaymentsPlans.AddRangeAsync(newPlans);
 
         protected override Task BlockPlansAsync()
             => _dbContext.ClosePaymentsPlansForUpdate();
