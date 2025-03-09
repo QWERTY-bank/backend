@@ -62,13 +62,27 @@ namespace Bank.Credits.Application.Credits.Helpers
                 ? (daysLeft / CreditConstants.PaymentPeriodDays) + (daysLeft % CreditConstants.PaymentPeriodDays == 0 ? 0 : 1)
                 : 1;
 
-            var interestRateType = credit.CalculateInterestRateForPeriod();
+            var interestRate = credit.CalculateInterestRateForPeriod();
+
+            var payment = credit.DebtAmount * CalculateAnnualCoeff(interestRate, remainedPaymentsCount);
+
+            // Если начислили процент, но автоперевод еще не прошел, и в это промежуток пользователь уменьшил платеж, то не учитываем процент за этот период
+            if (credit.LastInterestChargeDate == DateHelper.CurrentDate 
+                && !credit.PaymentHistory!.Any(x => x.Type == PaymentType.Repayment && x.PaymentDate == DateHelper.CurrentDate && x.PaymentStatus == PaymentStatusType.Conducted))
+            {
+                payment = remainedPaymentsCount == 1
+                    ? credit.DebtAmount
+                    : credit.DebtAmount * CalculateAnnualCoeff(interestRate, remainedPaymentsCount - 1) / (CalculateAnnualCoeff(interestRate, remainedPaymentsCount - 1) + 1);
+            }
+
+            credit.PaymentsInfo.Payment = (int)Math.Ceiling(payment);
+            credit.PaymentsInfo.LastPayment = payment * remainedPaymentsCount - credit.PaymentsInfo.Payment * (remainedPaymentsCount - 1);
+        }
+
+        private static decimal CalculateAnnualCoeff(decimal interestRateType, int remainedPaymentsCount)
+        {
             var temp = Pow(1 + interestRateType, remainedPaymentsCount);
-
-            var paymentForPeriod = Math.Round(credit.DebtAmount * (interestRateType * temp) / (temp - 1), 2);
-
-            credit.PaymentsInfo.Payment = (int)Math.Ceiling(paymentForPeriod);
-            credit.PaymentsInfo.LastPayment = paymentForPeriod * remainedPaymentsCount - credit.PaymentsInfo.Payment * (remainedPaymentsCount - 1);
+            return (interestRateType * temp) / (temp - 1);
         }
 
         public static void ApplyInterestRate(this Credit credit)

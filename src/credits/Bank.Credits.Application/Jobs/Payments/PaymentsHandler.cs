@@ -79,7 +79,6 @@ namespace Bank.Credits.Application.Jobs.Payments
 
             if (payment.PaymentStatus == PaymentStatusType.Conducted)
             {
-                payment.Credit.ApplyInterestRate();
                 payment.Credit!.MakePayment(payment.PaymentAmount);
             }
         }

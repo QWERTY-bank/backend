@@ -48,7 +48,7 @@ namespace Bank.Credits.Application.Credits
                     continue;
                 }
 
-                item.NextPaymentAmount = credit?.CalculateNextPaymentAmount() ?? 0M;
+                item.NextPaymentAmount = Math.Round(credit?.CalculateNextPaymentAmount() ?? 0M, 2);
                 item.NextPaymentDateOnly = credit?.CalculateNextPaymentDate() ?? DateOnly.MinValue;
             }
 
@@ -87,7 +87,7 @@ namespace Bank.Credits.Application.Credits
 
                 result.NextPayments.Add(new()
                 {
-                    PaymentAmount = credit.PaymentsInfo.LastPayment,
+                    PaymentAmount = Math.Round(credit.PaymentsInfo.LastPayment, 2),
                     PaymentDateOnly = DateHelper.CurrentDate <= credit.LastDate!.Value
                         ? credit.LastDate!.Value
                         : DateHelper.CurrentDate,
