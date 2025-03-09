@@ -37,6 +37,15 @@ namespace Bank.Credits.Application.Credits
             var credits = await creditsQuery.ToPagedListAsync(page, pageSize);
 
             var result = credits.ToMappedPagedList<Credit, CreditShortDto>(_mapper);
+
+            foreach (var item in result)
+            {
+                var credit = credits.FirstOrDefault(x => x.Id == item.Id);
+
+                item.NextPaymentAmount = credit?.CalculateNextPaymentAmount() ?? 0M;
+                item.NextPaymentDateOnly = credit?.CalculateNextPaymentDate() ?? DateOnly.MinValue;
+            }
+
             return ExecutionResult<IPagedList<CreditShortDto>>.FromSuccess(result);
         }
 
