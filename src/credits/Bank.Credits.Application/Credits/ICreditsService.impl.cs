@@ -83,9 +83,9 @@ namespace Bank.Credits.Application.Credits
                 result.NextPayments.Add(new()
                 {
                     PaymentAmount = credit.PaymentsInfo.LastPayment,
-                    PaymentDateOnly = CreditHelper.CurrentDate <= credit.LastDate!.Value
+                    PaymentDateOnly = DateHelper.CurrentDate <= credit.LastDate!.Value
                         ? credit.LastDate!.Value
-                        : CreditHelper.CurrentDate,
+                        : DateHelper.CurrentDate,
                 });
             }
 
@@ -149,7 +149,7 @@ namespace Bank.Credits.Application.Credits
                 PaymentAmount = model.Value,
                 PaymentDateTime = DateTime.UtcNow,
                 PaymentStatus = PaymentStatusType.InProcess,
-                PaymentDate = CreditHelper.CurrentDate
+                PaymentDate = DateHelper.CurrentDate
             });
 
             await _context.SaveChangesAsync();

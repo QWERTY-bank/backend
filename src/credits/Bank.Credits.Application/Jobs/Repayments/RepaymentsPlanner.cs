@@ -22,7 +22,7 @@ namespace Bank.Credits.Application.Jobs.Repayments
             // Учитываем только те кредиты, которые не имеют завершенного или находящегося в ожидании платежа
             return _dbContext.Credits
                 .Where(x => x.Status == CreditStatusType.Active)
-                .Where(x => !x.PaymentHistory!.Any(x => x.PaymentDate == CreditHelper.CurrentDate && x.Type == PaymentType.Repayment
+                .Where(x => !x.PaymentHistory!.Any(x => x.PaymentDate == DateHelper.CurrentDate && x.Type == PaymentType.Repayment
                                                     && (x.PaymentStatus == PaymentStatusType.InProcess || x.PaymentStatus == PaymentStatusType.Conducted)));
         }
 

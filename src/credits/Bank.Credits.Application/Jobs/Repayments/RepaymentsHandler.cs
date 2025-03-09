@@ -39,7 +39,7 @@ namespace Bank.Credits.Application.Jobs.Repayments
                 .Include(x => x.PaymentHistory)
                 .Include(x => x.Tariff)
                 .Where(x => x.Status == CreditStatusType.Active)
-                .Where(x => !x.PaymentHistory!.Any(x => x.PaymentDate == CreditHelper.CurrentDate && x.Type == PaymentType.Repayment
+                .Where(x => !x.PaymentHistory!.Any(x => x.PaymentDate == DateHelper.CurrentDate && x.Type == PaymentType.Repayment
                                                     && (x.PaymentStatus == PaymentStatusType.InProcess || x.PaymentStatus == PaymentStatusType.Conducted)))
                 .Where(x => fromPlanId <= x.PlanId && x.PlanId <= toPlanId)
                 .ToListAsync();
@@ -48,7 +48,7 @@ namespace Bank.Credits.Application.Jobs.Repayments
             {
                 // Проверяем, что у кредита сегодня платеж
                 var nextPaymentDate = credit.CalculateNextPaymentDate();
-                if (nextPaymentDate != CreditHelper.CurrentDate)
+                if (nextPaymentDate != DateHelper.CurrentDate)
                 {
                     continue;
                 }
@@ -61,7 +61,7 @@ namespace Bank.Credits.Application.Jobs.Repayments
                     AccountId = credit.AccountId,
                     CreditId = credit.Id,
                     PaymentAmount = credit.CalculateNextPaymentAmount(),
-                    PaymentDate = CreditHelper.CurrentDate,
+                    PaymentDate = DateHelper.CurrentDate,
                     PaymentDateTime = DateTime.UtcNow,
                     PaymentStatus = PaymentStatusType.InProcess
                 });

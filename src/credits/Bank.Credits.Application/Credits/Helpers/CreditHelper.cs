@@ -6,17 +6,15 @@ namespace Bank.Credits.Application.Credits.Helpers
 {
     public static class CreditHelper
     {
-        public static DateOnly CurrentDate { get => DateOnly.FromDateTime(DateTime.UtcNow); }
-
         /// <summary>
         /// Нужно загрузить PaymentHistory
         /// </summary>
         public static DateOnly CalculateNextPaymentDate(this Credit credit)
         {
-            var passedDaysFromTaking = CurrentDate.DayNumber - credit.TakingDate!.Value.DayNumber;
+            var passedDaysFromTaking = DateHelper.CurrentDate.DayNumber - credit.TakingDate!.Value.DayNumber;
 
             var existCurrentDateRepayment = credit.PaymentHistory?
-                .Where(x => DateOnly.FromDateTime(x.PaymentDateTime) == CurrentDate)
+                .Where(x => DateOnly.FromDateTime(x.PaymentDateTime) == DateHelper.CurrentDate)
                 .Any(x => x.PaymentStatus == PaymentStatusType.Conducted && x.Type == PaymentType.Repayment) ?? false;
 
             var daysFromTakingToNext =
@@ -76,7 +74,7 @@ namespace Bank.Credits.Application.Credits.Helpers
         public static void ApplyInterestRate(this Credit credit)
         {
             credit.DebtAmount *= (1 + credit.Tariff!.NormalizedInterestRate);
-            credit.LastInterestChargeDate = CurrentDate;
+            credit.LastInterestChargeDate = DateHelper.CurrentDate;
         }
 
         public static void MakePayment(this Credit credit, decimal value)
