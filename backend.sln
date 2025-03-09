@@ -52,6 +52,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bank.Core.Persistence", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bank.Credits.Persistence", "src\credits\Bank.Credits.Persistence\Bank.Credits.Persistence.csproj", "{976E4AC5-8EBD-480B-94D5-F51A2E357ECA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{5BDB930B-2CDD-4FD3-A2BE-308BBDA81758}"
+	ProjectSection(SolutionItems) = preProject
+		docs\Screenshot 2025-03-09 at 21.53.58.png = docs\Screenshot 2025-03-09 at 21.53.58.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
