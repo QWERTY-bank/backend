@@ -8,6 +8,7 @@ namespace Bank.Credits.Application.Credits.Helpers
         {
             get
             {
+                //return DateOnly.FromDateTime(DateTime.Now);
                 var startFrom = new DateTime(2025, 03, 09);
                 var now = DateTime.UtcNow;
 

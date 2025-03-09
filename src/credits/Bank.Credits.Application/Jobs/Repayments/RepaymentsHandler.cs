@@ -65,6 +65,11 @@ namespace Bank.Credits.Application.Jobs.Repayments
                     PaymentDateTime = DateTime.UtcNow,
                     PaymentStatus = PaymentStatusType.InProcess
                 });
+
+                if (credit.LastInterestChargeDate != DateHelper.CurrentDate)
+                {
+                    credit.ApplyInterestRate();
+                }
             }
         }
 
