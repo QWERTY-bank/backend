@@ -64,6 +64,7 @@ public class AccountService
         
         var depositTransaction = new DepositTransactionEntity
         {
+            ParentKey = transactionKey,
             AccountId = toAccountId,
             Key = Guid.NewGuid(),
             CreatedDate = DateTime.UtcNow,
