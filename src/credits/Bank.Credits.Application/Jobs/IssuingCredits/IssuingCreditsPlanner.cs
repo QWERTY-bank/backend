@@ -15,7 +15,7 @@ namespace Bank.Credits.Application.Jobs.IssuingCredits
             CreditsDbContext dbContext,
             ILogger<IssuingCreditsPlanner> logger,
             IOptions<IssuingCreditsPlannerOptions> options
-        ): base(dbContext, logger, options.Value.CreditsInOneRequest) { }
+        ) : base(dbContext, logger, options.Value.CreditsInOneRequest) { }
 
         protected override IQueryable<Credit> FilterCredits(DbSet<Credit> credits)
             => credits.Where(x => x.Status == CreditStatusType.Requested);
@@ -28,8 +28,9 @@ namespace Bank.Credits.Application.Jobs.IssuingCredits
         }
 
         protected override Task AddPlansAsync(List<IssuingCreditsPlan> newPlans)
-        {
-            return _dbContext.IssuingCreditsPlans.AddRangeAsync(newPlans);
-        }
+            => _dbContext.IssuingCreditsPlans.AddRangeAsync(newPlans);
+
+        protected override Task BlockPlansAsync()
+            => _dbContext.CloseIssuingCreditsPlansForUpdate();
     }
 }

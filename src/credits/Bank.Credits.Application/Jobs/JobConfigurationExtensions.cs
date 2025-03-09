@@ -1,6 +1,7 @@
 ﻿using Bank.Credits.Application.Jobs.Configurations;
 using Bank.Credits.Application.Jobs.IssuingCredits;
 using Bank.Credits.Application.Jobs.IssuingCredits.Configurations;
+using Bank.Credits.Application.Jobs.Payments.Configurations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
@@ -13,6 +14,9 @@ namespace Bank.Credits.Application.Jobs
         {
             services.ConfigureOptions<IssuingCreditsPlannerOptionsConfigure>();
             services.ConfigureOptions<IssuingCreditsHandlerOptionsConfigure>();
+
+            services.ConfigureOptions<PaymentsPlannerOptionsConfigure>();
+            services.ConfigureOptions<PaymentsHandlerOptionsConfigure>();
 
             var jobsOptions = configuration.GetRequiredSection("Jobs").Get<JobsOptions>();
             if (jobsOptions == null)

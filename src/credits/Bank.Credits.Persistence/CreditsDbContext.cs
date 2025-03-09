@@ -28,6 +28,8 @@ namespace Bank.Credits.Persistence
         #region Plans
 
         public DbSet<IssuingCreditsPlan> IssuingCreditsPlans { get; set; }
+        public DbSet<PaymentsPlan> PaymentsPlans { get; set; }
+        public DbSet<RepaymentPlan> RepaymentPlans { get; set; }
 
         #endregion
 
@@ -71,16 +73,9 @@ namespace Bank.Credits.Persistence
 
             #region Plans
 
-            modelBuilder.Entity<IssuingCreditsPlan>()
-                .ToTable(nameof(IssuingCreditsPlans), BankCreditsPlanSchema);
-            modelBuilder.Entity<IssuingCreditsPlan>()
-                .HasKey(x => x.Id);
-            modelBuilder.Entity<IssuingCreditsPlan>()
-                .Property(x => x.Status)
-                .HasDefaultValue(PlanStatusType.Wait);
-            modelBuilder.Entity<IssuingCreditsPlan>()
-                .HasIndex(x => x.Id)
-                .IsUnique();
+            modelBuilder.ConfigurePlanEntity<IssuingCreditsPlan>(BankCreditsPlanSchema);
+            modelBuilder.ConfigurePlanEntity<PaymentsPlan>(BankCreditsPlanSchema);
+            modelBuilder.ConfigurePlanEntity<RepaymentPlan>(BankCreditsPlanSchema);
 
             #endregion
         }

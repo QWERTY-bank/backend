@@ -27,12 +27,13 @@ namespace Bank.Credits.Application.Jobs.Base
         protected abstract IQueryable<Credit> FilterCredits(DbSet<Credit> credits);
         protected abstract Task<TPlan?> GetLastPlanAsync();
         protected abstract Task AddPlansAsync(List<TPlan> newPlans);
+        protected abstract Task BlockPlansAsync();
         public async Task Execute(IJobExecutionContext context)
         {
             using var scope = await _dbContext.Database.BeginTransactionAsync();
             try
             {
-                await _dbContext.CloseIssuingCreditsPlansForUpdate();
+                await BlockPlansAsync();
 
                 var creditsQuery = FilterCredits(_dbContext.Credits);
 
