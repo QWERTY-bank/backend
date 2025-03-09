@@ -51,6 +51,11 @@ namespace Bank.Credits.Application.Jobs.Payments
 
         private async Task HandleReduceDebtAsync(Payment payment)
         {
+            if (Math.Abs(payment.PaymentAmount - payment.Credit!.DebtAmount) < 0.1M)
+            {
+                payment.PaymentAmount = payment.Credit!.DebtAmount;
+            }
+
             if (payment.PaymentAmount > payment.Credit!.DebtAmount || payment.Credit.Status != CreditStatusType.Active)
             {
                 payment.PaymentStatus = PaymentStatusType.Canceled;
