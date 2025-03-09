@@ -46,7 +46,7 @@ namespace Bank.Credits.Application.Jobs.Repayments
 
             foreach (var credit in credits)
             {
-                // Проверяем, что у кредита сегодня платеж
+                // Проверяем, что у кредита сегодня платеж 
                 var nextPaymentDate = credit.CalculateNextPaymentDate();
                 if (nextPaymentDate != DateHelper.CurrentDate)
                 {
