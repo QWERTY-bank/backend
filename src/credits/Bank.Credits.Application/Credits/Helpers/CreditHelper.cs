@@ -8,6 +8,9 @@ namespace Bank.Credits.Application.Credits.Helpers
     {
         public static DateOnly CurrentDate { get => DateOnly.FromDateTime(DateTime.UtcNow); }
 
+        /// <summary>
+        /// Нужно загрузить PaymentHistory
+        /// </summary>
         public static DateOnly CalculateNextPaymentDate(Credit credit)
         {
             var passedDaysFromTaking = CurrentDate.DayNumber - credit.TakingDate!.Value.DayNumber;
@@ -24,6 +27,15 @@ namespace Bank.Credits.Application.Credits.Helpers
             return credit.TakingDate.Value.AddDays(daysFromTakingToNext);
         }
 
+        public static decimal CalculateNextPaymentAmount(this Credit credit)
+        {
+            var nextDate = CalculateNextPaymentDate(credit);
+
+            return nextDate < credit.LastDate
+                ? credit.PaymentsInfo.Payment
+                : credit.PaymentsInfo.LastPayment;
+        }
+
         /// <summary>
         /// X - равный платеж, кроме последнего Y, который либо равен либо меньше X
         /// D - сколько должны сейчас
@@ -33,6 +45,8 @@ namespace Bank.Credits.Application.Credits.Helpers
         /// Формула аннуитетного платежа
         /// X = cell(D * (i*(1+i)^y)/((1 + i)^y - 1))
         /// Y = D - X * y
+        /// 
+        /// Нужно загрузить PaymentHistory и Tariff
         /// </summary>
         public static void UpdateCreditPaymentsInfo(this Credit credit)
         {
@@ -57,6 +71,22 @@ namespace Bank.Credits.Application.Credits.Helpers
 
             credit.PaymentsInfo.Payment = (int)Math.Ceiling(paymentForPeriod);
             credit.PaymentsInfo.LastPayment = paymentForPeriod * remainedPaymentsCount - credit.PaymentsInfo.Payment * (remainedPaymentsCount - 1);
+        }
+
+        public static void MakePayment(this Credit credit, decimal value)
+        {
+            credit.DebtAmount -= value;
+
+            if (credit.DebtAmount <= 0)
+            {
+                credit.Status = CreditStatusType.Closed;
+            }
+        }
+
+        public static void ReduceDebt(this Credit credit, decimal value)
+        {
+            credit.MakePayment(value);
+            credit.UpdateCreditPaymentsInfo();
         }
 
         private static decimal CalculateInterestRateForPeriod(this Credit credit)

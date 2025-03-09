@@ -26,7 +26,7 @@ namespace Bank.Credits.Application.Jobs.IssuingCredits
             _coreRequestService = coreRequestService;
         }
 
-        protected override async Task HandleCreditsAsync(long fromPlanId, long toPlanId)
+        protected override async Task HandlePlannedEntitiesAsync(long fromPlanId, long toPlanId)
         {
             var credits = await _dbContext.Credits
                 .Include(x => x.Tariff)
@@ -40,7 +40,7 @@ namespace Bank.Credits.Application.Jobs.IssuingCredits
                 var result = await _coreRequestService.UnitAccountDepositTransferAsync(new()
                 {
                     Key = credit.Key,
-                    CurrencyValues = 
+                    CurrencyValues =
                     [
                         new()
                         {
@@ -51,8 +51,11 @@ namespace Bank.Credits.Application.Jobs.IssuingCredits
                 }, credit.AccountId);
 
                 credit.Status = result.IsSuccess ? CreditStatusType.Active : CreditStatusType.Canceled;
-                credit.TakingDate = CreditHelper.CurrentDate;
-                credit.UpdateCreditPaymentsInfo();
+                if (credit.Status == CreditStatusType.Active)
+                {
+                    credit.TakingDate = CreditHelper.CurrentDate;
+                    credit.UpdateCreditPaymentsInfo();
+                }
             }
         }
 

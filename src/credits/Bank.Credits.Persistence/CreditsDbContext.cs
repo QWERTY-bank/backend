@@ -68,6 +68,11 @@ namespace Bank.Credits.Persistence
                 .WithMany(x => x.PaymentHistory)
                 .HasForeignKey(x => x.CreditId)
                 .IsRequired();
+            modelBuilder.Entity<Payment>()
+                .Property(x => x.PlanId)
+                .ValueGeneratedOnAdd();
+            modelBuilder.Entity<Payment>()
+                .HasIndex(x => x.PlanId);
 
             #endregion
 

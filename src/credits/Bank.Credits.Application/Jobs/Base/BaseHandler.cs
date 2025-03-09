@@ -58,7 +58,7 @@ namespace Bank.Credits.Application.Jobs.Base
             await _dbContext.SaveChangesAsync();
         }
 
-        protected abstract Task HandleCreditsAsync(long fromPlanId, long toPlanId);
+        protected abstract Task HandlePlannedEntitiesAsync(long fromPlanId, long toPlanId);
         private async Task HandleCreditsAsync(long startFrom, long endAt, long segmentIndex)
         {
             (long fromPlanId, long toPlanId) = PlanFabric.GetSegment(startFrom, endAt, _creditsInOneRequest, segmentIndex);
@@ -66,7 +66,7 @@ namespace Bank.Credits.Application.Jobs.Base
             using var scope = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
             try
             {
-                await HandleCreditsAsync(fromPlanId, toPlanId);
+                await HandlePlannedEntitiesAsync(fromPlanId, toPlanId);
 
                 await _dbContext.SaveChangesAsync();
             }

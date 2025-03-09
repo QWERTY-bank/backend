@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace Bank.Credits.Application.Jobs.Repayments
 {
-    public class RepaymentsPlanner : BasePlanner<RepaymentPlan, RepaymentsPlanner>
+    public class RepaymentsPlanner : BasePlanner<Credit, RepaymentPlan, RepaymentsPlanner>
     {
         public RepaymentsPlanner(
             CreditsDbContext dbContext,
@@ -17,7 +17,7 @@ namespace Bank.Credits.Application.Jobs.Repayments
             IOptions<RepaymentsPlannerOptions> options
         ) : base(dbContext, logger, options.Value.CreditsInOneRequest) { }
 
-        protected override IQueryable<Credit> FilterCredits(DbSet<Credit> credits)
+        protected override IQueryable<Credit> FilterPlannedEntity()
         {
             throw new NotImplementedException();
         }

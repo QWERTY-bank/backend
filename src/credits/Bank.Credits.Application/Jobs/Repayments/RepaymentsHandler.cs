@@ -16,7 +16,7 @@ namespace Bank.Credits.Application.Jobs.Repayments
            IOptions<RepaymentsHandlerOptions> options
         ) : base(dbContext, logger, options.Value.CreditsInOneRequest) { }
 
-        protected override Task HandleCreditsAsync(long fromPlanId, long toPlanId)
+        protected override Task HandlePlannedEntitiesAsync(long fromPlanId, long toPlanId)
         {
             throw new NotImplementedException();
         }

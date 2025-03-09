@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace Bank.Credits.Application.Jobs.IssuingCredits
 {
-    public class IssuingCreditsPlanner : BasePlanner<IssuingCreditsPlan, IssuingCreditsPlanner>
+    public class IssuingCreditsPlanner : BasePlanner<Credit, IssuingCreditsPlan, IssuingCreditsPlanner>
     {
         public IssuingCreditsPlanner(
             CreditsDbContext dbContext,
@@ -17,8 +17,8 @@ namespace Bank.Credits.Application.Jobs.IssuingCredits
             IOptions<IssuingCreditsPlannerOptions> options
         ) : base(dbContext, logger, options.Value.CreditsInOneRequest) { }
 
-        protected override IQueryable<Credit> FilterCredits(DbSet<Credit> credits)
-            => credits.Where(x => x.Status == CreditStatusType.Requested);
+        protected override IQueryable<Credit> FilterPlannedEntity()
+            => _dbContext.Credits.Where(x => x.Status == CreditStatusType.Requested);
 
         protected override Task<IssuingCreditsPlan?> GetLastPlanAsync()
         {

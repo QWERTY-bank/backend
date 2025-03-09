@@ -1,5 +1,5 @@
 ﻿using Bank.Credits.Application.Jobs.Helpers;
-using Bank.Credits.Domain.Credits;
+using Bank.Credits.Domain.Common;
 using Bank.Credits.Domain.Jobs;
 using Bank.Credits.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -8,11 +8,12 @@ using Quartz;
 
 namespace Bank.Credits.Application.Jobs.Base
 {
-    public abstract class BasePlanner<TPlan, TPlanner> : IJob where TPlan : PlanBaseEntity, new()
+    public abstract class BasePlanner<TPlannedEntity, TPlan, TPlanner> : IJob 
+        where TPlan : PlanBaseEntity, new() where TPlannedEntity : JobPlannedBaseEntity
     {
         protected readonly CreditsDbContext _dbContext;
         protected readonly ILogger<TPlanner> _logger;
-        protected readonly int _creditsInOneRequest;
+        protected readonly int _plannedEntitiesInOneRequest;
 
         public BasePlanner(
             CreditsDbContext dbContext,
@@ -21,10 +22,10 @@ namespace Bank.Credits.Application.Jobs.Base
         {
             _dbContext = dbContext;
             _logger = logger;
-            _creditsInOneRequest = creditsInOneRequest;
+            _plannedEntitiesInOneRequest = creditsInOneRequest;
         }
 
-        protected abstract IQueryable<Credit> FilterCredits(DbSet<Credit> credits);
+        protected abstract IQueryable<TPlannedEntity> FilterPlannedEntity();
         protected abstract Task<TPlan?> GetLastPlanAsync();
         protected abstract Task AddPlansAsync(List<TPlan> newPlans);
         protected abstract Task BlockPlansAsync();
@@ -35,17 +36,17 @@ namespace Bank.Credits.Application.Jobs.Base
             {
                 await BlockPlansAsync();
 
-                var creditsQuery = FilterCredits(_dbContext.Credits);
+                var plannedEntitiesQuery = FilterPlannedEntity();
 
-                var creditsExists = await creditsQuery.AnyAsync();
-                if (!creditsExists)
+                var TPlannedEntitiesExists = await plannedEntitiesQuery.AnyAsync();
+                if (!TPlannedEntitiesExists)
                 {
                     return;
                 }
 
                 // Запрашиваем минимальный и максимальный planId кредита со статусом Requested
-                var minPlanId = await creditsQuery.MinAsync(x => x.PlanId);
-                var maxPlanId = await creditsQuery.MaxAsync(x => x.PlanId);
+                var minPlanId = await plannedEntitiesQuery.MinAsync(x => x.PlanId);
+                var maxPlanId = await plannedEntitiesQuery.MaxAsync(x => x.PlanId);
 
                 // Запрашиваем последний запрос и берем от туда ToPlanId
                 var lastPlan = await GetLastPlanAsync();
@@ -58,16 +59,16 @@ namespace Bank.Credits.Application.Jobs.Base
                 {
                     var newPlans = new List<TPlan>();
 
-                    for (var i = 0; i < (maxPlanId - minPlanId + 1) / _creditsInOneRequest; i++)
+                    for (var i = 0; i < (maxPlanId - minPlanId + 1) / _plannedEntitiesInOneRequest; i++)
                     {
-                        var plan = PlanFabric.CreatePlan<TPlan>(minPlanId, maxPlanId, _creditsInOneRequest, i);
+                        var plan = PlanFabric.CreatePlan<TPlan>(minPlanId, maxPlanId, _plannedEntitiesInOneRequest, i);
                         newPlans.Add(plan);
                     }
 
                     // Если есть остаток от деления, то добавляем еще один запрос для обработки оставшихся кредитов
-                    if ((maxPlanId - minPlanId + 1) % _creditsInOneRequest > 0)
+                    if ((maxPlanId - minPlanId + 1) % _plannedEntitiesInOneRequest > 0)
                     {
-                        var plan = PlanFabric.CreatePlan<TPlan>(minPlanId, maxPlanId, _creditsInOneRequest, newPlans.Count);
+                        var plan = PlanFabric.CreatePlan<TPlan>(minPlanId, maxPlanId, _plannedEntitiesInOneRequest, newPlans.Count);
                         newPlans.Add(plan);
                     }
 

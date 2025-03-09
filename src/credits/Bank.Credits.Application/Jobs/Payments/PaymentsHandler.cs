@@ -1,5 +1,9 @@
-﻿using Bank.Credits.Application.Jobs.Base;
+﻿using Bank.Credits.Application.Credits.Helpers;
+using Bank.Credits.Application.Jobs.Base;
 using Bank.Credits.Application.Jobs.Payments.Configurations;
+using Bank.Credits.Application.Requests;
+using Bank.Credits.Application.Requests.Models;
+using Bank.Credits.Domain.Credits;
 using Bank.Credits.Domain.Jobs;
 using Bank.Credits.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -8,17 +12,103 @@ using Microsoft.Extensions.Options;
 
 namespace Bank.Credits.Application.Jobs.Payments
 {
+    /*
+        1. Добавить джобу по обработке платежей
+        2. Добавить джобу по созданию платежей на погашение, чтобы сохранять ключ идемпонтентности 
+
+        В джобе по созданию погашений создаем платеж с текущей инфой по кредиту
+        В джобе по обработке платежа перед этим заново расчитываем платеж, так как перед этим пользователь мог уменьшить сумму кредита
+
+        Обработка платежа будет проходить 5 на 1, 5 - период запуска планера, 1 - период запуска хендлера
+        Обработка создания погашения тоже 5 на 1. Запрашивать нужно будет те кредиты у которых нет платежа в статусе ВПроцессе или Выполнен в день платежа
+
+        В джобе по созданию погашений добавить начисление проценка и в кредит поставить последнюю дату начисления процента и перед начислением стравнивать текущую дату в выставленной, если не равна то начисляем процент
+
+
+        Добавить сервис который будет в зависимости от CreditConstants.DayLength переводить часы в день и заменить получение текущей даты на него
+    */
     public class PaymentsHandler : BaseHandler<PaymentsPlan, PaymentsHandler>
     {
+        private readonly ICoreRequestService _coreRequestService;
+
         public PaymentsHandler(
            CreditsDbContext dbContext,
            ILogger<PaymentsHandler> logger,
+           ICoreRequestService coreRequestService,
            IOptions<PaymentsHandlerOptions> options
-       ) : base(dbContext, logger, options.Value.CreditsInOneRequest) { }
-
-        protected override Task HandleCreditsAsync(long fromPlanId, long toPlanId)
+        ) : base(dbContext, logger, options.Value.CreditsInOneRequest)
         {
-            throw new NotImplementedException();
+            _coreRequestService = coreRequestService;
+        }
+
+        protected override async Task HandlePlannedEntitiesAsync(long fromPlanId, long toPlanId)
+        {
+            var payments = await _dbContext.Payments
+                .Include(x => x.Credit)
+                    .ThenInclude(x => x.Tariff)
+                .Where(x => x.PaymentStatus == PaymentStatusType.InProcess)
+                .Where(x => fromPlanId <= x.PlanId && x.PlanId <= toPlanId)
+                .ToListAsync();
+
+            foreach (var payment in payments)
+            {
+                switch (payment.Type)
+                {
+                    case PaymentType.ReduceDebt:
+                        await HandleReduceDebtAsync(payment);
+                        break;
+                    case PaymentType.Repayment:
+                        await HandleRepaymentAsync(payment);
+                        break;
+                };
+
+                if (payment.PaymentStatus == PaymentStatusType.Conducted)
+                {
+                    payment.Credit!.ReduceDebt(payment.PaymentAmount);
+                }
+            }
+        }
+
+        private async Task HandleReduceDebtAsync(Payment payment)
+        {
+            if (payment.PaymentAmount > payment.Credit!.DebtAmount || payment.Credit.Status != CreditStatusType.Active)
+            {
+                payment.PaymentStatus = PaymentStatusType.Canceled;
+                return;
+            }
+
+            await TransferAsync(payment);
+        }
+
+        private async Task HandleRepaymentAsync(Payment payment)
+        {
+            if (payment.Credit!.Status != CreditStatusType.Active)
+            {
+                payment.PaymentStatus = PaymentStatusType.Canceled;
+                return;
+            }
+
+            payment.PaymentAmount = payment.Credit!.CalculateNextPaymentAmount();
+
+            await TransferAsync(payment);
+        }
+
+        private async Task TransferAsync(Payment payment)
+        {
+            var result = await _coreRequestService.UnitAccountWithdrawTransferAsync(new()
+            {
+                Key = payment.Key,
+                CurrencyValues =
+                [
+                    new()
+                    {
+                        Code = CurrencyCode.Rub,
+                        Value = payment.PaymentAmount,
+                    }
+                ]       
+            }, payment.AccountId);
+
+            payment.PaymentStatus = result.IsSuccess ? PaymentStatusType.Conducted : PaymentStatusType.Canceled;
         }
 
         protected override DbSet<PaymentsPlan> SelectPlans()

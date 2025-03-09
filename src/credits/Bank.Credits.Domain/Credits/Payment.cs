@@ -2,7 +2,7 @@
 
 namespace Bank.Credits.Domain.Credits
 {
-    public class Payment : BaseEntity
+    public class Payment : JobPlannedBaseEntity
     {
         /// <summary>
         /// Ключ идемпотентности, с которым был создан платеж

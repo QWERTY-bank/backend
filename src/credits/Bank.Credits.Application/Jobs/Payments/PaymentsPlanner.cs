@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace Bank.Credits.Application.Jobs.Payments
 {
-    public class PaymentsPlanner : BasePlanner<PaymentsPlan, PaymentsPlanner>
+    public class PaymentsPlanner : BasePlanner<Payment, PaymentsPlan, PaymentsPlanner>
     {
         public PaymentsPlanner(
             CreditsDbContext dbContext,
@@ -17,10 +17,8 @@ namespace Bank.Credits.Application.Jobs.Payments
             IOptions<PaymentsPlannerOptions> options
         ) : base(dbContext, logger, options.Value.CreditsInOneRequest) { }
 
-        protected override IQueryable<Credit> FilterCredits(DbSet<Credit> credits)
-        {
-            throw new NotImplementedException();
-        }
+        protected override IQueryable<Payment> FilterPlannedEntity()
+            => _dbContext.Payments.Where(x => x.PaymentStatus == PaymentStatusType.InProcess);
 
         protected override Task<PaymentsPlan?> GetLastPlanAsync()
         {
