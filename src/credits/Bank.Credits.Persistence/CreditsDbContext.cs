@@ -73,9 +73,9 @@ namespace Bank.Credits.Persistence
 
             #region Plans
 
-            modelBuilder.ConfigurePlanEntity<IssuingCreditsPlan>(BankCreditsPlanSchema);
-            modelBuilder.ConfigurePlanEntity<PaymentsPlan>(BankCreditsPlanSchema);
-            modelBuilder.ConfigurePlanEntity<RepaymentPlan>(BankCreditsPlanSchema);
+            modelBuilder.ConfigurePlanEntity<IssuingCreditsPlan>(nameof(IssuingCreditsPlans), BankCreditsPlanSchema);
+            modelBuilder.ConfigurePlanEntity<PaymentsPlan>(nameof(PaymentsPlans), BankCreditsPlanSchema);
+            modelBuilder.ConfigurePlanEntity<RepaymentPlan>(nameof(RepaymentPlans), BankCreditsPlanSchema);
 
             #endregion
         }

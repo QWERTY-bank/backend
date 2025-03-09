@@ -5,11 +5,11 @@ namespace Bank.Credits.Persistence
 {
     public static class PlanExtensions
     {
-        public static void ConfigurePlanEntity<TPlanEntity>(this ModelBuilder modelBuilder, string schema)
+        public static void ConfigurePlanEntity<TPlanEntity>(this ModelBuilder modelBuilder, string table, string schema)
             where TPlanEntity : PlanBaseEntity
         {
             modelBuilder.Entity<TPlanEntity>()
-                .ToTable(nameof(TPlanEntity), schema);
+                .ToTable(table, schema);
             modelBuilder.Entity<TPlanEntity>()
                 .HasKey(x => x.Id);
             modelBuilder.Entity<TPlanEntity>()
