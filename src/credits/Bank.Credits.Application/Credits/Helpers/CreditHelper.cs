@@ -14,7 +14,7 @@ namespace Bank.Credits.Application.Credits.Helpers
             var passedDaysFromTaking = DateHelper.CurrentDate.DayNumber - credit.TakingDate!.Value.DayNumber;
 
             var existCurrentDateRepayment = credit.PaymentHistory?
-                .Where(x => DateOnly.FromDateTime(x.PaymentDateTime) == DateHelper.CurrentDate)
+                .Where(x => x.PaymentDate == DateHelper.CurrentDate)
                 .Any(x => x.PaymentStatus == PaymentStatusType.Conducted && x.Type == PaymentType.Repayment) ?? false;
 
             var daysFromTakingToNext =
