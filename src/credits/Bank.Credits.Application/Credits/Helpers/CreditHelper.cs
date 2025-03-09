@@ -20,7 +20,7 @@ namespace Bank.Credits.Application.Credits.Helpers
             var daysFromTakingToNext =
                 CreditConstants.PaymentPeriodDays * (passedDaysFromTaking / CreditConstants.PaymentPeriodDays) +
                 // Если текущая дата равна дате погашения, но было погашение на текущую дату, то берем следующую дату платежа
-                passedDaysFromTaking % CreditConstants.PaymentPeriodDays == 0 && !existCurrentDateRepayment ? 0 : CreditConstants.PaymentPeriodDays;
+                (passedDaysFromTaking % CreditConstants.PaymentPeriodDays == 0 && !existCurrentDateRepayment ? 0 : CreditConstants.PaymentPeriodDays);
 
             return credit.TakingDate.Value.AddDays(daysFromTakingToNext);
         }
@@ -87,7 +87,7 @@ namespace Bank.Credits.Application.Credits.Helpers
 
         public static void ApplyInterestRate(this Credit credit)
         {
-            credit.DebtAmount *= (1 + credit.Tariff!.NormalizedInterestRate);
+            credit.DebtAmount *= (1 + credit.CalculateInterestRateForPeriod());
             credit.LastInterestChargeDate = DateHelper.CurrentDate;
         }
 
@@ -98,6 +98,7 @@ namespace Bank.Credits.Application.Credits.Helpers
             if (credit.DebtAmount <= 0)
             {
                 credit.Status = CreditStatusType.Closed;
+                credit.DebtAmount = 0;
             }
         }
 
