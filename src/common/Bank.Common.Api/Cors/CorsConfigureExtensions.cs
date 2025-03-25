@@ -1,5 +1,4 @@
-﻿using Bank.Common.Api.Configurations.Others;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Bank.Common.Api.Cors
 {
@@ -7,7 +6,6 @@ namespace Bank.Common.Api.Cors
     {
         public static IServiceCollection AddCorsConfigure(this IServiceCollection services)
         {
-            services.ConfigureOptions<ModalStateOptionsConfigure>();
             services.ConfigureOptions<CustomCorsOptionsConfigure>();
 
             services.AddCors();
