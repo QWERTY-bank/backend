@@ -1,15 +1,17 @@
 using Bank.Common.Api.Configurations;
 using Bank.Common.Api.Cors;
 using Bank.Users.Api;
+using Bank.Users.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCorsConfigure();
 
 builder.ConfigureAppsettings();
-builder.Services.AddUsersConfigurations();
+builder.Services.AddApiUsersConfigurations();
 builder.Services.AddUsersServices();
-builder.Services.AddAutoMapperProfiles();
+builder.Services.AddApiAutoMapperProfiles();
+builder.Services.AddApplicationAutoMapperProfiles();
 builder.AddUsersDbContext();
 builder.AddRedisDb();
 
