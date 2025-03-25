@@ -1,5 +1,6 @@
 ﻿using Bank.Users.Application.Auth;
 using Bank.Users.Application.Auth.Mapper;
+using Bank.Users.Application.Settings;
 using Bank.Users.Application.Users;
 using Bank.Users.Application.Users.Mapper;
 using Bank.Users.Persistence;
@@ -23,6 +24,7 @@ namespace Bank.Users.Application
             services.AddScoped<ITokensService, TokensService>();
             services.AddScoped<IRefreshTokenStore, RefreshTokenStore>();
             services.AddScoped<IPasswordService, PasswordService>();
+            services.AddScoped<IClientUserSettingsService, ClientUserSettingsService>();
 
             services.AddScoped<IUserService, UserService>();
 
@@ -35,7 +37,10 @@ namespace Bank.Users.Application
         /// </summary>
         public static void AddApplicationAutoMapperProfiles(this IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(AuthApplicationMapperProfile), typeof(UserApplicationMapperProfile));
+            services.AddAutoMapper(
+                typeof(AuthApplicationMapperProfile), typeof(UserApplicationMapperProfile),
+                typeof(ClientUserSettingsApplicationMapperProfile)
+            );
         }
 
         /// <summary>
