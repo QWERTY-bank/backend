@@ -1,6 +1,7 @@
 ﻿using Bank.Users.Application.Auth;
 using Bank.Users.Application.Auth.Mapper;
 using Bank.Users.Application.Settings;
+using Bank.Users.Application.Settings.Mapper;
 using Bank.Users.Application.Users;
 using Bank.Users.Application.Users.Mapper;
 using Bank.Users.Persistence;

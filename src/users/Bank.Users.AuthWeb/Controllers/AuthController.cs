@@ -1,8 +1,8 @@
 ﻿using Bank.Users.Application.Auth;
-using Bank.Users.Web.Models;
+using Bank.Users.AuthWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Bank.Users.Web.Controllers
+namespace Bank.Users.AuthWeb.Controllers
 {
     public class AuthController : Controller
     {

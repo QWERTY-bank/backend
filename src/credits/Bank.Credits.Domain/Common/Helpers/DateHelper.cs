@@ -1,6 +1,6 @@
-﻿using Bank.Credits.Application.Constants;
+﻿using Bank.Credits.Domain.Common.Constants;
 
-namespace Bank.Credits.Application.Credits.Helpers
+namespace Bank.Credits.Domain.Common.Helpers
 {
     public static class DateHelper
     {
@@ -9,10 +9,10 @@ namespace Bank.Credits.Application.Credits.Helpers
             get
             {
                 //return DateOnly.FromDateTime(DateTime.Now);
-                var startFrom = new DateTime(2025, 03, 09);
+                var startFrom = new DateTime(2025, 03, 27);
                 var now = DateTime.UtcNow;
 
-                var passedSeconds = (now - startFrom);
+                var passedSeconds = now - startFrom;
 
                 var passedDays = (int)(passedSeconds.Ticks / CreditConstants.DayLength.Ticks);
 

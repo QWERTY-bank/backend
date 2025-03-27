@@ -1,8 +1,8 @@
-﻿using Bank.Credits.Application.Credits.Helpers;
-using Bank.Credits.Application.Jobs.Base;
+﻿using Bank.Credits.Application.Jobs.Base;
 using Bank.Credits.Application.Jobs.IssuingCredits.Configurations;
 using Bank.Credits.Application.Requests;
 using Bank.Credits.Application.Requests.Models;
+using Bank.Credits.Domain.Common.Helpers;
 using Bank.Credits.Domain.Credits;
 using Bank.Credits.Domain.Jobs;
 using Bank.Credits.Persistence;

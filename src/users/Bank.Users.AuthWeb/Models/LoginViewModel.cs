@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Bank.Users.Web.Models
+namespace Bank.Users.AuthWeb.Models
 {
     public class LoginViewModel
     {

@@ -1,10 +1,10 @@
-﻿using Bank.Credits.Application.Constants;
+﻿using Bank.Credits.Domain.Common.Constants;
+using Bank.Credits.Domain.Common.Helpers;
 using Bank.Credits.Domain.Credits;
-using Bank.Credits.Domain.Tariffs;
 
 namespace Bank.Credits.Application.Credits.Helpers
 {
-    public static class CreditHelper
+    public static class CreditHelper2
     {
         /// <summary>
         /// Нужно загрузить PaymentHistory
@@ -27,7 +27,7 @@ namespace Bank.Credits.Application.Credits.Helpers
 
         public static decimal CalculateNextPaymentAmount(this Credit credit)
         {
-            var nextDate = CalculateNextPaymentDate(credit);
+            var nextDate = credit.CalculateNextPaymentDate();
 
             return nextDate < credit.LastDate
                 ? credit.PaymentsInfo.Payment
@@ -55,11 +55,11 @@ namespace Bank.Credits.Application.Credits.Helpers
             // Если предыдущего погашения не было -> пересчитываем X и Y для суммы долга с учетом процента за пропущенные периоды
             // .
 
-            var nextPaymentDate = CalculateNextPaymentDate(credit);
+            var nextPaymentDate = credit.CalculateNextPaymentDate();
 
             var daysLeft = credit.LastDate!.Value.DayNumber - nextPaymentDate.DayNumber + 1;
             var remainedPaymentsCount = daysLeft > 0
-                ? (daysLeft / CreditConstants.PaymentPeriodDays) + (daysLeft % CreditConstants.PaymentPeriodDays == 0 ? 0 : 1)
+                ? daysLeft / CreditConstants.PaymentPeriodDays + (daysLeft % CreditConstants.PaymentPeriodDays == 0 ? 0 : 1)
                 : 1;
 
             var interestRate = credit.CalculateInterestRateForPeriod();
@@ -81,55 +81,32 @@ namespace Bank.Credits.Application.Credits.Helpers
 
         private static decimal CalculateAnnualCoeff(decimal interestRateType, int remainedPaymentsCount)
         {
-            var temp = Pow(1 + interestRateType, remainedPaymentsCount);
-            return (interestRateType * temp) / (temp - 1);
+            var temp = MathHelper.Pow(1 + interestRateType, remainedPaymentsCount);
+            return interestRateType * temp / (temp - 1);
         }
 
-        public static void ApplyInterestRate(this Credit credit)
-        {
-            credit.DebtAmount *= (1 + credit.CalculateInterestRateForPeriod());
-            credit.LastInterestChargeDate = DateHelper.CurrentDate;
-        }
+        //public static void ApplyInterestRate(this Credit credit)
+        //{
+        //    credit.DebtAmount *= 1 + credit.Tariff!.InterestRateForPeriod;
+        //    credit.LastInterestChargeDate = DateHelper.CurrentDate;
+        //}
 
-        public static void MakePayment(this Credit credit, decimal value)
-        {
-            credit.DebtAmount -= value;
+        //public static void MakePayment(this Credit credit, decimal value)
+        //{
+        //    credit.DebtAmount -= value;
 
-            if (credit.DebtAmount <= 0)
-            {
-                credit.Status = CreditStatusType.Closed;
-                credit.DebtAmount = 0;
-            }
-        }
+        //    if (credit.DebtAmount <= 0)
+        //    {
+        //        credit.Status = CreditStatusType.Closed;
+        //        credit.DebtAmount = 0;
+        //    }
+        //}
 
-        public static void ReduceDebt(this Credit credit, decimal value)
-        {
-            credit.MakePayment(value);
-            credit.UpdateCreditPaymentsInfo();
-        }
+        //public static void ReduceDebt(this Credit credit, decimal value)
+        //{
+        //    credit.MakePayment(value);
+        //    credit.UpdateCreditPaymentsInfo();
+        //}
 
-        private static decimal CalculateInterestRateForPeriod(this Credit credit)
-        {
-            return CreditConstants.PaymentPeriodDays * (credit.Tariff!.InterestRateType switch
-            {
-                InterestRateType.Annual => credit.Tariff.NormalizedInterestRate / 365,
-                InterestRateType.Monthly => credit.Tariff.NormalizedInterestRate / 30,
-                InterestRateType.Daytime => credit.Tariff.NormalizedInterestRate,
-                _ => throw new NotImplementedException(),
-            });
-        }
-
-        private static decimal Pow(decimal baseNum, int exponent)
-        {
-            if (exponent == 0) return 1;
-            if (exponent < 0) return 1 / Pow(baseNum, -exponent);
-
-            decimal result = 1;
-            for (int i = 0; i < exponent; i++)
-            {
-                result *= baseNum;
-            }
-            return result;
-        }
     }
 }

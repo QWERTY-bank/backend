@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Bank.Common.Application.Extensions;
 using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
-using Bank.Credits.Application.Constants;
-using Bank.Credits.Application.Credits.Helpers;
 using Bank.Credits.Application.Credits.Models;
+using Bank.Credits.Domain.Common.Constants;
+using Bank.Credits.Domain.Common.Helpers;
 using Bank.Credits.Domain.Credits;
 using Bank.Credits.Persistence;
 using Microsoft.EntityFrameworkCore;
