@@ -1,5 +1,4 @@
-﻿using Bank.Credits.Application.Credits.Helpers;
-using Bank.Credits.Application.Jobs.Base;
+﻿using Bank.Credits.Application.Jobs.Base;
 using Bank.Credits.Application.Jobs.Payments.Configurations;
 using Bank.Credits.Application.Requests;
 using Bank.Credits.Application.Requests.Models;

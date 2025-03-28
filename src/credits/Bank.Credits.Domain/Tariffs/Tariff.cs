@@ -12,9 +12,10 @@ namespace Bank.Credits.Domain.Tariffs
         public required int MinPeriodDays { get; set; }
         public required int MaxPeriodDays { get; set; }
 
+        public decimal IncrementallyInterestRateForPeriod { get => 1 + InterestRateForPeriod; }
         public decimal InterestRateForPeriod
         {
-            get => 1 + CreditConstants.PaymentPeriodDays * InterestRateType switch
+            get => CreditConstants.PaymentPeriodDays * InterestRateType switch
             {
                 InterestRateType.Annual => NormalizedInterestRate / 365,
                 InterestRateType.Monthly => NormalizedInterestRate / 30,

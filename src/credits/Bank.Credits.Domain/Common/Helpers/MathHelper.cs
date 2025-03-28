@@ -2,6 +2,11 @@
 {
     public static class MathHelper
     {
+        public static decimal Multiplies(decimal first, decimal second)
+        {
+            return Math.Round(first * second, 2);
+        }
+
         public static decimal Pow(decimal baseNum, int exponent)
         {
             if (exponent == 0) return 1;

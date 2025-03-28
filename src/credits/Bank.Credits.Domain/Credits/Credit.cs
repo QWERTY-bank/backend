@@ -1,4 +1,5 @@
 ﻿using Bank.Credits.Domain.Common;
+using Bank.Credits.Domain.Common.Constants;
 using Bank.Credits.Domain.Common.Helpers;
 using Bank.Credits.Domain.Tariffs;
 
@@ -6,7 +7,7 @@ namespace Bank.Credits.Domain.Credits
 {
     public class Credit : JobPlannedBaseEntity
     {
-        public CreditPaymentsInfo PaymentsInfo { get; set; } = null!;
+        public CreditPaymentsInfo PaymentsInfo { get; set; } = new();
 
         /// <summary>
         /// Ключ идемпотентности, с которым был создан кредит
@@ -57,6 +58,7 @@ namespace Bank.Credits.Domain.Credits
         /// создаст платеж, а так как процент начисляется в хендлере, то произойдет повторный вызов начисления 
         /// процента, который начислять уже не нужно)
         /// Если сейчас не день платежа, то вернет false
+        /// Если рассчитанные платежи закончились, то умножает текущий долг на процентную ставку
         /// </summary>
         public bool ApplyInterestRate()
         {
@@ -73,12 +75,13 @@ namespace Bank.Credits.Domain.Credits
             if (PaymentsInfo.DebtsWithInterest.Any())
             {
                 PaymentsInfo.DebtAmount = PaymentsInfo.DebtsWithInterest.Peek();
-                PaymentsInfo.LastInterestChargeDate = DateHelper.CurrentDate;
             }
             else
             {
-                PaymentsInfo.DebtAmount = Math.Round(PaymentsInfo.DebtAmount * Tariff!.InterestRateForPeriod, 2);
+                PaymentsInfo.DebtAmount = MathHelper.Multiplies(PaymentsInfo.DebtAmount, Tariff!.IncrementallyInterestRateForPeriod);
             }
+
+            PaymentsInfo.LastInterestChargeDate = DateHelper.CurrentDate;
 
             return true;
         }
@@ -102,12 +105,7 @@ namespace Bank.Credits.Domain.Credits
                 return false;
             }
 
-            if (PaymentsInfo.EqualPayment < PaymentsInfo.DebtAmount)
-            {
-                return false;
-            }
-
-            PaymentsInfo.DebtAmount -= PaymentsInfo.DebtsWithInterest.Any() ? PaymentsInfo.EqualPayment : PaymentsInfo.DebtAmount;
+            PaymentsInfo.DebtAmount -= PaymentsInfo.NextPayment;
             PaymentsInfo.UpdateNextPaymentDate();
 
             UpdateCreditStatus();
@@ -117,7 +115,7 @@ namespace Bank.Credits.Domain.Credits
 
         /// <summary>
         /// Уменьшает платеж на указанную сумму и вызывает UpdatePaymentsInfo
-        /// Если указанная сумма больше суммы долга, то вернет false, инчае если уменьшение прошло успешно, то true
+        /// Если указанная сумма больше суммы долга, то вернет false, иначе если уменьшение прошло успешно, то true
         /// </summary>
         public bool ReduceDebt(decimal value)
         {
@@ -146,13 +144,59 @@ namespace Bank.Credits.Domain.Credits
                 return;
             }
 
-            // TODO: расчет платежей
+            if (PaymentsInfo.LastDate < PaymentsInfo.NextPaymentDate)
+            {
+                return;
+            }
 
-            // Вычислить равный платеж (последний платеж равен последнему остатку)
-            // Вычислить суммы остатков с процентами
+            var remainedPaymentsCount = PaymentsInfo.RemainedPaymentsCount;
 
-            // Если остался один период то сразу записываем в платеж сумму долга а в массив остатков с процентами один остаток с процентом
+            // Если процент начислялся и платеж еще не прошел, но клиент уменьшил сумму кредита, то
+            // платеж по кредиту должен быть пересчитан с учетом того, что процент за период уже начислен
+            if (PaymentsInfo.LastInterestChargeDate == DateHelper.CurrentDate &&
+                !PaymentHistory!.Any(x => x.Type == PaymentType.Repayment && x.PaymentDate == DateHelper.CurrentDate && x.PaymentStatus == PaymentStatusType.Conducted))
+            {
+                if (remainedPaymentsCount == 1)
+                {
+                    return;
+                }
 
+                var annualCoeff = CalculateAnnualCoeff(Tariff!.InterestRateForPeriod, remainedPaymentsCount - 1);
+                PaymentsInfo.EqualPayment = MathHelper.Multiplies(PaymentsInfo.DebtAmount, annualCoeff / (annualCoeff + 1));
+
+                PaymentsInfo.DebtsWithInterest = CalculateDebtsWithInterest(
+                    initDebt: PaymentsInfo.DebtAmount - PaymentsInfo.EqualPayment,
+                    equalPayment: PaymentsInfo.EqualPayment,
+                    remainedPaymentsCount: remainedPaymentsCount - 1);
+            }
+            // В другом случае считаем по обычной формуле
+            else
+            {
+                var annualCoeff = CalculateAnnualCoeff(Tariff!.InterestRateForPeriod, remainedPaymentsCount);
+                PaymentsInfo.EqualPayment = MathHelper.Multiplies(PaymentsInfo.DebtAmount, annualCoeff);
+
+                PaymentsInfo.DebtsWithInterest = CalculateDebtsWithInterest(
+                    initDebt: PaymentsInfo.DebtAmount,
+                    equalPayment: PaymentsInfo.EqualPayment,
+                    remainedPaymentsCount);
+            }
+        }
+
+        private Queue<decimal> CalculateDebtsWithInterest(decimal initDebt, decimal equalPayment, int remainedPaymentsCount)
+        {
+            var debtsWithInterestRate = new List<decimal>();
+
+            var debt = initDebt;
+            for (int i = 0; i < remainedPaymentsCount; i++)
+            {
+                debt = MathHelper.Multiplies(debt, Tariff!.IncrementallyInterestRateForPeriod);
+
+                debtsWithInterestRate.Add(debt);
+
+                debt -= equalPayment;
+            }
+
+            return new(debtsWithInterestRate);
         }
 
         /// <summary>
@@ -161,61 +205,45 @@ namespace Bank.Credits.Domain.Credits
         /// <param name="interestRate">Процентная ставка</param>
         /// <param name="periodDays"></param>
         /// <returns></returns>
-        private static decimal CalculateAnnualCoeff(decimal interestRate, int periodDays)
+        private static decimal CalculateAnnualCoeff(decimal interestRate, int periodsCount)
         {
-            var temp = MathHelper.Pow(1 + interestRate, periodDays);
+            var temp = MathHelper.Pow(1 + interestRate, periodsCount);
             return interestRate * temp / (temp - 1);
+        }
+
+        public IEnumerable<Payment> NextRepayments()
+        {
+            if (Status != CreditStatusType.Active)
+            {
+                yield break;
+            }
+
+            var nextDate = PaymentsInfo.NextPaymentDate;
+
+            while (nextDate <= PaymentsInfo.LastDate)
+            {
+                yield return new RepaymentPayment
+                {
+                    Key = Guid.NewGuid(),
+                    PaymentAmount = PaymentsInfo.EqualPayment,
+                    PaymentStatus = PaymentStatusType.InProcess,
+                    PaymentDate = nextDate.Value,
+                    CreditId = Id
+                };
+
+                nextDate = nextDate!.Value.AddDays(CreditConstants.PaymentPeriodDays);
+            }
+
+            if (nextDate > PaymentsInfo.LastDate)
+            {
+                yield return new RepaymentPayment
+                {
+                    Key = Guid.NewGuid(),
+                    PaymentAmount = PaymentsInfo.DebtsWithInterest.LastOrDefault(PaymentsInfo.DebtAmount),
+                    PaymentStatus = PaymentStatusType.InProcess,
+                    CreditId = Id
+                };
+            }
         }
     }
 }
-
-/*
- 
-        /// <summary>
-        /// X - равный платеж, кроме последнего Y, который либо равен либо меньше X
-        /// D - сколько должны сейчас
-        /// y - сколько платежей = На сколько дней взяли \ продолжительность периода в днях - (Дата взятия - Текущая дата)
-        /// i процент за день/месяц/год
-        /// 
-        /// Формула аннуитетного платежа
-        /// X = cell(D * (i*(1+i)^y)/((1 + i)^y - 1))
-        /// Y = D - X * y
-        /// 
-        /// Нужно загрузить PaymentHistory и Tariff
-        /// </summary>
-        public static void UpdateCreditPaymentsInfo(this Credit credit)
-        {
-            // Сохраняем в кредит X и Y, при уменьшении кредита в ReduceCreditAsync пересчитываем их
-            // 
-            // При авто-погашении сначала умножаем текущий долг на процент потом вычитаем от туда X или Y если это последний платеж и сохраняем в сумму долга
-            // 
-            // Если предыдущего погашения не было -> пересчитываем X и Y для суммы долга с учетом процента за пропущенные периоды
-            // .
-
-            var nextPaymentDate = credit.CalculateNextPaymentDate();
-
-            var daysLeft = credit.LastDate!.Value.DayNumber - nextPaymentDate.DayNumber + 1;
-            var remainedPaymentsCount = daysLeft > 0
-                ? daysLeft / CreditConstants.PaymentPeriodDays + (daysLeft % CreditConstants.PaymentPeriodDays == 0 ? 0 : 1)
-                : 1;
-
-            var interestRate = credit.CalculateInterestRateForPeriod();
-
-            var payment = credit.DebtAmount * CalculateAnnualCoeff(interestRate, remainedPaymentsCount);
-
-            // Если начислили процент, но автоперевод еще не прошел, и в это промежуток пользователь уменьшил платеж, то не учитываем процент за этот период
-            if (credit.LastInterestChargeDate == DateHelper.CurrentDate 
-                && !credit.PaymentHistory!.Any(x => x.Type == PaymentType.Repayment && x.PaymentDate == DateHelper.CurrentDate && x.PaymentStatus == PaymentStatusType.Conducted))
-            {
-                payment = remainedPaymentsCount == 1
-                    ? credit.DebtAmount
-                    : credit.DebtAmount * CalculateAnnualCoeff(interestRate, remainedPaymentsCount - 1) / (CalculateAnnualCoeff(interestRate, remainedPaymentsCount - 1) + 1);
-            }
-
-            credit.PaymentsInfo.Payment = (int)Math.Ceiling(payment);
-            credit.PaymentsInfo.LastPayment = payment * remainedPaymentsCount - credit.PaymentsInfo.Payment * (remainedPaymentsCount - 1);
-        }
-
-
- 
- */

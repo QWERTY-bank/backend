@@ -2,7 +2,6 @@
 using Bank.Common.Application.Extensions;
 using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
 using Bank.Credits.Application.Credits.Models;
-using Bank.Credits.Domain.Common.Constants;
 using Bank.Credits.Domain.Common.Helpers;
 using Bank.Credits.Domain.Credits;
 using Bank.Credits.Persistence;
@@ -39,19 +38,6 @@ namespace Bank.Credits.Application.Credits
 
             var result = credits.ToMappedPagedList<Credit, CreditShortDto>(_mapper);
 
-            foreach (var item in result)
-            {
-                var credit = credits.FirstOrDefault(x => x.Id == item.Id);
-
-                if (!(credit?.TakingDate.HasValue ?? false))
-                {
-                    continue;
-                }
-
-                item.NextPaymentAmount = Math.Round(credit?.CalculateNextPaymentAmount() ?? 0M, 2);
-                item.NextPaymentDateOnly = credit?.CalculateNextPaymentDate() ?? DateOnly.MinValue;
-            }
-
             return ExecutionResult<IPagedList<CreditShortDto>>.FromSuccess(result);
         }
 
@@ -68,31 +54,6 @@ namespace Bank.Credits.Application.Credits
             }
 
             var result = _mapper.Map<CreditDto>(credit);
-
-            if (credit.Status == CreditStatusType.Active && credit.TakingDate.HasValue)
-            {
-                result.NextPayments ??= [];
-
-                var nextDate = CreditHelper.CalculateNextPaymentDate(credit);
-
-                while (nextDate < credit.LastDate!.Value)
-                {
-                    result.NextPayments.Add(new()
-                    {
-                        PaymentAmount = credit.PaymentsInfo.Payment,
-                        PaymentDateOnly = nextDate,
-                    });
-                    nextDate = nextDate.AddDays(CreditConstants.PaymentPeriodDays);
-                }
-
-                result.NextPayments.Add(new()
-                {
-                    PaymentAmount = Math.Round(credit.PaymentsInfo.LastPayment, 2),
-                    PaymentDateOnly = DateHelper.CurrentDate <= credit.LastDate!.Value
-                        ? credit.LastDate!.Value
-                        : DateHelper.CurrentDate,
-                });
-            }
 
             return ExecutionResult<CreditDto>.FromSuccess(result);
         }

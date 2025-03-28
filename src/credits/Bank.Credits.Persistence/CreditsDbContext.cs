@@ -49,7 +49,15 @@ namespace Bank.Credits.Persistence
             modelBuilder.Entity<Credit>()
                 .ToTable(nameof(Credits));
             modelBuilder.Entity<Credit>()
-                .OwnsOne(x => x.PaymentsInfo);
+                .OwnsOne(x => x.PaymentsInfo, nav =>
+                {
+                    nav.Property(y => y.DebtsWithInterest)
+                       .HasConversion(
+                            v => string.Join(';', v),
+                            v => new(v.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(decimal.Parse).ToList())
+                       );
+                });
+
             modelBuilder.Entity<Credit>()
                 .HasOne(x => x.Tariff)
                 .WithMany()

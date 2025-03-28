@@ -8,12 +8,12 @@ namespace Bank.Credits.Domain.Credits
         /// <summary>
         /// На какой срок выдан кредит
         /// </summary>
-        public required int PeriodDays { get; set; }
+        public int PeriodDays { get; set; }
 
         /// <summary>
         /// Дата выдачи кредита, устанавливаем только, когда кредит переходит из "Ожидание" в статус "Активный" 
         /// </summary>
-        public required DateOnly? TakingDate { get; set; }
+        public DateOnly? TakingDate { get; set; }
 
         /// <summary>
         /// День последнего платежа по кредиту
@@ -24,7 +24,7 @@ namespace Bank.Credits.Domain.Credits
         /// <summary>
         /// Сумма долга по кредиту в текущий момент 
         /// </summary>
-        public required decimal DebtAmount { get; set; }
+        public decimal DebtAmount { get; set; }
 
         /// <summary>
         /// Список остатков по кредиту с начисленными процентами перед платежом
@@ -41,11 +41,24 @@ namespace Bank.Credits.Domain.Credits
         /// </summary>
         public decimal EqualPayment { get; set; }
 
+        public decimal NextPayment { get => DebtsWithInterest.Any() ? EqualPayment : DebtAmount; }
+
         /// <summary>
         /// Дата следующего платежа
         /// </summary>
         [NotNullIfNotNull(nameof(TakingDate))]
         public DateOnly? NextPaymentDate { get; set; }
+
+        public int RemainedPaymentsCount
+        {
+            get
+            {
+                var daysLeft = LastDate!.Value.DayNumber - NextPaymentDate!.Value.DayNumber;
+                return daysLeft > 0
+                    ? daysLeft / CreditConstants.PaymentPeriodDays + (daysLeft % CreditConstants.PaymentPeriodDays == 0 ? 0 : 1) + 1
+                    : 1;
+            }
+        }
 
         /// <summary>
         /// Переносит дату следующего платежа на следующий период
