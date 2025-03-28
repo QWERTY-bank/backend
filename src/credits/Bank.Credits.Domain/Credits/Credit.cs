@@ -67,8 +67,17 @@ namespace Bank.Credits.Domain.Credits
 
             if (PaymentsInfo.LastInterestChargeDate == DateHelper.CurrentDate)
             {
+                return true;
+            }
+
+            if (PaymentsInfo.DebtsWithInterest.Any())
+            {
                 PaymentsInfo.DebtAmount = PaymentsInfo.DebtsWithInterest.Peek();
                 PaymentsInfo.LastInterestChargeDate = DateHelper.CurrentDate;
+            }
+            else
+            {
+                PaymentsInfo.DebtAmount = Math.Round(PaymentsInfo.DebtAmount * Tariff!.InterestRateForPeriod, 2);
             }
 
             return true;
@@ -98,7 +107,7 @@ namespace Bank.Credits.Domain.Credits
                 return false;
             }
 
-            PaymentsInfo.DebtAmount -= PaymentsInfo.EqualPayment;
+            PaymentsInfo.DebtAmount -= PaymentsInfo.DebtsWithInterest.Any() ? PaymentsInfo.EqualPayment : PaymentsInfo.DebtAmount;
             PaymentsInfo.UpdateNextPaymentDate();
 
             UpdateCreditStatus();
