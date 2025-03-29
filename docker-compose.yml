@@ -41,6 +41,18 @@ services:
     ports:
       - "5003:8080"
 
+  bank.users.authweb:
+    image: ${DOCKER_REGISTRY-}bankusersauthweb
+    build:
+      context: .
+      dockerfile: src/users/Bank.Users.AuthWeb/Dockerfile
+    depends_on:
+      - postgres
+      - redis
+    <<: *common
+    ports:
+      - "5004:8080"
+
   postgres:
     image: postgres:latest
     restart: always
