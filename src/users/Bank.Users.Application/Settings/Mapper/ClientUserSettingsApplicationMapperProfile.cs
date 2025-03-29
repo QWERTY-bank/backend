@@ -2,7 +2,7 @@
 using Bank.Users.Application.Settings.Models;
 using Bank.Users.Domain.Settings;
 
-namespace Bank.Users.Application.Users.Mapper
+namespace Bank.Users.Application.Settings.Mapper
 {
     public class ClientUserSettingsApplicationMapperProfile : Profile
     {

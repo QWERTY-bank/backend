@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Bank.Common.Application.Extensions;
 using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
-using Bank.Credits.Application.Constants;
-using Bank.Credits.Application.Credits.Helpers;
 using Bank.Credits.Application.Credits.Models;
+using Bank.Credits.Application.User;
+using Bank.Credits.Domain.Common.Helpers;
 using Bank.Credits.Domain.Credits;
 using Bank.Credits.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -16,15 +16,18 @@ namespace Bank.Credits.Application.Credits
     {
         private readonly CreditsDbContext _context;
         private readonly ILogger<CreditsService> _logger;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
         public CreditsService(
             CreditsDbContext context,
             ILogger<CreditsService> logger,
+            IUserService userService,
             IMapper mapper)
         {
             _context = context;
             _logger = logger;
+            _userService = userService;
             _mapper = mapper;
         }
 
@@ -38,19 +41,6 @@ namespace Bank.Credits.Application.Credits
             var credits = await creditsQuery.ToPagedListAsync(page, pageSize);
 
             var result = credits.ToMappedPagedList<Credit, CreditShortDto>(_mapper);
-
-            foreach (var item in result)
-            {
-                var credit = credits.FirstOrDefault(x => x.Id == item.Id);
-
-                if (!(credit?.TakingDate.HasValue ?? false))
-                {
-                    continue;
-                }
-
-                item.NextPaymentAmount = Math.Round(credit?.CalculateNextPaymentAmount() ?? 0M, 2);
-                item.NextPaymentDateOnly = credit?.CalculateNextPaymentDate() ?? DateOnly.MinValue;
-            }
 
             return ExecutionResult<IPagedList<CreditShortDto>>.FromSuccess(result);
         }
@@ -68,31 +58,6 @@ namespace Bank.Credits.Application.Credits
             }
 
             var result = _mapper.Map<CreditDto>(credit);
-
-            if (credit.Status == CreditStatusType.Active && credit.TakingDate.HasValue)
-            {
-                result.NextPayments ??= [];
-
-                var nextDate = CreditHelper.CalculateNextPaymentDate(credit);
-
-                while (nextDate < credit.LastDate!.Value)
-                {
-                    result.NextPayments.Add(new()
-                    {
-                        PaymentAmount = credit.PaymentsInfo.Payment,
-                        PaymentDateOnly = nextDate,
-                    });
-                    nextDate = nextDate.AddDays(CreditConstants.PaymentPeriodDays);
-                }
-
-                result.NextPayments.Add(new()
-                {
-                    PaymentAmount = Math.Round(credit.PaymentsInfo.LastPayment, 2),
-                    PaymentDateOnly = DateHelper.CurrentDate <= credit.LastDate!.Value
-                        ? credit.LastDate!.Value
-                        : DateHelper.CurrentDate,
-                });
-            }
 
             return ExecutionResult<CreditDto>.FromSuccess(result);
         }
@@ -121,7 +86,8 @@ namespace Bank.Credits.Application.Credits
 
             var newCredit = _mapper.Map<Credit>(model);
 
-            newCredit.UserId = userId;
+            var user = await _userService.GetUserEntityAsync(userId);
+            newCredit.UserId = user.Id;
 
             await _context.Credits.AddAsync(newCredit);
             await _context.SaveChangesAsync();

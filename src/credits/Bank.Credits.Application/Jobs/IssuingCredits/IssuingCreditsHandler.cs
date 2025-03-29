@@ -1,8 +1,8 @@
-﻿using Bank.Credits.Application.Credits.Helpers;
-using Bank.Credits.Application.Jobs.Base;
+﻿using Bank.Credits.Application.Jobs.Base;
 using Bank.Credits.Application.Jobs.IssuingCredits.Configurations;
 using Bank.Credits.Application.Requests;
 using Bank.Credits.Application.Requests.Models;
+using Bank.Credits.Domain.Common.Helpers;
 using Bank.Credits.Domain.Credits;
 using Bank.Credits.Domain.Jobs;
 using Bank.Credits.Persistence;
@@ -28,35 +28,35 @@ namespace Bank.Credits.Application.Jobs.IssuingCredits
 
         protected override async Task HandlePlannedEntitiesAsync(long fromPlanId, long toPlanId)
         {
-            var credits = await _dbContext.Credits
-                .Include(x => x.Tariff)
-                .Include(x => x.PaymentHistory)
-                .Where(x => x.Status == CreditStatusType.Requested)
-                .Where(x => fromPlanId <= x.PlanId && x.PlanId <= toPlanId)
-                .ToListAsync();
+            //var credits = await _dbContext.Credits
+            //    .Include(x => x.Tariff)
+            //    .Include(x => x.PaymentHistory)
+            //    .Where(x => x.Status == CreditStatusType.Requested)
+            //    .Where(x => fromPlanId <= x.PlanId && x.PlanId <= toPlanId)
+            //    .ToListAsync();
 
-            foreach (var credit in credits)
-            {
-                var result = await _coreRequestService.UnitAccountDepositTransferAsync(new()
-                {
-                    Key = credit.Key,
-                    CurrencyValues =
-                    [
-                        new()
-                        {
-                            Code = CurrencyCode.Rub,
-                            Value = credit.DebtAmount
-                        }
-                    ]
-                }, credit.AccountId);
+            //foreach (var credit in credits)
+            //{
+            //    var result = await _coreRequestService.UnitAccountDepositTransferAsync(new()
+            //    {
+            //        Key = credit.Key,
+            //        CurrencyValues =
+            //        [
+            //            new()
+            //            {
+            //                Code = CurrencyCode.Rub,
+            //                Value = credit.DebtAmount
+            //            }
+            //        ]
+            //    }, credit.AccountId);
 
-                credit.Status = result.IsSuccess ? CreditStatusType.Active : CreditStatusType.Canceled;
-                if (credit.Status == CreditStatusType.Active)
-                {
-                    credit.TakingDate = DateHelper.CurrentDate;
-                    credit.UpdateCreditPaymentsInfo();
-                }
-            }
+            //    credit.Status = result.IsSuccess ? CreditStatusType.Active : CreditStatusType.Canceled;
+            //    if (credit.Status == CreditStatusType.Active)
+            //    {
+            //        credit.TakingDate = DateHelper.CurrentDate;
+            //        credit.UpdateCreditPaymentsInfo();
+            //    }
+            //}
         }
 
         protected override DbSet<IssuingCreditsPlan> SelectPlans()
