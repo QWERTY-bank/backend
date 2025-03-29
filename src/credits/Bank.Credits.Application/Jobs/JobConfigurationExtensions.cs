@@ -30,6 +30,8 @@ namespace Bank.Credits.Application.Jobs
                 throw new NullReferenceException("Section JobsConfiguration was not found in application settings");
             }
 
+            return;
+
             services.AddQuartz(q =>
             {
                 int startDelaySeconds = 10;

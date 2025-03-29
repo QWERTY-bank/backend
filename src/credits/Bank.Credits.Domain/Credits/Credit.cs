@@ -2,6 +2,7 @@
 using Bank.Credits.Domain.Common.Constants;
 using Bank.Credits.Domain.Common.Helpers;
 using Bank.Credits.Domain.Tariffs;
+using Bank.Credits.Domain.User;
 
 namespace Bank.Credits.Domain.Credits
 {
@@ -17,7 +18,9 @@ namespace Bank.Credits.Domain.Credits
         /// <summary>
         /// Id пользователя, к которому привязан кредит
         /// </summary>
-        public required Guid UserId { get; set; }
+        public Guid UserId { get; set; }
+
+        public UserEntity? User { get; set; }
 
         /// <summary>
         /// Номер счета, на который выдан кредит
@@ -38,7 +41,7 @@ namespace Bank.Credits.Domain.Credits
         /// <summary>
         /// История платежей по кредиту
         /// </summary>
-        public List<Payment>? PaymentHistory { get; set; }
+        public List<Payment> PaymentHistory { get; set; } = null!;
 
         /// <summary>
         /// Переводит активный кредит в статус Closed, если сумма долга составляет меньше нуля
@@ -241,6 +244,8 @@ namespace Bank.Credits.Domain.Credits
                     Key = Guid.NewGuid(),
                     PaymentAmount = PaymentsInfo.DebtsWithInterest.LastOrDefault(PaymentsInfo.DebtAmount),
                     PaymentStatus = PaymentStatusType.InProcess,
+                    PaymentDate = PaymentsInfo.NextPaymentDate < PaymentsInfo.LastDate
+                        ? PaymentsInfo.LastDate!.Value : PaymentsInfo.NextPaymentDate!.Value,
                     CreditId = Id
                 };
             }

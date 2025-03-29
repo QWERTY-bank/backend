@@ -2,6 +2,7 @@
 using Bank.Credits.Domain.Credits;
 using Bank.Credits.Domain.Jobs;
 using Bank.Credits.Domain.Tariffs;
+using Bank.Credits.Domain.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Reflection;
@@ -16,6 +17,12 @@ namespace Bank.Credits.Persistence
         public CreditsDbContext(DbContextOptions<CreditsDbContext> options) : base(options)
         {
         }
+
+        #region User 
+
+        public DbSet<UserEntity> Users { get; set; }
+
+        #endregion
 
         #region Credits
 
@@ -40,6 +47,19 @@ namespace Bank.Credits.Persistence
             var assembly = Assembly.GetExecutingAssembly();
             modelBuilder.ApplyConfigurationsFromAssembly(assembly);
             modelBuilder.HasDefaultSchema(BankCreditsSchema);
+
+            #region User
+
+            modelBuilder.Entity<UserEntity>()
+                .ToTable(nameof(Users));
+
+            modelBuilder.Entity<UserEntity>()
+                .HasMany(x => x.Credits)
+                .WithOne(x => x.User)
+                .HasForeignKey(x => x.UserId)
+                .IsRequired();
+
+            #endregion
 
             #region Credits
 

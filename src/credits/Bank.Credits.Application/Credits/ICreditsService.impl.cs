@@ -2,6 +2,7 @@
 using Bank.Common.Application.Extensions;
 using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
 using Bank.Credits.Application.Credits.Models;
+using Bank.Credits.Application.User;
 using Bank.Credits.Domain.Common.Helpers;
 using Bank.Credits.Domain.Credits;
 using Bank.Credits.Persistence;
@@ -15,15 +16,18 @@ namespace Bank.Credits.Application.Credits
     {
         private readonly CreditsDbContext _context;
         private readonly ILogger<CreditsService> _logger;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
         public CreditsService(
             CreditsDbContext context,
             ILogger<CreditsService> logger,
+            IUserService userService,
             IMapper mapper)
         {
             _context = context;
             _logger = logger;
+            _userService = userService;
             _mapper = mapper;
         }
 
@@ -82,7 +86,8 @@ namespace Bank.Credits.Application.Credits
 
             var newCredit = _mapper.Map<Credit>(model);
 
-            newCredit.UserId = userId;
+            var user = await _userService.GetUserEntityAsync(userId);
+            newCredit.UserId = user.Id;
 
             await _context.Credits.AddAsync(newCredit);
             await _context.SaveChangesAsync();

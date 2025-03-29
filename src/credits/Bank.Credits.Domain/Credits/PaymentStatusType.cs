@@ -11,6 +11,9 @@ namespace Bank.Credits.Domain.Credits
         Conducted = 1,
 
         [Description("Отменен")]
-        Canceled = 2
+        Canceled = 2,
+
+        [Description("Просрочен")]
+        Overdue = 3,
     }
 }

@@ -7,6 +7,8 @@ using Bank.Credits.Application.Requests;
 using Bank.Credits.Application.Requests.Configurations;
 using Bank.Credits.Application.Tariffs;
 using Bank.Credits.Application.Tariffs.Mapper;
+using Bank.Credits.Application.User;
+using Bank.Credits.Application.User.Mapper;
 using Bank.Credits.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -24,6 +26,8 @@ namespace Bank.Credits.Api
         /// </summary>
         public static void AddCreditServices(this IServiceCollection services)
         {
+            services.AddScoped<IUserService, UserService>();
+
             services.AddScoped<ICreditsService, CreditsService>();
             services.AddScoped<ITariffsService, TariffsService>();
 
@@ -39,7 +43,8 @@ namespace Bank.Credits.Api
         {
             services.AddAutoMapper(
                 typeof(CreditApplicationMapperProfile), typeof(CreditApiMapperProfile),
-                typeof(TariffApplicationMapperProfile), typeof(TariffApiMapperProfile)
+                typeof(TariffApplicationMapperProfile), typeof(TariffApiMapperProfile),
+                typeof(UserApplicationMapperProfile)
             );
         }
 

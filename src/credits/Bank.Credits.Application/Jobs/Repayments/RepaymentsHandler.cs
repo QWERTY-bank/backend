@@ -62,42 +62,42 @@ namespace Bank.Credits.Application.Jobs.Repayments
 
         protected override async Task HandlePlannedEntitiesAsync(long fromPlanId, long toPlanId)
         {
-            var credits = await _dbContext.Credits
-                .Include(x => x.PaymentHistory)
-                .Include(x => x.Tariff)
-                .Where(x => x.Status == CreditStatusType.Active)
-                .Where(x => !x.PaymentHistory!.Any(x => x.PaymentDate == DateHelper.CurrentDate && x.Type == PaymentType.Repayment
-                                                    && (x.PaymentStatus == PaymentStatusType.InProcess || x.PaymentStatus == PaymentStatusType.Conducted)))
-                .Where(x => fromPlanId <= x.PlanId && x.PlanId <= toPlanId)
-                .ToListAsync();
+            //var credits = await _dbContext.Credits
+            //    .Include(x => x.PaymentHistory)
+            //    .Include(x => x.Tariff)
+            //    .Where(x => x.Status == CreditStatusType.Active)
+            //    .Where(x => !x.PaymentHistory!.Any(x => x.PaymentDate == DateHelper.CurrentDate && x.Type == PaymentType.Repayment
+            //                                        && (x.PaymentStatus == PaymentStatusType.InProcess || x.PaymentStatus == PaymentStatusType.Conducted)))
+            //    .Where(x => fromPlanId <= x.PlanId && x.PlanId <= toPlanId)
+            //    .ToListAsync();
 
-            foreach (var credit in credits)
-            {
-                // Проверяем, что у кредита сегодня платеж 
-                var nextPaymentDate = credit.CalculateNextPaymentDate();
-                if (nextPaymentDate != DateHelper.CurrentDate)
-                {
-                    continue;
-                }
+            //foreach (var credit in credits)
+            //{
+            //    // Проверяем, что у кредита сегодня платеж 
+            //    var nextPaymentDate = credit.CalculateNextPaymentDate();
+            //    if (nextPaymentDate != DateHelper.CurrentDate)
+            //    {
+            //        continue;
+            //    }
 
-                credit.PaymentHistory ??= [];
+            //    credit.PaymentHistory ??= [];
 
-                credit.PaymentHistory.Add(new RepaymentPayment()
-                {
-                    Key = Guid.NewGuid(),
-                    AccountId = credit.AccountId,
-                    CreditId = credit.Id,
-                    PaymentAmount = credit.CalculateNextPaymentAmount(),
-                    PaymentDate = DateHelper.CurrentDate,
-                    PaymentDateTime = DateTime.UtcNow,
-                    PaymentStatus = PaymentStatusType.InProcess
-                });
+            //    credit.PaymentHistory.Add(new RepaymentPayment()
+            //    {
+            //        Key = Guid.NewGuid(),
+            //        AccountId = credit.AccountId,
+            //        CreditId = credit.Id,
+            //        PaymentAmount = credit.CalculateNextPaymentAmount(),
+            //        PaymentDate = DateHelper.CurrentDate,
+            //        PaymentDateTime = DateTime.UtcNow,
+            //        PaymentStatus = PaymentStatusType.InProcess
+            //    });
 
-                if (credit.LastInterestChargeDate != DateHelper.CurrentDate)
-                {
-                    credit.ApplyInterestRate();
-                }
-            }
+            //    if (credit.LastInterestChargeDate != DateHelper.CurrentDate)
+            //    {
+            //        credit.ApplyInterestRate();
+            //    }
+            //}
         }
 
         protected override DbSet<RepaymentPlan> SelectPlans()
