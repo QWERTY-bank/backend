@@ -1,4 +1,5 @@
 using Bank.Core.Application.Accounts;
+using Bank.Core.Application.Accounts.User;
 
 namespace Bank.Core.Api.Infrastructure.Extensions;
 

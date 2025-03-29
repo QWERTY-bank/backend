@@ -5,31 +5,30 @@ using Bank.Core.Domain.Transactions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Bank.Core.Application.Accounts.Read;
+namespace Bank.Core.Application.Accounts.Admin;
 
-public class GetMyAccountTransactionsQuery : IRequest<OperationResult<TransactionsResponseDto>>
+public class GetUserAccountTransactionsQuery : IRequest<OperationResult<TransactionsResponseDto>>
 {
-    public required Guid UserId { get; init; }
     public required long AccountId { get; init; }
     public required Period Period { get; init; }
 }
 
-public class GetMyAccountTransactionsQueryHandler : IRequestHandler<GetMyAccountTransactionsQuery, OperationResult<TransactionsResponseDto>>
+public class GetUserAccountTransactionsQueryHandler : IRequestHandler<GetUserAccountTransactionsQuery, OperationResult<TransactionsResponseDto>>
 {
     private readonly ICoreDbContext _dbContext;
 
-    public GetMyAccountTransactionsQueryHandler(ICoreDbContext dbContext)
+    public GetUserAccountTransactionsQueryHandler(ICoreDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
     public async Task<OperationResult<TransactionsResponseDto>> Handle(
-        GetMyAccountTransactionsQuery request, 
+        GetUserAccountTransactionsQuery request, 
         CancellationToken cancellationToken)
     {
-        var accountExists = await _dbContext.PersonalAccounts
+        var accountExists = await _dbContext.Accounts
             .AnyAsync(
-                account => account.Id == request.AccountId && account.UserId == request.UserId,
+                account => account.Id == request.AccountId,
                 cancellationToken);
 
         if (!accountExists)
@@ -45,7 +44,7 @@ public class GetMyAccountTransactionsQueryHandler : IRequestHandler<GetMyAccount
                 transaction.OperationDate <= request.Period.End)
             .OrderByDescending(transaction => transaction.OperationDate)
             .ToListAsync(cancellationToken);
-
+        
         var groupedTransactions = transactions
             .SelectMany(transaction => transaction.Currencies.Select(currency => new
             {

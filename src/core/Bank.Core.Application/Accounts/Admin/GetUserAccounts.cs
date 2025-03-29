@@ -3,7 +3,7 @@ using Bank.Core.Domain.Common;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Bank.Core.Application.Accounts.Read;
+namespace Bank.Core.Application.Accounts.Admin;
 
 public class GetUserAccountsQuery : IRequest<OperationResult<IReadOnlyCollection<AccountDto>>>
 {

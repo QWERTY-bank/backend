@@ -2,7 +2,7 @@ using Bank.Core.Domain.Common;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Bank.Core.Application.Accounts;
+namespace Bank.Core.Application.Accounts.User;
 
 public class CloseAccountCommand : IRequest<OperationResult<Empty>>
 {

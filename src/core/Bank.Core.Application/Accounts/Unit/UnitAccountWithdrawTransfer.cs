@@ -5,9 +5,9 @@ using Bank.Core.Domain.Transactions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Bank.Core.Application.Accounts;
+namespace Bank.Core.Application.Accounts.Unit;
 
-public class UnitAccountDepositTransferCommand : IRequest<OperationResult<Empty>>
+public class UnitAccountWithdrawTransferCommand : IRequest<OperationResult<Empty>>
 {
     public required Guid UnitId { get; init; }
     public required long UserAccountId { get; init; }
@@ -15,12 +15,12 @@ public class UnitAccountDepositTransferCommand : IRequest<OperationResult<Empty>
     public required IReadOnlyCollection<CurrencyValue> Currencies { get; init; }
 }
 
-public class UnitAccountDepositTransferCommandHandler : IRequestHandler<UnitAccountDepositTransferCommand, OperationResult<Empty>>
+public class UnitAccountWithdrawTransferCommandHandler : IRequestHandler<UnitAccountWithdrawTransferCommand, OperationResult<Empty>>
 {
     private readonly ICoreDbContext _dbContext;
     private readonly AccountService _accountService;
 
-    public UnitAccountDepositTransferCommandHandler(
+    public UnitAccountWithdrawTransferCommandHandler(
         ICoreDbContext dbContext, 
         AccountService accountService)
     {
@@ -29,7 +29,7 @@ public class UnitAccountDepositTransferCommandHandler : IRequestHandler<UnitAcco
     }
 
     public async Task<OperationResult<Empty>> Handle(
-        UnitAccountDepositTransferCommand request, 
+        UnitAccountWithdrawTransferCommand request, 
         CancellationToken cancellationToken)
     {
         var unitAccountId = await _dbContext.UnitAccounts
@@ -51,8 +51,8 @@ public class UnitAccountDepositTransferCommandHandler : IRequestHandler<UnitAcco
             .ToArray();
 
         var result = await _accountService.TransferCurrencies(
-            fromAccountId: unitAccountId,
-            toAccountId: request.UserAccountId,
+            fromAccountId: request.UserAccountId,
+            toAccountId: unitAccountId,
             request.Key,
             transactionCurrencies,
             cancellationToken);

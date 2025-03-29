@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
-namespace Bank.Core.Application.Accounts;
+namespace Bank.Core.Application.Accounts.User;
 
 public class AddDepositTransactionCommand : IRequest<OperationResult<Empty>>
 {

@@ -2,8 +2,11 @@ using System.Text.Json.Serialization;
 using Bank.Common.Api.Configurations;
 using Bank.Common.Api.Middlewares.Extensions;
 using Bank.Common.Auth.Extensions;
+using Bank.Core.Api.Hubs;
 using Bank.Core.Api.Infrastructure.Auth;
 using Bank.Core.Api.Infrastructure.Extensions;
+using Bank.Core.Api.Services;
+using Bank.Core.Application.Abstractions;
 using Bank.Core.Application.Common;
 using Microsoft.AspNetCore.Http.Json;
 
@@ -16,6 +19,12 @@ builder.Services
     .AddCoreMediatR()
     .AddJwtAuthentication();
 
+builder.Services.AddSignalR()
+    .AddJsonProtocol(options =>
+    {
+        options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
 builder.Services
     .AddAuthorization(options =>
     {
@@ -23,6 +32,7 @@ builder.Services
             policy => { policy.RequireClaim("scope", "unit-account"); });
     });
 
+builder.Services.AddScoped<IAccountHubService, AccountHubService>();
 builder.Services.AddScoped<AccountService>();
 
 builder.Services.AddControllers()
@@ -53,5 +63,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<AccountHub>("/account-hub");
 
 app.Run();

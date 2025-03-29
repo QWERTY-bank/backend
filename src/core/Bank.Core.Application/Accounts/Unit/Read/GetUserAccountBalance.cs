@@ -3,31 +3,31 @@ using Bank.Core.Domain.Common;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Bank.Core.Application.Accounts.Read;
+namespace Bank.Core.Application.Accounts.Unit.Read;
 
-public class GetMyAccountBalanceQuery : IRequest<OperationResult<MyBalanceDto>>
+public class GetUserAccountBalanceQuery : IRequest<OperationResult<BalanceDto>>
 {
-    public required Guid UserId { get; init; }
-    public required long AccountId { get; init; }
+    public long AccountId { get; init; }
 }
 
-public class GetMyAccountBalanceHandler : IRequestHandler<GetMyAccountBalanceQuery, OperationResult<MyBalanceDto>>
+public class GetUserAccountBalanceQueryHandler : IRequestHandler<GetUserAccountBalanceQuery, OperationResult<BalanceDto>>
 {
     private readonly ICoreDbContext _dbContext;
 
-    public GetMyAccountBalanceHandler(ICoreDbContext dbContext)
+    public GetUserAccountBalanceQueryHandler(ICoreDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
-    public async Task<OperationResult<MyBalanceDto>> Handle(
-        GetMyAccountBalanceQuery request,
+    public async Task<OperationResult<BalanceDto>> Handle(
+        GetUserAccountBalanceQuery request,
         CancellationToken cancellationToken)
     {
         var balanceDto = await _dbContext.PersonalAccounts
-            .Where(account => account.Id == request.AccountId && account.UserId == request.UserId)
-            .Select(account => new MyBalanceDto()
+            .Where(account => account.Id == request.AccountId)
+            .Select(account => new BalanceDto
             {
+                UserId = account.UserId,
                 IsClosed = account.IsClosed,
                 CurrencyValue = account.AccountCurrencies
                     .Select(currency => new CurrencyValue
@@ -40,7 +40,7 @@ public class GetMyAccountBalanceHandler : IRequestHandler<GetMyAccountBalanceQue
             .SingleOrDefaultAsync(cancellationToken);
 
         return balanceDto == null
-            ? OperationResultFactory.NotFound<MyBalanceDto>(request.AccountId)
+            ? OperationResultFactory.NotFound<BalanceDto>(request.AccountId)
             : OperationResultFactory.Success(balanceDto);
     }
 }
