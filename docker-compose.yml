@@ -24,6 +24,7 @@ services:
       context: .
       dockerfile: src/credits/Bank.Credits.Api/Dockerfile
     depends_on:
+      - bank.users.api
       - postgres
     <<: *common
     ports:
@@ -47,6 +48,7 @@ services:
       context: .
       dockerfile: src/users/Bank.Users.AuthWeb/Dockerfile
     depends_on:
+      - bank.users.api
       - postgres
       - redis
     <<: *common
