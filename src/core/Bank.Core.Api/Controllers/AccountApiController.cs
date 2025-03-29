@@ -71,7 +71,7 @@ public class AccountApiController : BaseController
         {
             Key = request.Key,
             UserAccountId = id,
-            Currencies = request.CurrencyValues,
+            Currencies = [request.CurrencyValue],
             UnitId = UnitId
         };
         var result = await _mediator.Send(command, cancellationToken);
@@ -100,7 +100,7 @@ public class AccountApiController : BaseController
         {
             Key = request.Key,
             UserAccountId = id,
-            Currencies = request.CurrencyValues,
+            Currencies = [request.CurrencyValue],
             UnitId = UnitId
         };
         var result = await _mediator.Send(command, cancellationToken);

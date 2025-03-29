@@ -2,19 +2,25 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Bank.Core.Application.Accounts.Models;
 
-public class BalanceDto
+public class UnitAccountDto
 {
     /// <summary>
-    ///     Идентификатор владельца счета
+    ///     Идентификатор счета
     /// </summary>
     [Required]
-    public required Guid UserId { get; init; }
+    public required long Id { get; init; }
     
     /// <summary>
-    ///     Закрыт ли счет
+    ///     Наименование счета
     /// </summary>
     [Required]
-    public required bool IsClosed { get; init; }
+    public required string Title { get; init; }
+    
+    /// <summary>
+    ///     Идентификатор юнита
+    /// </summary>
+    [Required]
+    public required Guid UnitId { get; init; }
     
     /// <summary>
     ///     Значения валют на счете

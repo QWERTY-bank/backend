@@ -84,17 +84,17 @@ public class GetMyAccountTransactionsQueryHandler : IRequestHandler<GetMyAccount
                 {
                     Key = transaction.Key,
                     Type = transaction.Type,
-                    CurrencyValues = transaction.Currencies
+                    CurrencyValue = transaction.Currencies
                         .Select(currency => new CurrencyValue
                         {
                             Code = currency.Code,
                             Value = currency.Value
                         })
-                        .ToArray()
+                        .First()
                 })
                 .ToArray(),
-            DepositCurrencyTotals = depositTotals,
-            WithdrawCurrencyTotals = withdrawTotals
+            DepositCurrencyTotals = depositTotals.First(),
+            WithdrawCurrencyTotals = withdrawTotals.First()
         };
 
         return OperationResultFactory.Success(transactionsResponse);

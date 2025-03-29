@@ -65,7 +65,8 @@ public class AccountController : BaseController
         var command = new CreateAccountCommand
         {
             Title = request.Title,
-            UserId = UserId
+            UserId = UserId,
+            Code = request.Code
         };
         var result = await _mediator.Send(command, cancellationToken);
 
@@ -126,6 +127,25 @@ public class AccountController : BaseController
     }
     
     /// <summary>
+    /// Переводит деньги со счета на счет (пока не реализовано, всегда возвращает 200)
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpPost("transfer")]
+    [ProducesResponseType((int)HttpStatusCode.NoContent)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
+    public async Task<IResult> TransferToAccount(
+        [FromBody] TransferRequest request,
+        CancellationToken cancellationToken)
+    {
+        return TypedResults.Ok();
+    }
+    
+    /// <summary>
     /// Вносит деньги на счет пользователя
     /// </summary>
     /// <param name="id"></param>
@@ -147,7 +167,7 @@ public class AccountController : BaseController
         {
             AccountId = id,
             TransactionKey = request.Transaction.Key,
-            Currencies = request.Transaction.CurrencyValues,
+            Currencies = [request.Transaction.CurrencyValue],
             UserId = UserId
         };
         var result = await _mediator.Send(command, cancellationToken);
@@ -177,7 +197,7 @@ public class AccountController : BaseController
         {
             AccountId = id,
             TransactionKey = request.Transaction.Key,
-            Currencies = request.Transaction.CurrencyValues,
+            Currencies = [request.Transaction.CurrencyValue],
             UserId = UserId
         };
         var result = await _mediator.Send(command, cancellationToken);

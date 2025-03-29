@@ -6,6 +6,7 @@ using Bank.Core.Api.Infrastructure.Web;
 using Bank.Core.Application.Accounts.Models;
 using Bank.Core.Application.Accounts.Read;
 using Bank.Core.Application.Common;
+using Bank.Core.Domain.Currencies;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +21,87 @@ public class AdminAccountController : BaseController
     public AdminAccountController(IMediator mediator)
     {
         _mediator = mediator;
+    }
+    
+    /// <summary>
+    /// Возвращает все счета (пока не реализовано, возвращает моковые данные)
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpGet]
+    [ProducesResponseType(typeof(IReadOnlyCollection<AccountDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
+    public async Task<IReadOnlyCollection<AccountDto>> GetAllAccounts(CancellationToken cancellationToken)
+    {
+        return
+        [
+            new AccountDto
+            {
+                Id = 1,
+                CurrencyValue = new CurrencyValue
+                {
+                    Value = 1000,
+                    Code = CurrencyCode.Rub
+                },
+                IsClosed = false,
+                Title = "Test Account",
+                UserId = Guid.NewGuid()
+            }
+        ];
+    }
+    
+    /// <summary>
+    /// Возвращает мастер счета банка (пока не реализовано, возвращает моковые данные)
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpGet("master")]
+    [ProducesResponseType(typeof(IReadOnlyCollection<UnitAccountDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
+    public async Task<IReadOnlyCollection<UnitAccountDto>> GetUnitAccounts(CancellationToken cancellationToken)
+    {
+        var unitId = Guid.NewGuid();
+        
+        return
+        [
+            new UnitAccountDto
+            {
+                Id = 1,
+                CurrencyValue = new CurrencyValue
+                {
+                    Value = 1000,
+                    Code = CurrencyCode.Rub
+                },
+                UnitId = unitId,
+                Title = "MasterRub"
+            },
+            new UnitAccountDto
+            {
+                Id = 1,
+                CurrencyValue = new CurrencyValue
+                {
+                    Value = 1000,
+                    Code = CurrencyCode.Eur
+                },
+                UnitId = unitId,
+                Title = "MasterEur"
+            },
+            new UnitAccountDto
+            {
+                Id = 1,
+                CurrencyValue = new CurrencyValue
+                {
+                    Value = 1000,
+                    Code = CurrencyCode.Usd
+                },
+                UnitId = unitId,
+                Title = "MasterUsd"
+            }
+        ];
     }
 
     /// <summary>

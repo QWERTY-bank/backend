@@ -11,6 +11,7 @@ public class CreateAccountCommand : IRequest<OperationResult<long>>
 {
     public required Guid UserId { get; init; }
     public required string Title { get; init; }
+    public required CurrencyCode Code { get; init; }
 }
 
 public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, OperationResult<long>>
@@ -32,7 +33,7 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
             [
                 new AccountCurrencyEntity
                 {
-                    Code = CurrencyCode.Rub,
+                    Code = command.Code,
                     Value = 0
                 }
             ]

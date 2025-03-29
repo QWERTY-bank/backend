@@ -27,14 +27,7 @@ public abstract class AccountBaseEntity : BaseEntity<long>
             }
             else
             {
-                var resourceValue = new AccountCurrencyEntity
-                {
-                    AccountId = Id,
-                    Code = newCurrency.Code,
-                    Value = newCurrency.Value
-                };
-                
-                AccountCurrencies.Add(resourceValue);
+                return OperationResultFactory.InvalidData<Empty>($"На счете отсутствует валюта {newCurrency.Code}");
             }
         }
         

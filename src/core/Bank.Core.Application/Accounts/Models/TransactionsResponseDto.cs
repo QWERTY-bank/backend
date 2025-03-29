@@ -14,11 +14,11 @@ public class TransactionsResponseDto
     /// Доходы
     /// </summary>
     [Required]
-    public required IReadOnlyCollection<CurrencyValue> DepositCurrencyTotals { get; init; }
+    public required CurrencyValue DepositCurrencyTotals { get; init; }
     
     /// <summary>
     /// Траты
     /// </summary>
     [Required]
-    public required IReadOnlyCollection<CurrencyValue> WithdrawCurrencyTotals { get; init; }
+    public required CurrencyValue WithdrawCurrencyTotals { get; init; }
 }

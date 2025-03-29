@@ -25,6 +25,7 @@ namespace Bank.Core.Persistence.Migrations
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     title = table.Column<string>(type: "text", nullable: false),
+                    is_closed = table.Column<bool>(type: "boolean", nullable: false),
                     type = table.Column<int>(type: "integer", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: true),
                     unit_id = table.Column<Guid>(type: "uuid", nullable: true)
@@ -63,7 +64,7 @@ namespace Bank.Core.Persistence.Migrations
                     operation_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     is_cancel = table.Column<bool>(type: "boolean", nullable: false),
                     account_id = table.Column<long>(type: "bigint", nullable: false),
-                    currencies = table.Column<List<TransactionCurrency>>(type: "jsonb", nullable: false)
+                    currencies = table.Column<IReadOnlyCollection<TransactionCurrency>>(type: "jsonb", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -131,14 +132,13 @@ namespace Bank.Core.Persistence.Migrations
                 name: "ix_account_entity_unit_id",
                 schema: "bank_core",
                 table: "account_entity",
-                column: "unit_id",
-                unique: true);
+                column: "unit_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_account_entity_user_id",
+                name: "ix_account_entity_user_id_title",
                 schema: "bank_core",
                 table: "account_entity",
-                column: "user_id",
+                columns: new[] { "user_id", "title" },
                 unique: true);
 
             migrationBuilder.CreateIndex(

@@ -133,7 +133,7 @@ namespace Bank.Core.Persistence.Migrations
                         .HasColumnName("created_date")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<List<TransactionCurrency>>("Currencies")
+                    b.Property<IReadOnlyCollection<TransactionCurrency>>("Currencies")
                         .IsRequired()
                         .HasColumnType("jsonb")
                         .HasColumnName("currencies");
@@ -189,8 +189,6 @@ namespace Bank.Core.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_account_entity_user_id_title");
 
-                    b.ToTable("account_entity", "bank_core");
-
                     b.HasDiscriminator().HasValue(0);
                 });
 
@@ -203,10 +201,7 @@ namespace Bank.Core.Persistence.Migrations
                         .HasColumnName("unit_id");
 
                     b.HasIndex("UnitId")
-                        .IsUnique()
                         .HasDatabaseName("ix_account_entity_unit_id");
-
-                    b.ToTable("account_entity", "bank_core");
 
                     b.HasDiscriminator().HasValue(1);
                 });
@@ -249,7 +244,7 @@ namespace Bank.Core.Persistence.Migrations
 
             modelBuilder.Entity("Bank.Core.Domain.Transactions.TransactionEntity", b =>
                 {
-                    b.HasOne("Bank.Core.Domain.Accounts.AccountBaseEntity", null)
+                    b.HasOne("Bank.Core.Domain.Accounts.AccountBaseEntity", "Account")
                         .WithMany("Transactions")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -262,6 +257,8 @@ namespace Bank.Core.Persistence.Migrations
                         .HasPrincipalKey("Key")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_transaction_entity_transaction_entity_parent_key");
+
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("Bank.Core.Domain.Accounts.AccountBaseEntity", b =>

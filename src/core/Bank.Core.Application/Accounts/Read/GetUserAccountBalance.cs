@@ -29,13 +29,13 @@ public class GetUserAccountBalanceQueryHandler : IRequestHandler<GetUserAccountB
             {
                 UserId = account.UserId,
                 IsClosed = account.IsClosed,
-                CurrencyValues = account.AccountCurrencies
+                CurrencyValue = account.AccountCurrencies
                     .Select(currency => new CurrencyValue
                     {
                         Code = currency.Code,
                         Value = currency.Value
                     })
-                    .ToArray()
+                    .First()
             })
             .SingleOrDefaultAsync(cancellationToken);
 

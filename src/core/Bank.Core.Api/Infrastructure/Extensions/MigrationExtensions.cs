@@ -59,20 +59,21 @@ internal static class MigrationExtensions
             return;
         }
         
-        var creditAccount = new UnitAccountEntity
+        var unitAccounts = Enum.GetValues<CurrencyCode>()
+            .Select(code => new UnitAccountEntity
         {
-            Title = "Аккаунт кредитов",
+            Title = $"Аккаунт кредитов {code}",
             UnitId = unitId,
             AccountCurrencies =
             [
                 new AccountCurrencyEntity
                 {
-                    Code = CurrencyCode.Rub,
-                    Value = decimal.MaxValue
+                    Code = code,
+                    Value = 100000000000
                 }
             ]
-        };
+        });
 
-        dbContext.UnitAccounts.Add(creditAccount);
+        dbContext.UnitAccounts.AddRange(unitAccounts);
     }
 }

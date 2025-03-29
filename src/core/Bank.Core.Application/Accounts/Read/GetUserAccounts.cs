@@ -30,12 +30,12 @@ public class GetUserAccountsQueryHandler : IRequestHandler<GetUserAccountsQuery,
                 IsClosed = account.IsClosed,
                 Title = account.Title,
                 UserId = account.UserId,
-                CurrencyValues = account.AccountCurrencies.Select(currency => new CurrencyValue
+                CurrencyValue = account.AccountCurrencies.Select(currency => new CurrencyValue
                     {
                         Code = currency.Code,
                         Value = currency.Value
                     })
-                    .ToArray()
+                    .First()
             })
             .ToListAsync(cancellationToken);
 
