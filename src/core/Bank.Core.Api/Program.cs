@@ -16,8 +16,11 @@ builder.ConfigureAppsettings();
 builder.Services
     .AddCoreSwagger()
     .AddCoreDatabase(builder.Configuration)
+    .AddRedis(builder.Configuration)
     .AddCoreMediatR()
     .AddJwtAuthentication();
+
+builder.Services.AddCurrencyRateClient(builder.Configuration);
 
 builder.Services.AddSignalR()
     .AddJsonProtocol(options =>
@@ -34,6 +37,7 @@ builder.Services
 
 builder.Services.AddScoped<IAccountHubService, AccountHubService>();
 builder.Services.AddScoped<AccountService>();
+builder.Services.AddSingleton<ICurrencyRateService, CurrencyRateService>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

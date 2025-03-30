@@ -128,7 +128,7 @@ public class AccountController : BaseController
     }
     
     /// <summary>
-    /// Переводит деньги со счета на счет (пока не реализовано, всегда возвращает 200)
+    /// Переводит деньги со счета на счет
     /// </summary>
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
@@ -143,7 +143,17 @@ public class AccountController : BaseController
         [FromBody] TransferRequest request,
         CancellationToken cancellationToken)
     {
-        return TypedResults.Ok();
+        var command = new TransferCurrencyCommand
+        {
+            FromAccountId = request.FromAccountId,
+            ToAccountId = request.ToAccountId,
+            CurrencyValue = request.Transaction.CurrencyValue,
+            TransactionKey = request.Transaction.Key,
+            UserId = UserId
+        };
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return result.ToEndpointResult();
     }
     
     /// <summary>

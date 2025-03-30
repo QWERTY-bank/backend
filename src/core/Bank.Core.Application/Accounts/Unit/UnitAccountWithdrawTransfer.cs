@@ -12,7 +12,7 @@ public class UnitAccountWithdrawTransferCommand : IRequest<OperationResult<Empty
     public required Guid UnitId { get; init; }
     public required long UserAccountId { get; init; }
     public required Guid Key { get; init; }
-    public required IReadOnlyCollection<CurrencyValue> Currencies { get; init; }
+    public required CurrencyValue CurrencyValue { get; init; }
 }
 
 public class UnitAccountWithdrawTransferCommandHandler : IRequestHandler<UnitAccountWithdrawTransferCommand, OperationResult<Empty>>
@@ -33,7 +33,7 @@ public class UnitAccountWithdrawTransferCommandHandler : IRequestHandler<UnitAcc
         CancellationToken cancellationToken)
     {
         var unitAccountId = await _dbContext.UnitAccounts
-            .Where(account => account.UnitId == request.UnitId)
+            .Where(account => account.UnitId == request.UnitId && account.AccountCurrencies.Any(currency => currency.Code == request.CurrencyValue.Code))
             .Select(account => account.Id)
             .SingleOrDefaultAsync(cancellationToken);
 
@@ -42,19 +42,17 @@ public class UnitAccountWithdrawTransferCommandHandler : IRequestHandler<UnitAcc
             return OperationResultFactory.NotFound<Empty>();
         }
 
-        var transactionCurrencies = request.Currencies
-            .Select(currency => new TransactionCurrency
-            {
-                Code = currency.Code,
-                Value = currency.Value
-            })
-            .ToArray();
+        var transactionCurrency = new TransactionCurrency
+        {
+            Code = request.CurrencyValue.Code,
+            Value = request.CurrencyValue.Value
+        };
 
         var result = await _accountService.TransferCurrencies(
             fromAccountId: request.UserAccountId,
             toAccountId: unitAccountId,
             request.Key,
-            transactionCurrencies,
+            transactionCurrency,
             cancellationToken);
 
         return result;

@@ -29,15 +29,18 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.13" />
+        <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.14" />
         <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
         <PackageReference Include="Npgsql" Version="8.0.7" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
+        <PackageReference Include="RedLock.net" Version="2.3.2" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\common\Bank.Common.Api\Bank.Common.Api.csproj" />
       <ProjectReference Include="..\Bank.Core.Application\Bank.Core.Application.csproj" />
+      <ProjectReference Include="..\Bank.Core.CurrencyRate\Bank.Core.CurrencyRate.csproj" />
       <ProjectReference Include="..\Bank.Core.Persistence\Bank.Core.Persistence.csproj" />
     </ItemGroup>
 

@@ -6,7 +6,6 @@ using Bank.Core.Api.Infrastructure.Web;
 using Bank.Core.Application.Accounts.Admin;
 using Bank.Core.Application.Accounts.Models;
 using Bank.Core.Application.Common;
-using Bank.Core.Domain.Currencies;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +23,7 @@ public class AdminAccountController : BaseController
     }
     
     /// <summary>
-    /// Возвращает все счета (пока не реализовано, возвращает моковые данные)
+    /// Возвращает все счета
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
@@ -33,27 +32,16 @@ public class AdminAccountController : BaseController
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
-    public async Task<IReadOnlyCollection<AccountDto>> GetAllAccounts(CancellationToken cancellationToken)
+    public async Task<IResult> GetAllAccounts(CancellationToken cancellationToken)
     {
-        return
-        [
-            new AccountDto
-            {
-                Id = 1,
-                CurrencyValue = new CurrencyValue
-                {
-                    Value = 1000,
-                    Code = CurrencyCode.Rub
-                },
-                IsClosed = false,
-                Title = "Test Account",
-                UserId = Guid.NewGuid()
-            }
-        ];
+        var query = new GetAllAccountsQuery();
+        var result = await _mediator.Send(query, cancellationToken);
+
+        return result.ToEndpointResult();
     }
     
     /// <summary>
-    /// Возвращает мастер счета банка (пока не реализовано, возвращает моковые данные)
+    /// Возвращает мастер счета банка
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
@@ -62,46 +50,12 @@ public class AdminAccountController : BaseController
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
-    public async Task<IReadOnlyCollection<UnitAccountDto>> GetUnitAccounts(CancellationToken cancellationToken)
+    public async Task<IResult> GetUnitAccounts(CancellationToken cancellationToken)
     {
-        var unitId = Guid.NewGuid();
-        
-        return
-        [
-            new UnitAccountDto
-            {
-                Id = 1,
-                CurrencyValue = new CurrencyValue
-                {
-                    Value = 1000,
-                    Code = CurrencyCode.Rub
-                },
-                UnitId = unitId,
-                Title = "MasterRub"
-            },
-            new UnitAccountDto
-            {
-                Id = 1,
-                CurrencyValue = new CurrencyValue
-                {
-                    Value = 1000,
-                    Code = CurrencyCode.Eur
-                },
-                UnitId = unitId,
-                Title = "MasterEur"
-            },
-            new UnitAccountDto
-            {
-                Id = 1,
-                CurrencyValue = new CurrencyValue
-                {
-                    Value = 1000,
-                    Code = CurrencyCode.Usd
-                },
-                UnitId = unitId,
-                Title = "MasterUsd"
-            }
-        ];
+        var query = new GetCreditAccountsQuery();
+        var result = await _mediator.Send(query, cancellationToken);
+
+        return result.ToEndpointResult();
     }
 
     /// <summary>

@@ -5,12 +5,12 @@ public class TransferRequest
     /// <summary>
     /// Идентификатор счета отправителя
     /// </summary>
-    public required int FromAccountId { get; init; }
+    public required long FromAccountId { get; init; }
     
     /// <summary>
     /// Идентификатор счета получателя
     /// </summary>
-    public required int ToAccountId { get; init; }
+    public required long ToAccountId { get; init; }
     
     /// <summary>
     /// Транзакция

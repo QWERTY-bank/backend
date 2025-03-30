@@ -1,3 +1,4 @@
+using Bank.Core.Application.Abstractions;
 using Bank.Core.Application.Accounts.Models;
 using Bank.Core.Domain.Common;
 using Bank.Core.Domain.Transactions;
@@ -18,10 +19,12 @@ public class AddDepositTransactionCommand : IRequest<OperationResult<Empty>>
 public class AddDepositTransactionCommandHandler : IRequestHandler<AddDepositTransactionCommand, OperationResult<Empty>>
 {
     private readonly ICoreDbContext _dbContext;
+    private readonly IAccountHubService _accountHubService;
 
-    public AddDepositTransactionCommandHandler(ICoreDbContext dbContext)
+    public AddDepositTransactionCommandHandler(ICoreDbContext dbContext, IAccountHubService accountHubService)
     {
         _dbContext = dbContext;
+        _accountHubService = accountHubService;
     }
 
     public async Task<OperationResult<Empty>> Handle(
@@ -75,6 +78,11 @@ public class AddDepositTransactionCommandHandler : IRequestHandler<AddDepositTra
         {
             await _dbContext.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
+
+            await _accountHubService.NotifyUsers(
+                request.AccountId,
+                depositTransaction, 
+                account.AccountCurrencies.Single());
             
             return OperationResultFactory.EmptyResult;
         }

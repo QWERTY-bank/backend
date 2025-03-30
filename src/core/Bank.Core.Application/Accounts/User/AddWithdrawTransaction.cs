@@ -1,3 +1,4 @@
+using Bank.Core.Application.Abstractions;
 using Bank.Core.Application.Accounts.Models;
 using Bank.Core.Domain.Common;
 using Bank.Core.Domain.Transactions;
@@ -18,10 +19,12 @@ public class AddWithdrawTransactionCommand : IRequest<OperationResult<Empty>>
 public class AddWithdrawTransactionCommandHandler : IRequestHandler<AddWithdrawTransactionCommand, OperationResult<Empty>>
 {
     private readonly ICoreDbContext _dbContext;
+    private readonly IAccountHubService _accountHubService;
 
-    public AddWithdrawTransactionCommandHandler(ICoreDbContext dbContext)
+    public AddWithdrawTransactionCommandHandler(ICoreDbContext dbContext, IAccountHubService accountHubService)
     {
         _dbContext = dbContext;
+        _accountHubService = accountHubService;
     }
 
     public async Task<OperationResult<Empty>> Handle(
@@ -75,6 +78,11 @@ public class AddWithdrawTransactionCommandHandler : IRequestHandler<AddWithdrawT
         {
             await _dbContext.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
+            
+            await _accountHubService.NotifyUsers(
+                request.AccountId,
+                withdrawTransaction, 
+                account.AccountCurrencies.Single());
             
             return OperationResultFactory.EmptyResult;
         }

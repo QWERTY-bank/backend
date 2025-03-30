@@ -1,3 +1,4 @@
+using Bank.Core.Application.Accounts.Admin;
 using Bank.Core.Domain.Accounts;
 using Bank.Core.Domain.Currencies;
 using Bank.Core.Persistence;
@@ -49,7 +50,7 @@ internal static class MigrationExtensions
 
     private static async Task AddCreditAccountAsync(CoreDbContext dbContext)
     {
-        var unitId = Guid.Parse("a99fb2a5-c52e-4168-8ac9-b28878d3b407");
+        var unitId = GetCreditAccountsQueryHandler.CreditAccountId;
 
         var accountExists = await dbContext.UnitAccounts
             .AnyAsync(account => account.UnitId == unitId);
