@@ -4,6 +4,14 @@ namespace Bank.Core.Domain.Transactions;
 
 public record TransactionCurrency
 {
-    public required decimal Value { get; init; }
+    private const int Decimals = 2;
+
+    private readonly decimal _value;
+    
+    public required decimal Value
+    {
+        get => _value;
+        init => _value = Math.Round(value, Decimals);
+    }
     public required CurrencyCode Code { get; init; }
 }

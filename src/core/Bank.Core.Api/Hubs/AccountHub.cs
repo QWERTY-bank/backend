@@ -49,38 +49,42 @@ public class AccountHub : Hub<IAccountHub>
             }
         }
 
-        var transactionHubResponse = await _dbContext.Accounts
+        var account = await _dbContext.Accounts
+            .AsNoTracking()
+            .Include(account => account.AccountCurrencies)
+            .Include(account => account.Transactions)
             .Where(account => account.Id == subscribeToAccountModel.AccountId)
-            .Select(account => new TransactionsHubResponse
-            {
-                CurrencyValue = account.AccountCurrencies
-                    .Select(currency => new CurrencyValue
-                    {
-                        Value = currency.Value,
-                        Code = currency.Code
-                    })
-                    .Single(),
-                Transactions = account.Transactions
-                    .Select(transaction => new TransactionDto
-                    {
-                        Key = transaction.Key,
-                        CurrencyValue = transaction.Currencies
-                            .Select(currency => new CurrencyValue
-                            {
-                                Value = currency.Value,
-                                Code = currency.Code
-                            })
-                            .Single(),
-                        Type = transaction.Type
-                    })
-                    .ToArray()
-            })
             .SingleOrDefaultAsync();
 
-        if (transactionHubResponse == null)
+        if (account == null)
         {
             return;
         }
+        
+        var transactionHubResponse = new TransactionsHubResponse
+        {
+            CurrencyValue = account.AccountCurrencies
+                .Select(currency => new CurrencyValue
+                {
+                    Value = currency.Value,
+                    Code = currency.Code
+                })
+                .Single(),
+            Transactions = account.Transactions
+                .Select(transaction => new TransactionDto
+                {
+                    Key = transaction.Key,
+                    CurrencyValue = transaction.Currencies
+                        .Select(currency => new CurrencyValue
+                        {
+                            Value = currency.Value,
+                            Code = currency.Code
+                        })
+                        .Single(),
+                    Type = transaction.Type
+                })
+                .ToArray()
+        };
 
         await Clients.Client(Context.ConnectionId).ReceiveTransactions(transactionHubResponse);
         

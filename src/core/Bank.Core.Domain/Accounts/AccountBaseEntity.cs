@@ -5,8 +5,6 @@ namespace Bank.Core.Domain.Accounts;
 
 public abstract class AccountBaseEntity : BaseEntity<long>
 {
-    private const int Decimals = 2;
-    
     public required string Title { get; init; }
     public bool IsClosed { get; set; } = false;
     public List<TransactionEntity> Transactions { get; init; } = [];
@@ -25,7 +23,7 @@ public abstract class AccountBaseEntity : BaseEntity<long>
             
             if (currentCurrencies.TryGetValue(newCurrency.Code, out var currency))
             {
-                currency.Value += Math.Round(newCurrency.Value, Decimals);
+                currency.Value += newCurrency.Value;
             }
             else
             {
@@ -63,7 +61,7 @@ public abstract class AccountBaseEntity : BaseEntity<long>
                     $"На счете не достаточно валюты {newCurrency.Code} для списания");
             }
             
-            currency.Value -= Math.Round(newCurrency.Value, Decimals);
+            currency.Value -= newCurrency.Value;
         }
         
         Transactions.Add(transaction);
