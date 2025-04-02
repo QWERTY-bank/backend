@@ -23,6 +23,11 @@ namespace Bank.Credits.Domain.Credits
         public required long AccountId { get; set; }
 
         /// <summary>
+        /// Валюта счета, на который выдан кредит
+        /// </summary>
+        public required CurrencyCode CurrencyCode { get; set; }
+
+        /// <summary>
         /// Статус кредита
         /// </summary>
         public required CreditStatusType Status { get; set; }
@@ -38,10 +43,23 @@ namespace Bank.Credits.Domain.Credits
         /// </summary>
         public List<Payment> PaymentHistory { get; set; } = null!;
 
+        public void CancelCredit()
+        {
+            Status = CreditStatusType.Canceled;
+        }
+
+        public void TakeCredit()
+        {
+            Status = CreditStatusType.Active;
+            PaymentsInfo.TakingDate = DateHelper.CurrentDate;
+            PaymentsInfo.UpdateNextPaymentDate();
+            UpdatePaymentsInfo();
+        }
+
         /// <summary>
         /// Переводит активный кредит в статус Closed, если сумма долга составляет меньше нуля
         /// </summary>
-        private void UpdateCreditStatus()
+        public void UpdateCreditStatus()
         {
             if (Status == CreditStatusType.Active && PaymentsInfo.DebtAmount <= 0.0M)
             {
@@ -72,7 +90,8 @@ namespace Bank.Credits.Domain.Credits
 
             if (PaymentsInfo.DebtsWithInterest.Any())
             {
-                PaymentsInfo.DebtAmount = PaymentsInfo.DebtsWithInterest.Peek();
+                PaymentsInfo.DebtAmount = PaymentsInfo.DebtsWithInterest.Dequeue();
+                PaymentsInfo.DebtsWithInterest = new(PaymentsInfo.DebtsWithInterest); // Обновляем очередь
             }
             else
             {
@@ -106,7 +125,22 @@ namespace Bank.Credits.Domain.Credits
             PaymentsInfo.DebtAmount -= PaymentsInfo.NextPayment;
             PaymentsInfo.UpdateNextPaymentDate();
 
-            UpdateCreditStatus();
+            return true;
+        }
+
+        /// <summary>
+        /// Возвращает деньги в долг и обновляет информацию о платежах
+        /// </summary>
+        public bool CancelPayment(decimal value)
+        {
+            if (Status != CreditStatusType.Active)
+            {
+                return false;
+            }
+
+            PaymentsInfo.DebtAmount += value;
+
+            UpdatePaymentsInfo();
 
             return true;
         }
@@ -123,7 +157,6 @@ namespace Bank.Credits.Domain.Credits
             }
 
             PaymentsInfo.DebtAmount -= value;
-            UpdatePaymentsInfo();
 
             return true;
         }
@@ -142,10 +175,10 @@ namespace Bank.Credits.Domain.Credits
                 return;
             }
 
-            if (PaymentsInfo.LastDate < PaymentsInfo.NextPaymentDate)
-            {
-                return;
-            }
+            //if (PaymentsInfo.LastDate < PaymentsInfo.NextPaymentDate)
+            //{
+            //    return;
+            //}
 
             var remainedPaymentsCount = PaymentsInfo.RemainedPaymentsCount;
 
@@ -153,7 +186,7 @@ namespace Bank.Credits.Domain.Credits
             //////платеж по кредиту должен быть пересчитан с учетом того, что процент за период уже начислен
             // 
             //
-            if (PaymentsInfo.LastInterestChargeDate == DateHelper.CurrentDate) // && !PaymentHistory!.Any(x => x.Type == PaymentType.Repayment && x.PaymentDate == DateHelper.CurrentDate && x.PaymentStatus == PaymentStatusType.Conducted)
+            if (PaymentsInfo.LastInterestChargeDate == DateHelper.CurrentDate && PaymentsInfo.NextPaymentDate == DateHelper.CurrentDate) // && !PaymentHistory!.Any(x => x.Type == PaymentType.Repayment && x.PaymentDate == DateHelper.CurrentDate && x.PaymentStatus == PaymentStatusType.Conducted)
             {
                 if (remainedPaymentsCount == 1)
                 {
@@ -212,14 +245,14 @@ namespace Bank.Credits.Domain.Credits
 
         public IEnumerable<Payment> NextRepayments()
         {
-            if (Status != CreditStatusType.Active)
+            if (Status != CreditStatusType.Active || PaymentsInfo.DebtAmount == 0.0M)
             {
                 yield break;
             }
 
             var nextDate = PaymentsInfo.NextPaymentDate;
 
-            while (nextDate <= PaymentsInfo.LastDate)
+            while (nextDate < PaymentsInfo.LastDate)
             {
                 yield return new RepaymentPayment
                 {
@@ -233,7 +266,7 @@ namespace Bank.Credits.Domain.Credits
                 nextDate = nextDate!.Value.AddDays(CreditConstants.PaymentPeriodDays);
             }
 
-            if (nextDate > PaymentsInfo.LastDate)
+            if (nextDate >= PaymentsInfo.LastDate)
             {
                 yield return new RepaymentPayment
                 {

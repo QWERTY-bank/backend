@@ -1,5 +1,8 @@
 ﻿using Bank.Common.Api.Configurations;
 using Bank.Common.Auth.Extensions;
+using Bank.Common.Kafka;
+using Bank.Common.Kafka.Transfers;
+using Bank.Core.Api.Infrastructure.Extensions.Kafka;
 using Bank.Credits.Api.Mappers;
 using Bank.Credits.Application.Credits;
 using Bank.Credits.Application.Credits.Mapper;
@@ -9,6 +12,7 @@ using Bank.Credits.Application.Tariffs;
 using Bank.Credits.Application.Tariffs.Mapper;
 using Bank.Credits.Application.User;
 using Bank.Credits.Application.User.Mapper;
+using Bank.Credits.Kafka;
 using Bank.Credits.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -34,6 +38,20 @@ namespace Bank.Credits.Api
             services.AddScoped<ICoreRequestService, CoreRequestService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddMemoryCache();
+        }
+
+        public static void AddCoreKafka(this WebApplicationBuilder builder)
+        {
+            var kafkaSettings = builder.Configuration.GetRequiredSection("KafkaSettings").Get<KafkaSettings>()!;
+
+            builder.Services.AddConsumer<TransferResponse, TransferConsumer>(
+                kafkaSettings.BootstrapServers,
+                kafkaSettings.TransferConsumer.TopicName,
+                kafkaSettings.TransferConsumer.ConsumerGroup);
+
+            builder.Services.AddProducer<UnitAccountTransferModel>(
+                kafkaSettings.BootstrapServers,
+                kafkaSettings.TransferRequestProducer.TopicName);
         }
 
         /// <summary>

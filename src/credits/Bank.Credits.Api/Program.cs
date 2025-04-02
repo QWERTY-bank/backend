@@ -1,7 +1,7 @@
 using Bank.Common.Api.Configurations;
 using Bank.Common.Api.Cors;
 using Bank.Credits.Api;
-using Bank.Credits.Application.Jobs;
+using Bank.Credits.Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +13,7 @@ builder.Services.AddCreditServices();
 builder.Services.AddAutoMapperProfiles();
 builder.Services.AddJobs(builder.Configuration);
 builder.AddCreditDbContext();
+builder.AddCoreKafka();
 
 var app = builder.Build();
 

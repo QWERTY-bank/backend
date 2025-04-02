@@ -2,6 +2,7 @@
 using Bank.Common.Application.Extensions;
 using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
 using Bank.Credits.Application.Credits.Models;
+using Bank.Credits.Application.Requests;
 using Bank.Credits.Application.User;
 using Bank.Credits.Domain.Common.Helpers;
 using Bank.Credits.Domain.Credits;
@@ -18,17 +19,20 @@ namespace Bank.Credits.Application.Credits
         private readonly ILogger<CreditsService> _logger;
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
+        private readonly ICoreRequestService _requestService;
 
         public CreditsService(
             CreditsDbContext context,
             ILogger<CreditsService> logger,
             IUserService userService,
-            IMapper mapper)
+            IMapper mapper,
+            ICoreRequestService requestService)
         {
             _context = context;
             _logger = logger;
             _userService = userService;
             _mapper = mapper;
+            _requestService = requestService;
         }
 
         public async Task<ExecutionResult<IPagedList<CreditShortDto>>> GetCreditsAsync(CreditsFilter filter, int page, int pageSize, Guid userId)
@@ -84,7 +88,26 @@ namespace Bank.Credits.Application.Credits
                 return ExecutionResult.FromBadRequest("TakeCredit", $"The number of days must be from {tariff.MinPeriodDays} to {tariff.MaxPeriodDays}");
             }
 
+            var accountInfo = await _requestService.GetAccountBalanceAsync(model.AccountId);
+            if (accountInfo.IsNotSuccess)
+            {
+                return ExecutionResult.FromError(accountInfo);
+            }
+
+            if (accountInfo.Result.UserId != userId)
+            {
+                _logger.LogInformation("Account does not belong to the user");
+                return ExecutionResult.FromBadRequest("TakeCredit", "Account does not belong to the user");
+            }
+
+            if (accountInfo.Result.IsClosed)
+            {
+                _logger.LogInformation("Account is closed");
+                return ExecutionResult.FromBadRequest("TakeCredit", "Account is closed");
+            }
+
             var newCredit = _mapper.Map<Credit>(model);
+            newCredit.CurrencyCode = accountInfo.Result.CurrencyValue.Code;
             newCredit.PaymentHistory = 
             [
                 new IssuingCreditPayment() 
@@ -94,7 +117,7 @@ namespace Bank.Credits.Application.Credits
                     PaymentAmount = model.LoanAmount,
                     PaymentDateTime = DateTime.UtcNow,
                     PaymentStatus = PaymentStatusType.InProcess,
-                    PaymentDate = DateHelper.CurrentDate
+                    PaymentDate = DateHelper.CurrentDate,
                 }
             ];
 
