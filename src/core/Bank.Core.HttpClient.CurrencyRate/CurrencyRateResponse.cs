@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Bank.Core.CurrencyRate;
+namespace Bank.Core.HttpClient.CurrencyRate;
 
 public class CurrencyRateResponse
 {

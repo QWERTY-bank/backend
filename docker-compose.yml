@@ -14,6 +14,7 @@ services:
       dockerfile: src/core/Bank.Core.Api/Dockerfile
     depends_on:
       - postgres
+      - kafka
     <<: *common
     ports:
       - "5001:8080"
@@ -26,6 +27,7 @@ services:
     depends_on:
       - bank.users.api
       - postgres
+      - kafka
     <<: *common
     ports:
       - "5002:8080"
@@ -75,6 +77,52 @@ services:
       - my-net
     ports:
       - "6379:6379"
+        
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    ports:
+      - "2181:2181"
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+      ZOOKEEPER_CLIENT_PORT: 2181
+    tmpfs: "/datalog"
+    networks:
+      - my-net
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT"
+      KAFKA_LISTENERS: "CLIENT://:9092,EXTERNAL://:29092"
+      KAFKA_ADVERTISED_LISTENERS: "CLIENT://kafka:9092,EXTERNAL://localhost:29092"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_INTER_BROKER_LISTENER_NAME: "CLIENT"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_DELETE_TOPIC_ENABLE: "true"
+    networks:
+      - my-net
+    depends_on:
+      - zookeeper
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    ports:
+      - "8080:8080"
+    networks:
+      - my-net
+    depends_on:
+      - kafka
 
 networks:
   my-net:

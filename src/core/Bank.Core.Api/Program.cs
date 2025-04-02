@@ -5,6 +5,7 @@ using Bank.Common.Auth.Extensions;
 using Bank.Core.Api.Hubs;
 using Bank.Core.Api.Infrastructure.Auth;
 using Bank.Core.Api.Infrastructure.Extensions;
+using Bank.Core.Api.Infrastructure.Extensions.Kafka;
 using Bank.Core.Api.Services;
 using Bank.Core.Application.Abstractions;
 using Bank.Core.Application.Common;
@@ -16,6 +17,7 @@ builder.ConfigureAppsettings();
 builder.Services
     .AddCoreSwagger()
     .AddCoreDatabase(builder.Configuration)
+    .AddCoreKafka(builder.Configuration)
     .AddRedis(builder.Configuration)
     .AddCoreMediatR()
     .AddJwtAuthentication();

@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Bank.Core.Application.Abstractions;
 using Bank.Core.Application.Currencies.Models;
-using Bank.Core.CurrencyRate;
+using Bank.Core.HttpClient.CurrencyRate;
 using Bank.Core.Domain.Currencies;
 using Microsoft.Extensions.Caching.Distributed;
 using RedLockNet;

@@ -56,7 +56,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{5BDB930B-2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bank.Users.AuthWeb", "src\users\Bank.Users.AuthWeb\Bank.Users.AuthWeb.csproj", "{A1467054-221F-4F61-8057-43971483066B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bank.Core.CurrencyRate", "src\core\Bank.Core.CurrencyRate\Bank.Core.CurrencyRate.csproj", "{B18BDEFF-A834-4EEB-8F50-D2659F6721DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bank.Core.HttpClient.CurrencyRate", "src\core\Bank.Core.HttpClient.CurrencyRate\Bank.Core.HttpClient.CurrencyRate.csproj", "{B18BDEFF-A834-4EEB-8F50-D2659F6721DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bank.Common.Kafka", "src\common\Bank.Common.Kafka\Bank.Common.Kafka.csproj", "{363B6476-A257-4BA8-9FCE-EEA09EA12A77}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bank.Core.Kafka.Transfers", "src\core\Bank.Core.Kafka.Transfers\Bank.Core.Kafka.Transfers.csproj", "{237CE86D-ECEA-4122-B198-0E8CA397A702}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bank.Common.Kafka.Transfers", "src\common\Bank.Common.Kafka.Transfers\Bank.Common.Kafka.Transfers.csproj", "{273D5CEF-87C3-4E01-9AF0-BFED547B611F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -140,6 +146,18 @@ Global
 		{B18BDEFF-A834-4EEB-8F50-D2659F6721DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B18BDEFF-A834-4EEB-8F50-D2659F6721DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B18BDEFF-A834-4EEB-8F50-D2659F6721DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{363B6476-A257-4BA8-9FCE-EEA09EA12A77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{363B6476-A257-4BA8-9FCE-EEA09EA12A77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{363B6476-A257-4BA8-9FCE-EEA09EA12A77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{363B6476-A257-4BA8-9FCE-EEA09EA12A77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{237CE86D-ECEA-4122-B198-0E8CA397A702}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{237CE86D-ECEA-4122-B198-0E8CA397A702}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{237CE86D-ECEA-4122-B198-0E8CA397A702}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{237CE86D-ECEA-4122-B198-0E8CA397A702}.Release|Any CPU.Build.0 = Release|Any CPU
+		{273D5CEF-87C3-4E01-9AF0-BFED547B611F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{273D5CEF-87C3-4E01-9AF0-BFED547B611F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{273D5CEF-87C3-4E01-9AF0-BFED547B611F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{273D5CEF-87C3-4E01-9AF0-BFED547B611F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -167,6 +185,9 @@ Global
 		{976E4AC5-8EBD-480B-94D5-F51A2E357ECA} = {8542170C-C877-4C3C-90B4-01BAF573D9AC}
 		{A1467054-221F-4F61-8057-43971483066B} = {517451B4-3848-4C95-B466-8E8A7A2B899C}
 		{B18BDEFF-A834-4EEB-8F50-D2659F6721DA} = {53BA4D2A-683D-497F-B7AC-387B1D17A041}
+		{363B6476-A257-4BA8-9FCE-EEA09EA12A77} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
+		{237CE86D-ECEA-4122-B198-0E8CA397A702} = {53BA4D2A-683D-497F-B7AC-387B1D17A041}
+		{273D5CEF-87C3-4E01-9AF0-BFED547B611F} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {12763DB4-07C3-4231-9EC1-021CE5B1C0EF}

@@ -1,6 +1,6 @@
 using Refit;
 
-namespace Bank.Core.CurrencyRate;
+namespace Bank.Core.HttpClient.CurrencyRate;
 
 public interface ICurrencyRateClient
 {

@@ -1,4 +1,4 @@
-using Bank.Core.CurrencyRate;
+using Bank.Core.HttpClient.CurrencyRate;
 using Refit;
 
 namespace Bank.Core.Api.Infrastructure.Extensions;
