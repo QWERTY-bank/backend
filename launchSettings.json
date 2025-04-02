@@ -6,7 +6,8 @@
       "serviceActions": {
         "bank.core.api": "StartDebugging",
         "bank.credits.api": "StartDebugging",
-        "bank.users.api": "StartDebugging"
+        "bank.users.api": "StartDebugging",
+        "bank.users.authweb": "StartDebugging"
       }
     }
   }

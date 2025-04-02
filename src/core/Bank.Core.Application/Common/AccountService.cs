@@ -1,3 +1,4 @@
+using Bank.Core.Application.Abstractions;
 using Bank.Core.Domain.Common;
 using Bank.Core.Domain.Transactions;
 using Microsoft.EntityFrameworkCore;
@@ -8,17 +9,24 @@ namespace Bank.Core.Application.Common;
 public class AccountService
 {
     private readonly ICoreDbContext _dbContext;
+    private readonly ICurrencyRateService _currencyRateService;
+    private readonly IAccountHubService _accountHubService;
 
-    public AccountService(ICoreDbContext dbContext)
+    public AccountService(
+        ICoreDbContext dbContext,
+        ICurrencyRateService currencyRateService, 
+        IAccountHubService accountHubService)
     {
         _dbContext = dbContext;
+        _currencyRateService = currencyRateService;
+        _accountHubService = accountHubService;
     }
     
     public async Task<OperationResult<Empty>> TransferCurrencies(
         long fromAccountId,
         long toAccountId,
         Guid transactionKey,
-        IReadOnlyCollection<TransactionCurrency> currencies,
+        TransactionCurrency currency,
         CancellationToken cancellationToken)
     {
         if (fromAccountId == toAccountId)
@@ -54,12 +62,32 @@ public class AccountService
             Key = transactionKey,
             CreatedDate = DateTime.UtcNow,
             OperationDate = DateTime.UtcNow,
-            Currencies = currencies
+            Currencies = [currency]
         };
         var withdrawResult = fromAccount.Withdraw(withdrawTransaction);
         if (withdrawResult.IsError)
         {
             return withdrawResult;
+        }
+
+        var depositCurrency = currency;
+
+        var fromAccountCurrency = fromAccount.AccountCurrencies.Single();
+        var toAccountCurrency = toAccount.AccountCurrencies.Single();
+        
+        if (fromAccountCurrency.Code != toAccountCurrency.Code)
+        {
+            var convertedValue = await _currencyRateService.ConvertCurrency(
+                    currency.Value, 
+                    fromAccountCurrency.Code, 
+                    toAccountCurrency.Code,
+                    cancellationToken);
+
+            depositCurrency = new TransactionCurrency
+            {
+                Code = toAccountCurrency.Code,
+                Value = convertedValue
+            };
         }
         
         var depositTransaction = new DepositTransactionEntity
@@ -69,7 +97,7 @@ public class AccountService
             Key = Guid.NewGuid(),
             CreatedDate = DateTime.UtcNow,
             OperationDate = DateTime.UtcNow,
-            Currencies = currencies
+            Currencies = [depositCurrency]
         };
         var depositResult = toAccount.Deposit(depositTransaction);
         if (depositResult.IsError)
@@ -81,6 +109,10 @@ public class AccountService
         {
             await _dbContext.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
+
+            var fromAccountNotifyTask = _accountHubService.NotifyUsers(fromAccountId, withdrawTransaction, fromAccountCurrency);
+            var toAccountNotifyTask = _accountHubService.NotifyUsers(toAccountId, depositTransaction, toAccountCurrency);
+            await Task.WhenAll(fromAccountNotifyTask, toAccountNotifyTask);
             
             return OperationResultFactory.EmptyResult;
         }

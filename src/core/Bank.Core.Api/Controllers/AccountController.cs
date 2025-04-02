@@ -4,7 +4,8 @@ using Bank.Core.Api.Infrastructure.Web;
 using Bank.Core.Api.Models.Accounts;
 using Bank.Core.Application.Accounts;
 using Bank.Core.Application.Accounts.Models;
-using Bank.Core.Application.Accounts.Read;
+using Bank.Core.Application.Accounts.User;
+using Bank.Core.Application.Accounts.User.Read;
 using Bank.Core.Application.Common;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -65,7 +66,8 @@ public class AccountController : BaseController
         var command = new CreateAccountCommand
         {
             Title = request.Title,
-            UserId = UserId
+            UserId = UserId,
+            Code = request.Code
         };
         var result = await _mediator.Send(command, cancellationToken);
 
@@ -126,6 +128,35 @@ public class AccountController : BaseController
     }
     
     /// <summary>
+    /// Переводит деньги со счета на счет
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpPost("transfer")]
+    [ProducesResponseType((int)HttpStatusCode.NoContent)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
+    public async Task<IResult> TransferToAccount(
+        [FromBody] TransferRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new TransferCurrencyCommand
+        {
+            FromAccountId = request.FromAccountId,
+            ToAccountId = request.ToAccountId,
+            CurrencyValue = request.Transaction.CurrencyValue,
+            TransactionKey = request.Transaction.Key,
+            UserId = UserId
+        };
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return result.ToEndpointResult();
+    }
+    
+    /// <summary>
     /// Вносит деньги на счет пользователя
     /// </summary>
     /// <param name="id"></param>
@@ -147,7 +178,7 @@ public class AccountController : BaseController
         {
             AccountId = id,
             TransactionKey = request.Transaction.Key,
-            Currencies = request.Transaction.CurrencyValues,
+            Currencies = [request.Transaction.CurrencyValue],
             UserId = UserId
         };
         var result = await _mediator.Send(command, cancellationToken);
@@ -177,7 +208,7 @@ public class AccountController : BaseController
         {
             AccountId = id,
             TransactionKey = request.Transaction.Key,
-            Currencies = request.Transaction.CurrencyValues,
+            Currencies = [request.Transaction.CurrencyValue],
             UserId = UserId
         };
         var result = await _mediator.Send(command, cancellationToken);

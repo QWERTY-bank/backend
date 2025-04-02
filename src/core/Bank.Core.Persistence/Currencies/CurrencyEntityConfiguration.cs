@@ -22,4 +22,4 @@ public class CurrencyEntityConfiguration : IEntityTypeConfiguration<CurrencyEnti
             .HasPrincipalKey(resource => resource.Code)
             .OnDelete(DeleteBehavior.Restrict);
     }
-}
+} 

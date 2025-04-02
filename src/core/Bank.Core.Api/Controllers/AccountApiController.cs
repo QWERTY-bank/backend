@@ -5,7 +5,8 @@ using Bank.Core.Api.Infrastructure.Web;
 using Bank.Core.Api.Models.Accounts;
 using Bank.Core.Application.Accounts;
 using Bank.Core.Application.Accounts.Models;
-using Bank.Core.Application.Accounts.Read;
+using Bank.Core.Application.Accounts.Unit;
+using Bank.Core.Application.Accounts.Unit.Read;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -71,7 +72,7 @@ public class AccountApiController : BaseController
         {
             Key = request.Key,
             UserAccountId = id,
-            Currencies = request.CurrencyValues,
+            CurrencyValue = request.CurrencyValue,
             UnitId = UnitId
         };
         var result = await _mediator.Send(command, cancellationToken);
@@ -100,7 +101,7 @@ public class AccountApiController : BaseController
         {
             Key = request.Key,
             UserAccountId = id,
-            Currencies = request.CurrencyValues,
+            CurrencyValue = request.CurrencyValue,
             UnitId = UnitId
         };
         var result = await _mediator.Send(command, cancellationToken);

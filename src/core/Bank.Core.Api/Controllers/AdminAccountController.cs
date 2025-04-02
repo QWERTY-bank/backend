@@ -3,8 +3,8 @@ using Bank.Common.Auth.Attributes;
 using Bank.Common.Models.Auth;
 using Bank.Core.Api.Infrastructure.Extensions;
 using Bank.Core.Api.Infrastructure.Web;
+using Bank.Core.Application.Accounts.Admin;
 using Bank.Core.Application.Accounts.Models;
-using Bank.Core.Application.Accounts.Read;
 using Bank.Core.Application.Common;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +20,42 @@ public class AdminAccountController : BaseController
     public AdminAccountController(IMediator mediator)
     {
         _mediator = mediator;
+    }
+    
+    /// <summary>
+    /// Возвращает все счета
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpGet]
+    [ProducesResponseType(typeof(IReadOnlyCollection<AccountDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
+    public async Task<IResult> GetAllAccounts(CancellationToken cancellationToken)
+    {
+        var query = new GetAllAccountsQuery();
+        var result = await _mediator.Send(query, cancellationToken);
+
+        return result.ToEndpointResult();
+    }
+    
+    /// <summary>
+    /// Возвращает мастер счета банка
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpGet("master")]
+    [ProducesResponseType(typeof(IReadOnlyCollection<UnitAccountDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Forbidden)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(ErrorProblemDetails), (int)HttpStatusCode.InternalServerError)]
+    public async Task<IResult> GetUnitAccounts(CancellationToken cancellationToken)
+    {
+        var query = new GetCreditAccountsQuery();
+        var result = await _mediator.Send(query, cancellationToken);
+
+        return result.ToEndpointResult();
     }
 
     /// <summary>

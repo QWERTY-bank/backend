@@ -8,6 +8,6 @@ public class UnitAccountEntityTypeConfiguration : IEntityTypeConfiguration<UnitA
 {
     public void Configure(EntityTypeBuilder<UnitAccountEntity> builder)
     {
-        builder.HasIndex(account => account.UnitId).IsUnique();
+        builder.HasIndex(account => account.UnitId);
     }
 }

@@ -32,5 +32,5 @@ public class AccountDto
     ///     Значения валют на счете
     /// </summary>
     [Required]
-    public required IReadOnlyCollection<CurrencyValue> CurrencyValues { get; init; }
+    public required CurrencyValue CurrencyValue { get; init; }
 }
