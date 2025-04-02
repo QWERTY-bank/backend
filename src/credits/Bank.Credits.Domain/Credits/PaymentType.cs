@@ -8,6 +8,9 @@ namespace Bank.Credits.Domain.Credits
         ReduceDebt = 0,
 
         [Description("Выплата за период")]
-        Repayment = 1
+        Repayment = 1,
+
+        [Description("Взятие кредита")]
+        IssuingCredit = 2
     }
 }

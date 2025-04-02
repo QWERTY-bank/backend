@@ -19,20 +19,13 @@ namespace Bank.Credits.Application.Jobs.Repayments
 
         protected override IQueryable<Credit> FilterPlannedEntity()
         {
-            // Учитываем только те кредиты, которые не имеют завершенного или находящегося в ожидании платежа
+            // Учитываем только те, у которых сегодня платеж
             return _dbContext.Credits
                 .Where(x => x.Status == CreditStatusType.Active)
-                .Where(x => !x.PaymentHistory!.Any(x => x.PaymentDate == DateHelper.CurrentDate && x.Type == PaymentType.Repayment
-                                                    && (x.PaymentStatus == PaymentStatusType.InProcess || x.PaymentStatus == PaymentStatusType.Conducted)));
-        }
-
-        protected override Task<RepaymentPlan?> GetLastPlanAsync()
-        {
-            return Task.FromResult<RepaymentPlan?>(new()
-            {
-                FromPlanId = -1,
-                ToPlanId = -1,
-            });
+                .Where(x => x.PaymentsInfo.NextPaymentDate == DateHelper.CurrentDate);
+            // Учитываем только те кредиты, которые не имеют завершенного или находящегося в ожидании платежа
+            //.Where(x => !x.PaymentHistory!.Any(x => x.PaymentDate == DateHelper.CurrentDate && x.Type == PaymentType.Repayment
+            //                                    && (x.PaymentStatus == PaymentStatusType.InProcess || x.PaymentStatus == PaymentStatusType.Conducted)));
         }
 
         protected override Task AddPlansAsync(List<RepaymentPlan> newPlans)

@@ -32,6 +32,7 @@ namespace Bank.Credits.Application.Jobs.Repayments
      * 10. Каждый платеж или остаток должен иметь НЕ БОЛЕЕ ДВУХ знаков после запятой
      * 11. Если срок, на который взят кредит, не кратен числу дней в периоде, то последний платеж совершается в последний день срока, на который взят кредит
      * 12. Последний платеж может быть не равен остальным платежам, он всегда равен остатку по долгу
+     * 13. Платежи обрабатываются в том порядке, в котором они создались
 
     Сейчас
     1. Задача по планированию взятия кредита и задача по взятию кредита
@@ -62,42 +63,35 @@ namespace Bank.Credits.Application.Jobs.Repayments
 
         protected override async Task HandlePlannedEntitiesAsync(long fromPlanId, long toPlanId)
         {
-            //var credits = await _dbContext.Credits
-            //    .Include(x => x.PaymentHistory)
-            //    .Include(x => x.Tariff)
-            //    .Where(x => x.Status == CreditStatusType.Active)
-            //    .Where(x => !x.PaymentHistory!.Any(x => x.PaymentDate == DateHelper.CurrentDate && x.Type == PaymentType.Repayment
-            //                                        && (x.PaymentStatus == PaymentStatusType.InProcess || x.PaymentStatus == PaymentStatusType.Conducted)))
-            //    .Where(x => fromPlanId <= x.PlanId && x.PlanId <= toPlanId)
-            //    .ToListAsync();
+            var credits = await _dbContext.Credits
+                 .Where(x => x.PaymentsInfo.NextPaymentDate == DateHelper.CurrentDate)
+                 .ToListAsync();
 
-            //foreach (var credit in credits)
-            //{
-            //    // Проверяем, что у кредита сегодня платеж 
-            //    var nextPaymentDate = credit.CalculateNextPaymentDate();
-            //    if (nextPaymentDate != DateHelper.CurrentDate)
-            //    {
-            //        continue;
-            //    }
+            foreach(var credit in credits)
+            {
+                if (!credit.ApplyInterestRate())
+                {
+                    throw new ArgumentException("Interest calculation error");
+                }
 
-            //    credit.PaymentHistory ??= [];
+                if (!credit.MakeRepayment())
+                {
+                    throw new ArgumentException("Loan repayment error");
+                }
 
-            //    credit.PaymentHistory.Add(new RepaymentPayment()
-            //    {
-            //        Key = Guid.NewGuid(),
-            //        AccountId = credit.AccountId,
-            //        CreditId = credit.Id,
-            //        PaymentAmount = credit.CalculateNextPaymentAmount(),
-            //        PaymentDate = DateHelper.CurrentDate,
-            //        PaymentDateTime = DateTime.UtcNow,
-            //        PaymentStatus = PaymentStatusType.InProcess
-            //    });
+                credit.PaymentHistory ??= [];
 
-            //    if (credit.LastInterestChargeDate != DateHelper.CurrentDate)
-            //    {
-            //        credit.ApplyInterestRate();
-            //    }
-            //}
+                credit.PaymentHistory.Add(new RepaymentPayment()
+                {
+                    Key = Guid.NewGuid(),
+                    AccountId = credit.AccountId,
+                    CreditId = credit.Id,
+                    PaymentAmount = credit.PaymentsInfo.NextPayment,
+                    PaymentDate = DateHelper.CurrentDate,
+                    PaymentDateTime = DateTime.UtcNow,
+                    PaymentStatus = PaymentStatusType.InProcess
+                });
+            }
         }
 
         protected override DbSet<RepaymentPlan> SelectPlans()

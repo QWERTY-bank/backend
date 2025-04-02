@@ -48,7 +48,7 @@ namespace Bank.Credits.Application.Credits
         public async Task<ExecutionResult<CreditDto>> GetCreditAsync(Guid creditId, Guid userId)
         {
             var credit = await _context.Credits
-                .Include(x => x.PaymentHistory)
+                .Include(x => x.PaymentHistory.Where(x => x.Type != PaymentType.IssuingCredit))
                 .Include(x => x.Tariff)
                 .FirstOrDefaultAsync(x => x.Id == creditId && x.UserId == userId);
             if (credit == null)
@@ -64,10 +64,10 @@ namespace Bank.Credits.Application.Credits
 
         public async Task<ExecutionResult> TakeCreditAsync(TakeCreditDto model, Guid userId)
         {
-            var creditAlreadyRequested = await _context.Credits.AnyAsync(x => x.Key == model.Key);
+            var creditAlreadyRequested = await _context.Payments.AnyAsync(x => x.Key == model.Key);
             if (creditAlreadyRequested)
             {
-                _logger.LogInformation($"Credit with key = '{model.Key}' already requested");
+                _logger.LogInformation($"Credit with payment with key = '{model.Key}' already requested");
                 return ExecutionResult.FromBadRequest("TakeCredit", "Credit already requested");
             }
 
@@ -85,6 +85,18 @@ namespace Bank.Credits.Application.Credits
             }
 
             var newCredit = _mapper.Map<Credit>(model);
+            newCredit.PaymentHistory = 
+            [
+                new IssuingCreditPayment() 
+                {
+                    Key = model.Key,
+                    AccountId = model.AccountId,
+                    PaymentAmount = model.LoanAmount,
+                    PaymentDateTime = DateTime.UtcNow,
+                    PaymentStatus = PaymentStatusType.InProcess,
+                    PaymentDate = DateHelper.CurrentDate
+                }
+            ];
 
             var user = await _userService.GetUserEntityAsync(userId);
             newCredit.UserId = user.Id;
@@ -98,7 +110,7 @@ namespace Bank.Credits.Application.Credits
         public async Task<ExecutionResult> ReduceCreditAsync(Guid creditId, ReduceCreditDto model, Guid userId)
         {
             var credit = await _context.Credits
-              .Include(x => x.PaymentHistory!.Where(x => x.Key == model.Key))
+              .Include(x => x.PaymentHistory)
               .FirstOrDefaultAsync(x => x.Id == creditId && x.UserId == userId);
             if (credit == null)
             {
@@ -106,11 +118,31 @@ namespace Bank.Credits.Application.Credits
                 return ExecutionResult.FromNotFound("ReduceCredit", $"Credit with id = '{creditId}' not found");
             }
 
-            if (credit.PaymentHistory?.Any() ?? false)
+            if (credit.Status != CreditStatusType.Active)
+            {
+                _logger.LogInformation($"Credit with id = '{creditId}' must have the Active status");
+                return ExecutionResult.FromNotFound("ReduceCredit", $"Credit with id = '{creditId}' must have the Active status");
+            }
+
+            if (credit.PaymentHistory?.Any(x => x.Key == model.Key) ?? false)
             {
                 _logger.LogInformation($"Payment with key = '{model.Key}' already requested");
                 return ExecutionResult.FromBadRequest("ReduceCredit", "Payment already requested");
             }
+
+            if (credit.PaymentHistory?.Any(x => x.PaymentStatus == PaymentStatusType.InProcess && x.Type == PaymentType.Repayment) ?? false)
+            {
+                _logger.LogInformation($"Please try again later.");
+                return ExecutionResult.FromBadRequest("ReduceCredit", "Please try again later.");
+            }
+
+            if (credit.PaymentsInfo.DebtAmount < model.Value)
+            {
+                _logger.LogInformation("The amount owed is less than the specified amount");
+                return ExecutionResult.FromBadRequest("ReduceCredit", "The amount owed is less than the specified amount");
+            }
+
+            credit.ReduceDebt(model.Value);
 
             await _context.Payments.AddAsync(new ReducePayment()
             {

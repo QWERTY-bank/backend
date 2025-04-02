@@ -8,7 +8,7 @@ using Quartz;
 
 namespace Bank.Credits.Application.Jobs.Base
 {
-    public abstract class BasePlanner<TPlannedEntity, TPlan, TPlanner> : IJob 
+    public abstract class BasePlanner<TPlannedEntity, TPlan, TPlanner> : IJob
         where TPlan : PlanBaseEntity, new() where TPlannedEntity : JobPlannedBaseEntity
     {
         protected readonly CreditsDbContext _dbContext;
@@ -26,7 +26,7 @@ namespace Bank.Credits.Application.Jobs.Base
         }
 
         protected abstract IQueryable<TPlannedEntity> FilterPlannedEntity();
-        protected abstract Task<TPlan?> GetLastPlanAsync();
+        protected virtual Task<TPlan?> GetLastPlanAsync() => Task.FromResult<TPlan?>(new() { FromPlanId = -1, ToPlanId = -1 });
         protected abstract Task AddPlansAsync(List<TPlan> newPlans);
         protected abstract Task BlockPlansAsync();
         public async Task Execute(IJobExecutionContext context)

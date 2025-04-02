@@ -9,8 +9,7 @@ namespace Bank.Credits.Application.User.Mapper
         public UserApplicationMapperProfile()
         {
             CreateMap<UserEntity, UserCreditInfoDto>()
-                .ForMember(x => x.Rating, opt => opt.MapFrom(src => 75))
-                .ForMember(x => x.MaxRating, opt => opt.MapFrom(src => 100));
+                .ForMember(x => x.MaxRating, opt => opt.MapFrom(src => 1000));
         }
     }
 }

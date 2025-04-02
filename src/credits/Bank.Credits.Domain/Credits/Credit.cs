@@ -11,11 +11,6 @@ namespace Bank.Credits.Domain.Credits
         public CreditPaymentsInfo PaymentsInfo { get; set; } = new();
 
         /// <summary>
-        /// Ключ идемпотентности, с которым был создан кредит
-        /// </summary>
-        public required Guid Key { get; init; }
-
-        /// <summary>
         /// Id пользователя, к которому привязан кредит
         /// </summary>
         public Guid UserId { get; set; }
@@ -96,7 +91,7 @@ namespace Bank.Credits.Domain.Credits
         /// Вернет false, если процент по кредиту не начислен перед платежом или сейчас не день платежа
         /// Если обнаружилась ошибка в расчетах, то вернет false
         /// </summary>
-        public bool MakePayment()
+        public bool MakeRepayment()
         {
             if (Status != CreditStatusType.Active)
             {
@@ -154,10 +149,11 @@ namespace Bank.Credits.Domain.Credits
 
             var remainedPaymentsCount = PaymentsInfo.RemainedPaymentsCount;
 
-            // Если процент начислялся и платеж еще не прошел, но клиент уменьшил сумму кредита, то
-            // платеж по кредиту должен быть пересчитан с учетом того, что процент за период уже начислен
-            if (PaymentsInfo.LastInterestChargeDate == DateHelper.CurrentDate &&
-                !PaymentHistory!.Any(x => x.Type == PaymentType.Repayment && x.PaymentDate == DateHelper.CurrentDate && x.PaymentStatus == PaymentStatusType.Conducted))
+            //////(неактуально)Если процент начислялся и платеж на погашение еще не прошел или он отменился, но клиент уменьшил сумму кредита, то
+            //////платеж по кредиту должен быть пересчитан с учетом того, что процент за период уже начислен
+            // 
+            //
+            if (PaymentsInfo.LastInterestChargeDate == DateHelper.CurrentDate) // && !PaymentHistory!.Any(x => x.Type == PaymentType.Repayment && x.PaymentDate == DateHelper.CurrentDate && x.PaymentStatus == PaymentStatusType.Conducted)
             {
                 if (remainedPaymentsCount == 1)
                 {

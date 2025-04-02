@@ -24,6 +24,14 @@ namespace Bank.Credits.Domain.Credits
         public Credit? Credit { get; set; }
     }
 
+    public class IssuingCreditPayment : Payment
+    {
+        public IssuingCreditPayment()
+        {
+            Type = PaymentType.IssuingCredit;
+        }
+    }
+
     public class ReducePayment : Payment
     {
         public ReducePayment()
