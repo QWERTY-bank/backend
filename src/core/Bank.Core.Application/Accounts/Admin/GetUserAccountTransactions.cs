@@ -26,12 +26,14 @@ public class GetUserAccountTransactionsQueryHandler : IRequestHandler<GetUserAcc
         GetUserAccountTransactionsQuery request, 
         CancellationToken cancellationToken)
     {
-        var accountExists = await _dbContext.Accounts
-            .AnyAsync(
-                account => account.Id == request.AccountId,
+        var accountCurrency = await _dbContext.Accounts
+            .AsNoTracking()
+            .Select(account => account.AccountCurrencies.First())
+            .SingleOrDefaultAsync(
+                account => account.AccountId == request.AccountId,
                 cancellationToken);
 
-        if (!accountExists)
+        if (accountCurrency == null)
         {
             return OperationResultFactory.NotFound<TransactionsResponseDto>(request.AccountId);
         }
@@ -92,8 +94,16 @@ public class GetUserAccountTransactionsQueryHandler : IRequestHandler<GetUserAcc
                         .First()
                 })
                 .ToArray(),
-            DepositCurrencyTotals = depositTotals.First(),
-            WithdrawCurrencyTotals = withdrawTotals.First()
+            DepositCurrencyTotals = depositTotals.FirstOrDefault() ?? new CurrencyValue
+            {
+                Code = accountCurrency.Code,
+                Value = 0
+            },
+            WithdrawCurrencyTotals = withdrawTotals.FirstOrDefault() ?? new CurrencyValue
+            {
+                Code = accountCurrency.Code,
+                Value = 0
+            }
         };
 
         return OperationResultFactory.Success(transactionsResponse);

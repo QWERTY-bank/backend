@@ -84,7 +84,7 @@ public class TransferConsumer : ITopicConsumer<UnitAccountTransferModel>
             };
 
             await _producer.ProduceAsync(
-                transferResponse.Key.ToString(), 
+                value.UserAccountId.ToString(), 
                 transferResponse, 
                 cancellationToken);
         }
@@ -97,7 +97,7 @@ public class TransferConsumer : ITopicConsumer<UnitAccountTransferModel>
             };
             
             await _producer.ProduceAsync(
-                transferResponse.Key.ToString(), 
+                value.UserAccountId.ToString(), 
                 transferResponse, 
                 cancellationToken);
         }

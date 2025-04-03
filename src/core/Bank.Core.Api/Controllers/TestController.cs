@@ -22,6 +22,6 @@ public class TestController : ControllerBase
     [HttpPost]
     public async Task Test(UnitAccountTransferModel message)
     {
-        await _producer.ProduceAsync(message.Key.ToString(), message, CancellationToken.None);
+        await _producer.ProduceAsync(message.UserAccountId.ToString(), message, CancellationToken.None);
     }
 }

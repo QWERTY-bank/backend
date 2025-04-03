@@ -12,7 +12,6 @@ public class UnitAccountTransferModel
 public class CurrencyValueModel
 {
     public required TransferCurrencyCode Code { get; init; }
-    
     public required decimal Value { get; init; }
 }
 
