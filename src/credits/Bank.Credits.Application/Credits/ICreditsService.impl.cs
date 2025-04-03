@@ -3,6 +3,7 @@ using Bank.Common.Application.Extensions;
 using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
 using Bank.Credits.Application.Credits.Models;
 using Bank.Credits.Application.Requests;
+using Bank.Credits.Application.Requests.Models;
 using Bank.Credits.Application.User;
 using Bank.Credits.Domain.Common.Helpers;
 using Bank.Credits.Domain.Credits;
@@ -52,7 +53,7 @@ namespace Bank.Credits.Application.Credits
         public async Task<ExecutionResult<CreditDto>> GetCreditAsync(Guid creditId, Guid userId)
         {
             var credit = await _context.Credits
-                .Include(x => x.PaymentHistory.Where(x => x.Type != PaymentType.IssuingCredit))
+                .Include(x => x.PaymentHistory.Where(x => x.Type != PaymentType.IssuingCredit).OrderByDescending(x => x.PlanId))
                 .Include(x => x.Tariff)
                 .FirstOrDefaultAsync(x => x.Id == creditId && x.UserId == userId);
             if (credit == null)
@@ -88,22 +89,10 @@ namespace Bank.Credits.Application.Credits
                 return ExecutionResult.FromBadRequest("TakeCredit", $"The number of days must be from {tariff.MinPeriodDays} to {tariff.MaxPeriodDays}");
             }
 
-            var accountInfo = await _requestService.GetAccountBalanceAsync(model.AccountId);
+            var accountInfo = await GetAccountInfo(model.AccountId, userId);
             if (accountInfo.IsNotSuccess)
             {
                 return ExecutionResult.FromError(accountInfo);
-            }
-
-            if (accountInfo.Result.UserId != userId)
-            {
-                _logger.LogInformation("Account does not belong to the user");
-                return ExecutionResult.FromBadRequest("TakeCredit", "Account does not belong to the user");
-            }
-
-            if (accountInfo.Result.IsClosed)
-            {
-                _logger.LogInformation("Account is closed");
-                return ExecutionResult.FromBadRequest("TakeCredit", "Account is closed");
             }
 
             var newCredit = _mapper.Map<Credit>(model);
@@ -134,6 +123,7 @@ namespace Bank.Credits.Application.Credits
         {
             var credit = await _context.Credits
               .Include(x => x.PaymentHistory)
+              .Include(x => x.Tariff)
               .FirstOrDefaultAsync(x => x.Id == creditId && x.UserId == userId);
             if (credit == null)
             {
@@ -165,6 +155,18 @@ namespace Bank.Credits.Application.Credits
                 return ExecutionResult.FromBadRequest("ReduceCredit", "The amount owed is less than the specified amount");
             }
 
+            var accountInfo = await GetAccountInfo(model.AccountId, userId);
+            if (accountInfo.IsNotSuccess)
+            {
+                return ExecutionResult.FromError(accountInfo);
+            }
+
+            if (accountInfo.Result.CurrencyValue.Value < model.Value)
+            {
+                _logger.LogInformation("There are insufficient funds in the account");
+                return ExecutionResult.FromBadRequest("ReduceCredit", "There are insufficient funds in the account");
+            }
+
             credit.ReduceDebt(model.Value);
 
             await _context.Payments.AddAsync(new ReducePayment()
@@ -181,6 +183,29 @@ namespace Bank.Credits.Application.Credits
             await _context.SaveChangesAsync();
 
             return ExecutionResult.FromSuccess();
+        }
+
+        private async Task<ExecutionResult<BalanceDto>> GetAccountInfo(long accountId, Guid userId)
+        {
+            var accountInfo = await _requestService.GetAccountBalanceAsync(accountId);
+            if (accountInfo.IsNotSuccess)
+            {
+                return ExecutionResult<BalanceDto>.FromError(accountInfo);
+            }
+
+            if (accountInfo.Result.UserId != userId)
+            {
+                _logger.LogInformation("Account does not belong to the user");
+                return ExecutionResult<BalanceDto>.FromBadRequest("TakeCredit", "Account does not belong to the user");
+            }
+
+            if (accountInfo.Result.IsClosed)
+            {
+                _logger.LogInformation("Account is closed");
+                return ExecutionResult<BalanceDto>.FromBadRequest("TakeCredit", "Account is closed");
+            }
+
+            return accountInfo;
         }
     }
 }

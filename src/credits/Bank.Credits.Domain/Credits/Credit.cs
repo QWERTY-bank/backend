@@ -65,6 +65,10 @@ namespace Bank.Credits.Domain.Credits
             {
                 Status = CreditStatusType.Closed;
             }
+            else if (PaymentsInfo.DebtAmount > 0.0M)
+            {
+                Status = CreditStatusType.Active;
+            }
         }
 
         /// <summary>
@@ -133,13 +137,8 @@ namespace Bank.Credits.Domain.Credits
         /// </summary>
         public bool CancelPayment(decimal value)
         {
-            if (Status != CreditStatusType.Active)
-            {
-                return false;
-            }
-
             PaymentsInfo.DebtAmount += value;
-
+            
             UpdatePaymentsInfo();
 
             return true;
@@ -151,12 +150,13 @@ namespace Bank.Credits.Domain.Credits
         /// </summary>
         public bool ReduceDebt(decimal value)
         {
-            if (value < PaymentsInfo.DebtAmount)
+            if (PaymentsInfo.DebtAmount < value)
             {
                 return false;
             }
 
             PaymentsInfo.DebtAmount -= value;
+            UpdatePaymentsInfo();
 
             return true;
         }
