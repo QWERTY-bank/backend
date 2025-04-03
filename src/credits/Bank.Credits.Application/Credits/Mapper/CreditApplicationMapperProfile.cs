@@ -9,8 +9,10 @@ namespace Bank.Credits.Application.Credits.Mapper
         public CreditApplicationMapperProfile()
         {
             CreateMap<TakeCreditDto, Credit>()
-                .ForMember(x => x.PaymentsInfo.DebtAmount, opt => opt.MapFrom(x => x.LoanAmount))
-                .ForMember(x => x.UserId, opt => opt.Ignore());
+                .ForPath(x => x.PaymentsInfo.DebtAmount, opt => opt.MapFrom(x => x.LoanAmount))
+                .ForPath(x => x.PaymentsInfo.PeriodDays, opt => opt.MapFrom(x => x.PeriodDays))
+                .ForMember(x => x.UserId, opt => opt.Ignore())
+                .ForMember(x => x.CurrencyCode, opt => opt.Ignore());
 
             CreateMap<Credit, CreditShortDto>()
                 .ForMember(x => x.DebtAmount, opt => opt.MapFrom(x => Math.Round(x.PaymentsInfo.DebtAmount, 2)))
@@ -19,9 +21,11 @@ namespace Bank.Credits.Application.Credits.Mapper
 
             CreateMap<Credit, CreditDto>()
                 .ForMember(x => x.DebtAmount, opt => opt.MapFrom(x => Math.Round(x.PaymentsInfo.DebtAmount, 2)))
+                .ForMember(x => x.TakingDate, opt => opt.MapFrom(x => x.PaymentsInfo.TakingDate))
                 .ForMember(x => x.NextPayments, opt => opt.MapFrom(src => src.NextRepayments()));
 
-            CreateMap<Payment, PaymentDto>();
+            CreateMap<Payment, PaymentDto>()
+                .ForMember(x => x.PaymentType, opt => opt.MapFrom(src => src.Type));
             CreateMap<Payment, NextPaymentDto>()
                 .ForMember(x => x.PaymentDateOnly, opt => opt.MapFrom(src => src.PaymentDate));
         }

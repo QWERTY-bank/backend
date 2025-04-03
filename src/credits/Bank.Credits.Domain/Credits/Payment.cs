@@ -1,4 +1,5 @@
 ﻿using Bank.Credits.Domain.Common;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Bank.Credits.Domain.Credits
 {
@@ -20,8 +21,20 @@ namespace Bank.Credits.Domain.Credits
         public PaymentStatusType PaymentStatus { get; set; }
         public PaymentType Type { get; set; }
 
+        //public bool ResponseCame { get; set; }
+        //[MemberNotNullWhen(true, nameof(ResponseCame))]
+        //public PaymentStatusType? Response { get; set; }
+
         public Guid CreditId { get; set; }
         public Credit? Credit { get; set; }
+    }
+
+    public class IssuingCreditPayment : Payment
+    {
+        public IssuingCreditPayment()
+        {
+            Type = PaymentType.IssuingCredit;
+        }
     }
 
     public class ReducePayment : Payment

@@ -60,41 +60,6 @@ namespace Bank.Credits.Application.Requests
             return ExecutionResult<BalanceDto>.FromSuccess(balance);
         }
 
-        public Task<ExecutionResult> UnitAccountDepositTransferAsync(TransactionDto model, long accountId)
-        {
-            return Transfer(model, SetPathId(_options.UnitAccountDepositTransfer, accountId));
-        }
-
-        public Task<ExecutionResult> UnitAccountWithdrawTransferAsync(TransactionDto model, long accountId)
-        {
-            return Transfer(model, SetPathId(_options.UnitAccountWithdrawTransfer, accountId));
-        }
-
-        private async Task<ExecutionResult> Transfer(TransactionDto model, string path)
-        {
-            var getTokenResult = await _tokenService.GetServiceTokenAsync();
-            if (getTokenResult.IsNotSuccess)
-            {
-                return ExecutionResult.FromError(getTokenResult);
-            }
-
-            var request = new HttpRequestMessage(HttpMethod.Post, path)
-            {
-                Content = JsonContent.Create(model),
-                Headers = { Authorization = new AuthenticationHeaderValue("Bearer", getTokenResult.Result) }
-            };
-
-            var response = await _httpClient.SendAsync(request);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogError($"Error while sending request to {path}. StatusCode: {response.StatusCode}");
-                return ExecutionResult.FromInternalServer("UnitAccountDepositTransfer", $"Error while sending request to {path}. StatusCode: {response.StatusCode}");
-            }
-
-            return ExecutionResult.FromSuccess();
-        }
-
         private static string SetPathId(string path, long id)
         {
             return path.Replace("{id}", id.ToString());

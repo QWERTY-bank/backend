@@ -19,7 +19,7 @@ namespace Bank.Credits.Domain.Credits
         /// День последнего платежа по кредиту
         /// </summary>
         [NotNullIfNotNull(nameof(TakingDate))]
-        public DateOnly? LastDate { get => TakingDate?.AddDays(PeriodDays - 1); }
+        public DateOnly? LastDate { get => TakingDate?.AddDays(PeriodDays); }
 
         /// <summary>
         /// Сумма долга по кредиту в текущий момент 
@@ -29,7 +29,7 @@ namespace Bank.Credits.Domain.Credits
         /// <summary>
         /// Список остатков по кредиту с начисленными процентами перед платежом
         /// </summary>
-        public Queue<decimal> DebtsWithInterest { get; set; } = null!;
+        public Queue<decimal> DebtsWithInterest { get; set; } = new();
 
         /// <summary>
         /// Последний раз, когда начислялся процент
@@ -53,7 +53,7 @@ namespace Bank.Credits.Domain.Credits
         {
             get
             {
-                var daysLeft = LastDate!.Value.DayNumber - NextPaymentDate!.Value.DayNumber;
+                var daysLeft = LastDate!.Value.DayNumber - (NextPaymentDate?.DayNumber ?? TakingDate!.Value.DayNumber);
                 return daysLeft > 0
                     ? daysLeft / CreditConstants.PaymentPeriodDays + (daysLeft % CreditConstants.PaymentPeriodDays == 0 ? 0 : 1) + 1
                     : 1;
@@ -67,6 +67,8 @@ namespace Bank.Credits.Domain.Credits
         /// </summary>
         public void UpdateNextPaymentDate()
         {
+            NextPaymentDate ??= TakingDate;
+
             var presumptiveNextPaymentDate = NextPaymentDate!.Value.AddDays(CreditConstants.PaymentPeriodDays);
             NextPaymentDate = presumptiveNextPaymentDate < LastDate
                 ? presumptiveNextPaymentDate

@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\common\Bank.Common.Kafka.Transfers\Bank.Common.Kafka.Transfers.csproj" />
+    <ProjectReference Include="..\..\common\Bank.Common.Kafka\Bank.Common.Kafka.csproj" />
+    <ProjectReference Include="..\Bank.Credits.Persistence\Bank.Credits.Persistence.csproj" />
+  </ItemGroup>
+
+</Project>

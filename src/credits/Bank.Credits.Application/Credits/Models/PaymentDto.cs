@@ -18,5 +18,10 @@ namespace Bank.Credits.Application.Credits.Models
         /// Статус платежа
         /// </summary>
         public required PaymentStatusType PaymentStatus { get; init; }
+
+        /// <summary>
+        /// Тип платежа
+        /// </summary>
+        public required PaymentType PaymentType { get; init; }
     }
 }

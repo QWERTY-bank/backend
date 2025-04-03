@@ -2,6 +2,8 @@
 using Bank.Common.Application.Extensions;
 using Bank.Common.Application.Z1all.ExecutionResult.StatusCode;
 using Bank.Credits.Application.Credits.Models;
+using Bank.Credits.Application.Requests;
+using Bank.Credits.Application.Requests.Models;
 using Bank.Credits.Application.User;
 using Bank.Credits.Domain.Common.Helpers;
 using Bank.Credits.Domain.Credits;
@@ -18,17 +20,20 @@ namespace Bank.Credits.Application.Credits
         private readonly ILogger<CreditsService> _logger;
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
+        private readonly ICoreRequestService _requestService;
 
         public CreditsService(
             CreditsDbContext context,
             ILogger<CreditsService> logger,
             IUserService userService,
-            IMapper mapper)
+            IMapper mapper,
+            ICoreRequestService requestService)
         {
             _context = context;
             _logger = logger;
             _userService = userService;
             _mapper = mapper;
+            _requestService = requestService;
         }
 
         public async Task<ExecutionResult<IPagedList<CreditShortDto>>> GetCreditsAsync(CreditsFilter filter, int page, int pageSize, Guid userId)
@@ -48,7 +53,7 @@ namespace Bank.Credits.Application.Credits
         public async Task<ExecutionResult<CreditDto>> GetCreditAsync(Guid creditId, Guid userId)
         {
             var credit = await _context.Credits
-                .Include(x => x.PaymentHistory)
+                .Include(x => x.PaymentHistory.Where(x => x.Type != PaymentType.IssuingCredit).OrderByDescending(x => x.PlanId))
                 .Include(x => x.Tariff)
                 .FirstOrDefaultAsync(x => x.Id == creditId && x.UserId == userId);
             if (credit == null)
@@ -64,10 +69,10 @@ namespace Bank.Credits.Application.Credits
 
         public async Task<ExecutionResult> TakeCreditAsync(TakeCreditDto model, Guid userId)
         {
-            var creditAlreadyRequested = await _context.Credits.AnyAsync(x => x.Key == model.Key);
+            var creditAlreadyRequested = await _context.Payments.AnyAsync(x => x.Key == model.Key);
             if (creditAlreadyRequested)
             {
-                _logger.LogInformation($"Credit with key = '{model.Key}' already requested");
+                _logger.LogInformation($"Credit with payment with key = '{model.Key}' already requested");
                 return ExecutionResult.FromBadRequest("TakeCredit", "Credit already requested");
             }
 
@@ -84,7 +89,26 @@ namespace Bank.Credits.Application.Credits
                 return ExecutionResult.FromBadRequest("TakeCredit", $"The number of days must be from {tariff.MinPeriodDays} to {tariff.MaxPeriodDays}");
             }
 
+            var accountInfo = await GetAccountInfo(model.AccountId, userId);
+            if (accountInfo.IsNotSuccess)
+            {
+                return ExecutionResult.FromError(accountInfo);
+            }
+
             var newCredit = _mapper.Map<Credit>(model);
+            newCredit.CurrencyCode = accountInfo.Result.CurrencyValue.Code;
+            newCredit.PaymentHistory = 
+            [
+                new IssuingCreditPayment() 
+                {
+                    Key = model.Key,
+                    AccountId = model.AccountId,
+                    PaymentAmount = model.LoanAmount,
+                    PaymentDateTime = DateTime.UtcNow,
+                    PaymentStatus = PaymentStatusType.InProcess,
+                    PaymentDate = DateHelper.CurrentDate,
+                }
+            ];
 
             var user = await _userService.GetUserEntityAsync(userId);
             newCredit.UserId = user.Id;
@@ -98,7 +122,8 @@ namespace Bank.Credits.Application.Credits
         public async Task<ExecutionResult> ReduceCreditAsync(Guid creditId, ReduceCreditDto model, Guid userId)
         {
             var credit = await _context.Credits
-              .Include(x => x.PaymentHistory!.Where(x => x.Key == model.Key))
+              .Include(x => x.PaymentHistory)
+              .Include(x => x.Tariff)
               .FirstOrDefaultAsync(x => x.Id == creditId && x.UserId == userId);
             if (credit == null)
             {
@@ -106,11 +131,43 @@ namespace Bank.Credits.Application.Credits
                 return ExecutionResult.FromNotFound("ReduceCredit", $"Credit with id = '{creditId}' not found");
             }
 
-            if (credit.PaymentHistory?.Any() ?? false)
+            if (credit.Status != CreditStatusType.Active)
+            {
+                _logger.LogInformation($"Credit with id = '{creditId}' must have the Active status");
+                return ExecutionResult.FromNotFound("ReduceCredit", $"Credit with id = '{creditId}' must have the Active status");
+            }
+
+            if (credit.PaymentHistory?.Any(x => x.Key == model.Key) ?? false)
             {
                 _logger.LogInformation($"Payment with key = '{model.Key}' already requested");
                 return ExecutionResult.FromBadRequest("ReduceCredit", "Payment already requested");
             }
+
+            if (credit.PaymentHistory?.Any(x => x.PaymentStatus == PaymentStatusType.InProcess && x.Type == PaymentType.Repayment) ?? false)
+            {
+                _logger.LogInformation($"Please try again later.");
+                return ExecutionResult.FromBadRequest("ReduceCredit", "Please try again later.");
+            }
+
+            if (credit.PaymentsInfo.DebtAmount < model.Value)
+            {
+                _logger.LogInformation("The amount owed is less than the specified amount");
+                return ExecutionResult.FromBadRequest("ReduceCredit", "The amount owed is less than the specified amount");
+            }
+
+            var accountInfo = await GetAccountInfo(model.AccountId, userId);
+            if (accountInfo.IsNotSuccess)
+            {
+                return ExecutionResult.FromError(accountInfo);
+            }
+
+            if (accountInfo.Result.CurrencyValue.Value < model.Value)
+            {
+                _logger.LogInformation("There are insufficient funds in the account");
+                return ExecutionResult.FromBadRequest("ReduceCredit", "There are insufficient funds in the account");
+            }
+
+            credit.ReduceDebt(model.Value);
 
             await _context.Payments.AddAsync(new ReducePayment()
             {
@@ -126,6 +183,29 @@ namespace Bank.Credits.Application.Credits
             await _context.SaveChangesAsync();
 
             return ExecutionResult.FromSuccess();
+        }
+
+        private async Task<ExecutionResult<BalanceDto>> GetAccountInfo(long accountId, Guid userId)
+        {
+            var accountInfo = await _requestService.GetAccountBalanceAsync(accountId);
+            if (accountInfo.IsNotSuccess)
+            {
+                return ExecutionResult<BalanceDto>.FromError(accountInfo);
+            }
+
+            if (accountInfo.Result.UserId != userId)
+            {
+                _logger.LogInformation("Account does not belong to the user");
+                return ExecutionResult<BalanceDto>.FromBadRequest("TakeCredit", "Account does not belong to the user");
+            }
+
+            if (accountInfo.Result.IsClosed)
+            {
+                _logger.LogInformation("Account is closed");
+                return ExecutionResult<BalanceDto>.FromBadRequest("TakeCredit", "Account is closed");
+            }
+
+            return accountInfo;
         }
     }
 }
