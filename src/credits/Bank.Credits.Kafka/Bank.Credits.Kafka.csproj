@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\common\Bank.Common.Kafka.Transfers\Bank.Common.Kafka.Transfers.csproj" />
     <ProjectReference Include="..\..\common\Bank.Common.Kafka\Bank.Common.Kafka.csproj" />
+    <ProjectReference Include="..\Bank.Credits.Application\Bank.Credits.Application.csproj" />
     <ProjectReference Include="..\Bank.Credits.Persistence\Bank.Credits.Persistence.csproj" />
   </ItemGroup>
 

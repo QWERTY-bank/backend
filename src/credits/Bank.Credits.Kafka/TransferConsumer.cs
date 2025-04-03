@@ -1,5 +1,6 @@
 ﻿using Bank.Common.Kafka;
 using Bank.Common.Kafka.Transfers;
+using Bank.Credits.Application.User;
 using Bank.Credits.Domain.Credits;
 using Bank.Credits.Persistence;
 using Confluent.Kafka;
@@ -10,10 +11,12 @@ namespace Bank.Credits.Kafka
     public class TransferConsumer : ITopicConsumer<TransferResponse>
     {
         private readonly CreditsDbContext _dbContext;
+        private readonly IUserService _userService;
 
-        public TransferConsumer(CreditsDbContext dbContext)
+        public TransferConsumer(CreditsDbContext dbContext, IUserService userService)
         {
             _dbContext = dbContext;
+            _userService = userService;
         }
 
         public async Task ConsumeAsync(ConsumeResult<string, TransferResponse> message, CancellationToken _)
@@ -43,6 +46,8 @@ namespace Bank.Credits.Kafka
             action(payment, response.Status);
 
             await _dbContext.SaveChangesAsync();
+
+            await _userService.RecalculateRating(payment.Credit!.UserId);
         }
 
         private void ReduceDebt(Payment payment, TransferStatus status)
