@@ -25,9 +25,12 @@ namespace Bank.Users.Application.Auth.Helpers
             return tokenHandler.WriteToken(token);
         }
 
-        public static string GenerateRefreshToken()
+        public static string GenerateRefreshToken() => GenerateRandomString(64);
+        public static string GenerateLoginCode() => GenerateRandomString(32);
+
+        private static string GenerateRandomString(uint length)
         {
-            var randomNumber = new byte[64];
+            var randomNumber = new byte[length];
 
             using var generator = RandomNumberGenerator.Create();
 

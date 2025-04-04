@@ -11,6 +11,7 @@ namespace Bank.Users.Application.Auth
 {
     public class AuthService : IAuthService
     {
+        private readonly ILoginCodeService _loginCodeService;
         private readonly ITokensService _tokensService;
         private readonly IPasswordService _passwordService;
         private readonly IUserService _userService;
@@ -18,12 +19,14 @@ namespace Bank.Users.Application.Auth
         private readonly ILogger<AuthService> _logger;
 
         public AuthService(
+            ILoginCodeService loginCodeService,
             ITokensService tokensService,
             IPasswordService passwordService,
             IUserService userService,
             UsersDbContext context,
             ILogger<AuthService> logger)
         {
+            _loginCodeService = loginCodeService;
             _tokensService = tokensService;
             _passwordService = passwordService;
             _userService = userService;
@@ -72,9 +75,37 @@ namespace Bank.Users.Application.Auth
 
         public async Task<ExecutionResult<TokensDTO>> LoginAsync(LoginDTO model)
         {
+            var userResult = await GetUserByLoginAndPasswordAsync(model);
+            if (userResult.IsNotSuccess)
+            {
+                return ExecutionResult<TokensDTO>.FromError(userResult);
+            }
+
+            return await _tokensService.CreateUserTokensAsync(userResult.Result);
+        }
+
+        public async Task<ExecutionResult<LoginCodeDto>> GetLoginCodeAsync(LoginDTO model)
+        {
+            var userResult = await GetUserByLoginAndPasswordAsync(model);
+            if (userResult.IsNotSuccess)
+            {
+                return ExecutionResult<LoginCodeDto>.FromError(userResult);
+            }
+
+            return await _loginCodeService.CreateUserLoginCodeAsync(userResult.Result.Id);
+        }
+
+        public async Task<ExecutionResult<TokensDTO>> LoginAsync(LoginCodeDto model)
+        {
+            var userIdResult = await _loginCodeService.GetUserIdAsync(model);
+            if (userIdResult.IsNotSuccess)
+            {
+                return ExecutionResult<TokensDTO>.FromError(userIdResult);
+            }
+
             var user = await _context.Users
-                .Include(x => x.Roles)
-                .FirstOrDefaultAsync(x => x.Phone == model.Phone);
+               .Include(x => x.Roles)
+               .FirstOrDefaultAsync(x => x.Id == userIdResult.Result);
             if (user == null)
             {
                 _logger.LogInformation($"The user was not found on the phone.");
@@ -87,14 +118,34 @@ namespace Bank.Users.Application.Auth
                 return ExecutionResult<TokensDTO>.FromForbid("UserBlocked", "The user has been blocked.");
             }
 
+            return await _tokensService.CreateUserTokensAsync(user);
+        }
+
+        private async Task<ExecutionResult<UserEntity>> GetUserByLoginAndPasswordAsync(LoginDTO model)
+        {
+            var user = await _context.Users
+               .Include(x => x.Roles)
+               .FirstOrDefaultAsync(x => x.Phone == model.Phone);
+            if (user == null)
+            {
+                _logger.LogInformation($"The user was not found on the phone.");
+                return ExecutionResult<UserEntity>.FromBadRequest("LoginFail", "login fail.");
+            }
+
+            if (user.IsBlocked)
+            {
+                _logger.LogInformation($"User with id = '{user.Id}' is blocked.");
+                return ExecutionResult<UserEntity>.FromForbid("UserBlocked", "The user has been blocked.");
+            }
+
             var checkingPasswordResult = _passwordService.CheckPassword(model.Password, user.PasswordHash);
             if (checkingPasswordResult.IsNotSuccess)
             {
                 _logger.LogInformation($"Invalid password for user with id = '{user.Id}'.");
-                return ExecutionResult<TokensDTO>.FromBadRequest("LoginFail", "login fail.");
+                return ExecutionResult<UserEntity>.FromBadRequest("LoginFail", "login fail.");
             }
 
-            return await _tokensService.CreateUserTokensAsync(user);
+            return user;
         }
 
         public async Task<ExecutionResult<TokensDTO>> UpdateAccessTokenAsync(string refresh, Guid accessTokenJTI, Guid userId)

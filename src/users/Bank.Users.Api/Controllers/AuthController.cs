@@ -59,6 +59,17 @@ namespace Bank.Users.Api.Controllers
         }
 
         /// <summary>
+        /// Вход по коду
+        /// </summary>
+        [HttpPost("login/code")]
+        [ProducesResponseType(typeof(TokensDTO), StatusCodes.Status200OK)]
+        public async Task<IActionResult> LoginCodeAsync(CodeLoginAuthRequest request)
+        {
+            return await ExecutionResultHandlerAsync(()
+                => _authService.LoginAsync(_mapper.Map<LoginCodeDto>(request)));
+        }
+
+        /// <summary>
         /// Выход
         /// </summary>
         [HttpPost("logout")]

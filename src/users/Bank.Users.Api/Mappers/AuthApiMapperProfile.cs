@@ -16,6 +16,7 @@ namespace Bank.Users.Api.Mappers
         {
             CreateMap<RegistrationAuthRequest, RegistrationDTO>();
             CreateMap<LoginAuthRequest, LoginDTO>();
+            CreateMap<CodeLoginAuthRequest, LoginCodeDto>();
         }
     }
 }

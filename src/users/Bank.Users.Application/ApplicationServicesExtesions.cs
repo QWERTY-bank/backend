@@ -1,4 +1,5 @@
 ﻿using Bank.Users.Application.Auth;
+using Bank.Users.Application.Auth.Configurations;
 using Bank.Users.Application.Auth.Mapper;
 using Bank.Users.Application.Settings;
 using Bank.Users.Application.Settings.Mapper;
@@ -26,11 +27,14 @@ namespace Bank.Users.Application
             services.AddScoped<IRefreshTokenStore, RefreshTokenStore>();
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IClientUserSettingsService, ClientUserSettingsService>();
+            services.AddScoped<ILoginCodeService, LoginCodeService>();
 
             services.AddScoped<IUserService, UserService>();
 
             services.AddScoped<RolesSeed>();
             services.AddScoped<UsersSeed>();
+
+            services.ConfigureOptions<LoginCodeOptionsConfigure>();
         }
 
         /// <summary>

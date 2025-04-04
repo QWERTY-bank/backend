@@ -7,6 +7,8 @@ namespace Bank.Users.Application.Auth
     {
         Task<ExecutionResult<TokensDTO>> RegistrationAsync(RegistrationDTO model);
         Task<ExecutionResult<TokensDTO>> LoginAsync(LoginDTO model);
+        Task<ExecutionResult<TokensDTO>> LoginAsync(LoginCodeDto model);
+        Task<ExecutionResult<LoginCodeDto>> GetLoginCodeAsync(LoginDTO model);
         Task<ExecutionResult<TokensDTO>> UpdateAccessTokenAsync(string refresh, Guid accessTokenJTI, Guid userId);
     }
 }

@@ -34,7 +34,7 @@ namespace Bank.Users.AuthWeb.Controllers
                 return View(model);
             }
 
-            var result = await _authService.LoginAsync(new() { Password = model.Password, Phone = model.Phone });
+            var result = await _authService.GetLoginCodeAsync(new() { Password = model.Password, Phone = model.Phone });
 
             if (result.IsNotSuccess)
             {
@@ -50,7 +50,7 @@ namespace Bank.Users.AuthWeb.Controllers
                 return View(model);
             }
 
-            return Redirect($"{model.ReturnUrl}?access={result.Result.Access}&refresh={result.Result.Refresh}");
+            return Redirect($"{model.ReturnUrl}?code={result.Result.Code}");
         }
     }
 }
