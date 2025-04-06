@@ -79,7 +79,7 @@ namespace Bank.Credits.Quartz.Payments
             {
                 var message = new UnitAccountTransferModel()
                 {
-                    UserAccountId = payment.Credit!.AccountId,
+                    UserAccountId = payment.AccountId,
                     Type = payment.Type == PaymentType.IssuingCredit ? UnitTransferType.Deposit : UnitTransferType.Withdraw,
                     Key = payment.Key,
                     UnitId = Guid.Parse("a99fb2a5-c52e-4168-8ac9-b28878d3b407"),
