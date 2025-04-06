@@ -53,7 +53,11 @@ namespace Bank.Credits.Application.User
 
             if (user == null)
             {
-                throw new Exception("User not found");
+                return new UserCreditInfoDto()
+                {
+                    Rating = 1000,
+                    MaxRating = 1000
+                };
             }
 
             if (!user.RatingIsActual)
