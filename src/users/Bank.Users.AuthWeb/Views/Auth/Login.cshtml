@@ -1,23 +1,29 @@
 ﻿@model LoginViewModel
 
-<h2>Вход</h2>
-<form method="post" asp-controller="Auth" asp-action="Login">
-    <input type="hidden" asp-for="ReturnUrl" />
-
-    <div>
-        <label>Номер телефона</label>
-        <input asp-for="Phone" />
-        <span asp-validation-for="Phone" class="text-danger"></span>
+<div class="mobile-login-wrapper">
+    <div class="logo">
+        <img src="~/logo.svg" alt="QWERTY-Bank" />
+        <h1>QWERTY-Bank</h1>
     </div>
 
-    <div>
-        <label>Пароль</label>
-        <input type="password" asp-for="Password" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
+    <form method="post" asp-controller="Auth" asp-action="Login" class="mobile-login-form">
+        <input type="hidden" asp-for="ReturnUrl" />
 
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <span asp-validation-for="ReturnUrl" class="text-danger"></span>
+        <div class="form-group">
+            <label for="Phone">Номер телефона</label>
+            <input type="text" asp-for="Phone" placeholder="Text input" class="input-text" />
+            <span asp-validation-for="Phone" class="text-danger"></span>
+        </div>
 
-    <button type="submit">Войти</button>
-</form>
+        <div class="form-group">
+            <label for="Password">Пароль</label>
+            <input type="password" asp-for="Password" placeholder="Text input" class="input-text" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+        <span asp-validation-for="ReturnUrl" class="validation-summary"></span>
+
+        <button type="submit" class="btn-signin">Войти</button>
+    </form>
+</div>
