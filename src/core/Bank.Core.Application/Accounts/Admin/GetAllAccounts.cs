@@ -1,13 +1,14 @@
 using Bank.Core.Application.Accounts.Models;
+using Bank.Core.Domain.Accounts;
 using Bank.Core.Domain.Common;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bank.Core.Application.Accounts.Admin;
 
-public class GetAllAccountsQuery : IRequest<OperationResult<IReadOnlyCollection<AccountDto>>>;
+public class GetAllAccountsQuery : IRequest<OperationResult<IReadOnlyCollection<AdminAccountDto>>>;
 
-public class GetAllAccountsQueryHandler : IRequestHandler<GetAllAccountsQuery, OperationResult<IReadOnlyCollection<AccountDto>>>
+public class GetAllAccountsQueryHandler : IRequestHandler<GetAllAccountsQuery, OperationResult<IReadOnlyCollection<AdminAccountDto>>>
 {
     private readonly ICoreDbContext _dbContext;
 
@@ -16,10 +17,29 @@ public class GetAllAccountsQueryHandler : IRequestHandler<GetAllAccountsQuery, O
         _dbContext = dbContext;
     }
 
-    public async Task<OperationResult<IReadOnlyCollection<AccountDto>>> Handle(GetAllAccountsQuery request, CancellationToken cancellationToken)
+    public async Task<OperationResult<IReadOnlyCollection<AdminAccountDto>>> Handle(GetAllAccountsQuery request, CancellationToken cancellationToken)
     {
-        var accounts = await _dbContext.PersonalAccounts
-            .Select(account => new AccountDto
+        var creditAccounts = await _dbContext.UnitAccounts
+            .Where(account => account.UnitId == GetCreditAccountsQueryHandler.CreditAccountId)
+            .Select(account => new AdminAccountDto
+            {
+                Id = account.Id,
+                Title = account.Title,
+                UserId = null,
+                IsClosed = account.IsClosed,
+                CurrencyValue = account.AccountCurrencies
+                    .Select(currency => new CurrencyValue
+                    {
+                        Code = currency.Code,
+                        Value = currency.Value
+                    }).Single(),
+                IsMaster = true
+            })
+            .ToListAsync(cancellationToken);
+
+        var userAccounts = await _dbContext.PersonalAccounts
+            .OrderBy(account => account.Id)
+            .Select(account => new AdminAccountDto
             {
                 Id = account.Id,
                 Title = account.Title,
@@ -30,10 +50,13 @@ public class GetAllAccountsQueryHandler : IRequestHandler<GetAllAccountsQuery, O
                     {
                         Code = currency.Code,
                         Value = currency.Value
-                    }).Single()
+                    }).Single(),
+                IsMaster = false
             })
             .ToListAsync(cancellationToken);
+
+        var accounts = creditAccounts.Concat(userAccounts).ToArray();
         
-        return OperationResultFactory.Success<IReadOnlyCollection<AccountDto>>(accounts);
+        return OperationResultFactory.Success<IReadOnlyCollection<AdminAccountDto>>(accounts);
     }
 }
