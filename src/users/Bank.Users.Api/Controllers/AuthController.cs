@@ -8,6 +8,7 @@ using Bank.Users.Application.Auth;
 using Bank.Users.Application.Auth.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace Bank.Users.Api.Controllers
 {
@@ -22,6 +23,7 @@ namespace Bank.Users.Api.Controllers
         private readonly IAuthService _authService;
         private readonly ITokensService _tokensService;
         private readonly IMapper _mapper;
+        private readonly ILogger<AuthController> _logger;
 
         /// <summary>
         /// Конструктор
@@ -29,11 +31,13 @@ namespace Bank.Users.Api.Controllers
         public AuthController(
             IAuthService authService,
             ITokensService tokensService,
-            IMapper mapper)
+            IMapper mapper,
+            ILogger<AuthController> logger)
         {
             _authService = authService;
             _tokensService = tokensService;
             _mapper = mapper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -43,8 +47,14 @@ namespace Bank.Users.Api.Controllers
         [ProducesResponseType(typeof(TokensDTO), StatusCodes.Status200OK)]
         public async Task<IActionResult> RegistrationAsync(RegistrationAuthRequest request)
         {
-            return await ExecutionResultHandlerAsync(() 
-                => _authService.RegistrationAsync(_mapper.Map<RegistrationDTO>(request)));
+            ActivitySource _source = new ActivitySource("dasdasdasd", "1.0.0");
+
+            using (_source.StartActivity("Login"))
+            {
+            }
+
+            return await ExecutionResultHandlerAsync(()
+            => _authService.RegistrationAsync(_mapper.Map<RegistrationDTO>(request)));
         }
 
         /// <summary>
@@ -65,6 +75,7 @@ namespace Bank.Users.Api.Controllers
         [ProducesResponseType(typeof(TokensDTO), StatusCodes.Status200OK)]
         public async Task<IActionResult> LoginCodeAsync(CodeLoginAuthRequest request)
         {
+            _logger.LogError("asdasd");
             return await ExecutionResultHandlerAsync(()
                 => _authService.LoginAsync(_mapper.Map<LoginCodeDto>(request)));
         }

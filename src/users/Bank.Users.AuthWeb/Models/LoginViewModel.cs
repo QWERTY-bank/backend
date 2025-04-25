@@ -12,6 +12,6 @@ namespace Bank.Users.AuthWeb.Models
         public string Password { get; set; }
         
         [Required(ErrorMessage = "Значение ReturnUrl не установлено")]
-        public string ReturnUrl { get; set; }
+        public required string ReturnUrl { get; set; }
     }
 }

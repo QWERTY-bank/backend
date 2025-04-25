@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 1s
+
+scrape_configs:
+  - job_name: 'core'
+    static_configs:
+      - targets: ['bank.core.api:8080']
+
+  - job_name: 'credits'
+    static_configs:
+      - targets: ['bank.credits.api:8080']
+
+  - job_name: 'users'
+    static_configs:
+      - targets: ['bank.users.api:8080']
+
+  - job_name: 'authweb'
+    static_configs:
+      - targets: ['bank.users.authweb:8080']
