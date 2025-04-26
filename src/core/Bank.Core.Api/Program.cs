@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Bank.Common.Api.Configurations;
 using Bank.Common.Api.Middlewares.Extensions;
 using Bank.Common.Auth.Extensions;
+using Bank.Common.OpenTelemetry;
 using Bank.Core.Api.Hubs;
 using Bank.Core.Api.Infrastructure.Auth;
 using Bank.Core.Api.Infrastructure.Extensions;
@@ -52,6 +53,8 @@ builder.Services.Configure<JsonOptions>(options =>
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
+builder.Services.AddOpenTelemetry(builder.Configuration, "core");
+
 var app = builder.Build();
 
 await app.Services.MigrateDatabaseAsync();
@@ -71,5 +74,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHub<AccountHub>("/account-hub");
+app.UseOpenTelemetry();
 
 app.Run();
