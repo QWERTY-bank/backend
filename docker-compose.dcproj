@@ -10,14 +10,14 @@
     <DockerServiceName>bank.core.api</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="datasources.yaml" />
+    <None Include="conf\grafana\provisioning\datasources\datasources.yaml" />
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
-    <None Include="loki-config.yml" />
-    <None Include="prometheus.yml" />
-    <None Include="tempo.yaml" />
+    <None Include="conf\loki-config.yml" />
+    <None Include="conf\prometheus.yml" />
+    <None Include="conf\tempo.yaml" />
   </ItemGroup>
 </Project>

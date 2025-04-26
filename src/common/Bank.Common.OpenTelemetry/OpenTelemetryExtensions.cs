@@ -34,7 +34,6 @@ namespace Bank.Common.OpenTelemetry
                     tracing.SetResourceBuilder(resourceBuilder)
                            .AddHttpClientInstrumentation()
                            .AddAspNetCoreInstrumentation()
-                           //.AddConsoleExporter()
                            .AddOtlpExporter(options =>
                            {
                                options.Endpoint = new Uri(openTelemetryOptions.TracingGrpcEndpoint);

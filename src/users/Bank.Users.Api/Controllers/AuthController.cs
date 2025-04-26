@@ -75,7 +75,6 @@ namespace Bank.Users.Api.Controllers
         [ProducesResponseType(typeof(TokensDTO), StatusCodes.Status200OK)]
         public async Task<IActionResult> LoginCodeAsync(CodeLoginAuthRequest request)
         {
-            _logger.LogError("asdasd");
             return await ExecutionResultHandlerAsync(()
                 => _authService.LoginAsync(_mapper.Map<LoginCodeDto>(request)));
         }
