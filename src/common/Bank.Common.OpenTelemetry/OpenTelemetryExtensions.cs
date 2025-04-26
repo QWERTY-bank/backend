@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using LokiLoggingProvider.Options;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using OpenTelemetry.Exporter;
+using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -10,15 +13,15 @@ namespace Bank.Common.OpenTelemetry
 {
     public static class OpenTelemetryExtensions
     {
-        public static IServiceCollection AddOpenTelemetry(this IServiceCollection services, IConfiguration configuration, string serviceName)
+        public static void AddOpenTelemetry(this WebApplicationBuilder builder, string serviceName)
         {
             OpenTelemetryOptions openTelemetryOptions = new();
-            configuration.GetRequiredSection("OpenTelemetry").Bind(openTelemetryOptions);
+            builder.Configuration.GetRequiredSection("OpenTelemetry").Bind(openTelemetryOptions);
 
             var resourceBuilder = ResourceBuilder.CreateDefault()
                 .AddService(serviceName);
 
-            services.AddOpenTelemetry()
+            builder.Services.AddOpenTelemetry()
                 .WithMetrics(metrics =>
                 {
                     metrics.SetResourceBuilder(resourceBuilder)
@@ -31,23 +34,21 @@ namespace Bank.Common.OpenTelemetry
                     tracing.SetResourceBuilder(resourceBuilder)
                            .AddHttpClientInstrumentation()
                            .AddAspNetCoreInstrumentation()
-                           .AddConsoleExporter()
+                           //.AddConsoleExporter()
                            .AddOtlpExporter(options =>
                            {
                                options.Endpoint = new Uri(openTelemetryOptions.TracingGrpcEndpoint);
                                options.Protocol = OtlpExportProtocol.Grpc;
                            });
                 });
-            //.WithLogging(logging =>
-            //{
-            //    logging.SetResourceBuilder(resourceBuilder)
-            //           .AddOtlpExporter(options =>
-            //           {
-            //               options.Endpoint = new Uri("http://localhost:4310");
-            //           });
-            //});
 
-            return services;
+            builder.Logging.AddLoki(loggerOptions =>
+            {
+                loggerOptions.Client = PushClient.Grpc;
+                loggerOptions.StaticLabels.JobName = serviceName;
+                loggerOptions.Formatter = Formatter.Json;
+                loggerOptions.Grpc.Address = openTelemetryOptions.LoggingGrpcEndpoint;
+            });
         }
 
         public static void UseOpenTelemetry(this WebApplication app)

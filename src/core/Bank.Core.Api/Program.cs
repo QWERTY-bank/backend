@@ -53,7 +53,7 @@ builder.Services.Configure<JsonOptions>(options =>
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-builder.Services.AddOpenTelemetry(builder.Configuration, "core");
+builder.AddOpenTelemetry("core");
 
 var app = builder.Build();
 

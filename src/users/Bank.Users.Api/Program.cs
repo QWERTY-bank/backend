@@ -3,11 +3,6 @@ using Bank.Common.Api.Cors;
 using Bank.Common.OpenTelemetry;
 using Bank.Users.Api;
 using Bank.Users.Application;
-//using OpenTelemetry.Exporter;
-//using OpenTelemetry.Logs;
-//using OpenTelemetry.Metrics;
-//using OpenTelemetry.Resources;
-//using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +15,7 @@ builder.Services.AddApiAutoMapperProfiles();
 builder.Services.AddApplicationAutoMapperProfiles();
 builder.AddUsersDbContext();
 builder.AddRedisDb();
-builder.Services.AddOpenTelemetry(builder.Configuration, "users");
+builder.AddOpenTelemetry("users");
 
 var app = builder.Build();
 

@@ -16,7 +16,7 @@ builder.Services.AddJwtAuthentication();
 builder.Services.AddApplicationAutoMapperProfiles();
 builder.AddUsersDbContext();
 builder.AddRedisDb();
-builder.Services.AddOpenTelemetry(builder.Configuration, "authWeb");
+builder.AddOpenTelemetry("authWeb");
 
 var app = builder.Build();
 

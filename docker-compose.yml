@@ -136,6 +136,18 @@ services:
     depends_on:
       - prometheus
       - tempo
+      - loki
+    networks:
+      - my-net
+
+  loki:
+    image: grafana/loki:2.9.2
+    # ports:
+    #   - "3100:3100"
+    volumes:
+      - loki-data:/loki
+      - ./loki-config.yml:/etc/loki/local-config.yaml
+    command: ["-config.file=/etc/loki/local-config.yaml"]
     networks:
       - my-net
 
@@ -171,6 +183,8 @@ volumes:
   tempo-data:
     driver: local
   prometheus-data: 
+    driver: local
+  loki-data:
     driver: local
 
 networks:

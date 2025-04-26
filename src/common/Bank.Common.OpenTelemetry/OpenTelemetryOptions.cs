@@ -2,6 +2,7 @@
 {
     internal class OpenTelemetryOptions
     {
-        public string TracingGrpcEndpoint { get; set; } = null!; // = "http://tempo:4317";
+        public string TracingGrpcEndpoint { get; set; } = null!;
+        public string LoggingGrpcEndpoint { get; set; } = null!;
     }
 }

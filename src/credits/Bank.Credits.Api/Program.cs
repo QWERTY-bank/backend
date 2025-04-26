@@ -15,7 +15,7 @@ builder.Services.AddAutoMapperProfiles();
 builder.Services.AddJobs(builder.Configuration);
 builder.AddCreditDbContext();
 builder.AddCoreKafka();
-builder.Services.AddOpenTelemetry(builder.Configuration, "credits");
+builder.AddOpenTelemetry("credits");
 
 var app = builder.Build();
 
