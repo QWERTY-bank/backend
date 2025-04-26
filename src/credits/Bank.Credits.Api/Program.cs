@@ -1,5 +1,6 @@
 using Bank.Common.Api.Configurations;
 using Bank.Common.Api.Cors;
+using Bank.Common.OpenTelemetry;
 using Bank.Credits.Api;
 using Bank.Credits.Quartz;
 
@@ -14,6 +15,7 @@ builder.Services.AddAutoMapperProfiles();
 builder.Services.AddJobs(builder.Configuration);
 builder.AddCreditDbContext();
 builder.AddCoreKafka();
+builder.Services.AddOpenTelemetry(builder.Configuration, "credits");
 
 var app = builder.Build();
 
@@ -29,5 +31,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.UseOpenTelemetry();
 
 app.Run();

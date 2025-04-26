@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\common\Bank.Common.Api\Bank.Common.Api.csproj" />
+    <ProjectReference Include="..\..\common\Bank.Common.OpenTelemetry\Bank.Common.OpenTelemetry.csproj" />
     <ProjectReference Include="..\Bank.Credits.Application\Bank.Credits.Application.csproj" />
     <ProjectReference Include="..\Bank.Credits.Quartz\Bank.Credits.Quartz.csproj" />
   </ItemGroup>
