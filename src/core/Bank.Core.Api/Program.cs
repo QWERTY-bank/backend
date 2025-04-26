@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Bank.Common.Api.Configurations;
 using Bank.Common.Api.Middlewares.Extensions;
 using Bank.Common.Auth.Extensions;
+using Bank.Common.Resilience;
 using Bank.Core.Api.Hubs;
 using Bank.Core.Api.Infrastructure.Auth;
 using Bank.Core.Api.Infrastructure.Extensions;
@@ -56,6 +57,8 @@ var app = builder.Build();
 
 await app.Services.MigrateDatabaseAsync();
 await app.Services.SeedDataAsync();
+
+app.UseErrorMiddleware();
 
 app.UseExceptionsHandler();
 

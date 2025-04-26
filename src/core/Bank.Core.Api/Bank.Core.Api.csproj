@@ -39,6 +39,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\common\Bank.Common.Api\Bank.Common.Api.csproj" />
+      <ProjectReference Include="..\..\common\Bank.Common.Resilience\Bank.Common.Resilience.csproj" />
       <ProjectReference Include="..\Bank.Core.Application\Bank.Core.Application.csproj" />
       <ProjectReference Include="..\Bank.Core.HttpClient.CurrencyRate\Bank.Core.HttpClient.CurrencyRate.csproj" />
       <ProjectReference Include="..\Bank.Core.Kafka.Transfers\Bank.Core.Kafka.Transfers.csproj" />
