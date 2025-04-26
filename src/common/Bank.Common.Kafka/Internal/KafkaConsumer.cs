@@ -1,5 +1,6 @@
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
+using Confluent.Kafka.Extensions.Diagnostics;
 
 namespace Bank.Common.Kafka.Internal;
 
@@ -25,20 +26,23 @@ internal class KafkaConsumer<TMessage> : IKafkaConsumer
             .SetValueDeserializer(new KafkaJsonDeserializer<TMessage>())
             .Build();
         consumer.Subscribe(_topicName);
-        
+
         while (!cancellationToken.IsCancellationRequested)
         {
             try
             {
+                await consumer.ConsumeWithInstrumentation(async (result, _) =>
+                {
+                    using var scope = _serviceProvider.CreateScope();
+
+                    var topicConsumer = scope.ServiceProvider.GetRequiredService<ITopicConsumer<TMessage>>();
+
+                    await topicConsumer.ConsumeAsync(result!, cancellationToken);
+
+                    consumer.Commit(result);
+                }, cancellationToken);
+
                 var consumerResult = consumer.Consume();
-
-                using var scope = _serviceProvider.CreateScope();
-                
-                var topicConsumer = scope.ServiceProvider.GetRequiredService<ITopicConsumer<TMessage>>();
-
-                await topicConsumer.ConsumeAsync(consumerResult, cancellationToken);
-
-                consumer.Commit(consumerResult);
             }
             catch (Exception)
             {

@@ -8,6 +8,7 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Confluent.Kafka.Extensions.OpenTelemetry;
 
 namespace Bank.Common.OpenTelemetry
 {
@@ -34,6 +35,7 @@ namespace Bank.Common.OpenTelemetry
                     tracing.SetResourceBuilder(resourceBuilder)
                            .AddHttpClientInstrumentation()
                            .AddAspNetCoreInstrumentation()
+                           .AddConfluentKafkaInstrumentation()
                            .AddOtlpExporter(options =>
                            {
                                options.Endpoint = new Uri(openTelemetryOptions.TracingGrpcEndpoint);

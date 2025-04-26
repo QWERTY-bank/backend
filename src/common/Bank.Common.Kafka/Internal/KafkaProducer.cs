@@ -1,4 +1,5 @@
 using Confluent.Kafka;
+using Confluent.Kafka.Extensions.Diagnostics;
 
 namespace Bank.Common.Kafka.Internal;
 
@@ -15,7 +16,7 @@ internal class KafkaProducer<TMessage> : ITopicProducer<TMessage>, IDisposable
 
         _producer = new ProducerBuilder<string, TMessage>(producerConfig)
             .SetValueSerializer(new KafkaJsonSerializer<TMessage>())
-            .Build();
+            .BuildWithInstrumentation();
     }
 
     public Task<DeliveryResult<string, TMessage>> ProduceAsync(string key, TMessage message, CancellationToken cancellationToken)
