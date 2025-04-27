@@ -10,7 +10,7 @@ builder.Services.AddCorsConfigure();
 
 builder.ConfigureAppsettings();
 builder.Services.AddCreditConfigurations();
-builder.Services.AddCreditServices();
+builder.Services.AddCreditServices(builder.Configuration);
 builder.Services.AddAutoMapperProfiles();
 builder.Services.AddJobs(builder.Configuration);
 builder.AddCreditDbContext();

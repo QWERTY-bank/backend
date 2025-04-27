@@ -2,6 +2,7 @@
 using Bank.Common.Auth.Extensions;
 using Bank.Common.Kafka;
 using Bank.Common.Kafka.Transfers;
+using Bank.Common.Resilience;
 using Bank.Core.Api.Infrastructure.Extensions.Kafka;
 using Bank.Credits.Api.Mappers;
 using Bank.Credits.Application.Credits;
@@ -15,6 +16,7 @@ using Bank.Credits.Application.User.Mapper;
 using Bank.Credits.Kafka;
 using Bank.Credits.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using System.Text.Json.Serialization;
 
@@ -28,7 +30,7 @@ namespace Bank.Credits.Api
         /// <summary>
         /// Регистрация зависимостей
         /// </summary>
-        public static void AddCreditServices(this IServiceCollection services)
+        public static void AddCreditServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IUserService, UserService>();
 
@@ -38,6 +40,19 @@ namespace Bank.Credits.Api
             services.AddScoped<ICoreRequestService, CoreRequestService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddMemoryCache();
+
+
+            var coreRequestOptions = configuration.GetRequiredSection("CoreRequest").Get<CoreRequestOptions>()!;
+            services.AddHttpClient<ICoreRequestService, CoreRequestService>(client =>
+            {
+                client.BaseAddress = new Uri(coreRequestOptions.BaseUrl);
+            }).ApplyResilience<CoreRequestService>(coreRequestOptions.Resilience);
+
+            var tokenServiceOptions = configuration.GetRequiredSection("TokenService").Get<TokenServiceOptions>()!;
+            services.AddHttpClient<ITokenService, TokenService>(client =>
+            {
+                client.BaseAddress = new Uri(tokenServiceOptions.BaseUrl);
+            }).ApplyResilience<TokenService>(tokenServiceOptions.Resilience);
         }
 
         public static void AddCoreKafka(this WebApplicationBuilder builder)

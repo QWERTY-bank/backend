@@ -21,14 +21,12 @@ namespace Bank.Credits.Application.Requests
         public TokenService(
             IOptions<TokenServiceOptions> options, 
             IMemoryCache cache,
+            HttpClient httpClient,
             ILogger<TokenService> logger)
         {
             _options = options.Value;
             _cache = cache;
-            _httpClient = new() 
-            { 
-                BaseAddress = new Uri(_options.BaseUrl)
-            };
+            _httpClient = httpClient;
             _logger = logger;
         }
 

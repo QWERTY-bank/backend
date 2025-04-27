@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\common\Bank.Common.Application\Bank.Common.Application.csproj" />
+    <ProjectReference Include="..\..\common\Bank.Common.Resilience\Bank.Common.Resilience.csproj" />
     <ProjectReference Include="..\Bank.Credits.Persistence\Bank.Credits.Persistence.csproj" />
   </ItemGroup>
 
@@ -15,6 +16,7 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
   </ItemGroup>
 
 </Project>

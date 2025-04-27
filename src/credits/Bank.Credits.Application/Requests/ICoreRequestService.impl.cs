@@ -18,14 +18,12 @@ namespace Bank.Credits.Application.Requests
         public CoreRequestService(
             ITokenService tokenService,
             IOptions<CoreRequestOptions> options,
+            HttpClient httpClient,
             ILogger<CoreRequestService> logger)
         {
             _tokenService = tokenService;
             _options = options.Value;
-            _httpClient = new()
-            {
-                BaseAddress = new Uri(_options.BaseUrl)
-            };
+            _httpClient = httpClient;
             _logger = logger;
         }
 
