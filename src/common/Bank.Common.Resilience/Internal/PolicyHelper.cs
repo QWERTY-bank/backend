@@ -72,7 +72,6 @@ internal static class PolicyHelper
             return result.Result.Headers.RetryAfter.Delta.Value;
         }
 
-        // 500ms ~ 200ms -> 1s ~ 200ms -> 2s ~ 200ms
         return TimeSpan.FromMilliseconds(250 * Math.Pow(2, @try)) +
                TimeSpan.FromMilliseconds(Random.Shared.Next(0, 200));
     }
