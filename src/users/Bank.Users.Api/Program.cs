@@ -1,6 +1,7 @@
 using Bank.Common.Api.Configurations;
 using Bank.Common.Api.Cors;
 using Bank.Common.OpenTelemetry;
+using Bank.Common.Resilience;
 using Bank.Users.Api;
 using Bank.Users.Application;
 
@@ -21,6 +22,8 @@ var app = builder.Build();
 
 app.Services.AddAutoMigration();
 app.Services.AddDatabaseSeed();
+
+app.UseErrorMiddleware();
 
 app.UseSwagger();
 app.UseSwaggerUI();

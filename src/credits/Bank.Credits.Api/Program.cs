@@ -1,6 +1,7 @@
 using Bank.Common.Api.Configurations;
 using Bank.Common.Api.Cors;
 using Bank.Common.OpenTelemetry;
+using Bank.Common.Resilience;
 using Bank.Credits.Api;
 using Bank.Credits.Quartz;
 
@@ -20,6 +21,8 @@ builder.AddOpenTelemetry("credits");
 var app = builder.Build();
 
 app.Services.AddAutoMigration();
+
+app.UseErrorMiddleware();
 
 app.UseSwagger();
 app.UseSwaggerUI();
